@@ -5,11 +5,12 @@ return array(
     '/login/'         => 'AdminLogin',
     '/last/.*'        => 'LastGames',
     '/add/'           => 'AddGame',
-    '/graphs/.*'        => 'Graphs',
+    '/graphs/.*'      => 'Graphs',
     '/nominations/'   => 'Nominations',
     '/reg/'           => 'PlayerRegistration',
-    '/stat/.*'          => 'PlayersStat',
+    '/stat/.*'        => 'PlayersStat',
     '/timer/.*'       => 'Timer',
+    '/sortition/'     => 'Sortition',
 
     '/favicon.ico'    => 'Mainpage' // костылёк ^_^
 );
