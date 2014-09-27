@@ -9,7 +9,7 @@
     </tr>
     <?php foreach ($usersData as $item) { ?>
     <tr>
-        <td><a href="graphs.php?user=<?php echo $item['username'];?>"><?php echo $aliases[$item['username']];?></a></td>
+        <td><a href="/graphs/?user=<?php echo $item['username'];?>"><?php echo $aliases[$item['username']];?></a></td>
         <td><span class="badge<?php if ($item['rating'] >= 1500) { echo ' badge-success'; } else {echo ' badge-important';}; ?>"><?php echo $item['rating'];?></span></td>
         <td><?php echo $item['place_avg'];?></td>
         <td><?php echo $item['games_played'];?></td>

@@ -3,11 +3,13 @@
 return array(
     '/'               => 'Mainpage',
     '/login/'         => 'AdminLogin',
-    '/last/'          => 'LastGames',
+    '/last/.*'        => 'LastGames',
     '/add/'           => 'AddGame',
-    '/graphs/'        => 'Graphs',
+    '/graphs/.*'        => 'Graphs',
     '/nominations/'   => 'Nominations',
     '/reg/'           => 'PlayerRegistration',
-    '/stat/'          => 'PlayersStat',
-    '/timer/.*'       => 'Timer'
+    '/stat/.*'          => 'PlayersStat',
+    '/timer/.*'       => 'Timer',
+
+    '/favicon.ico'    => 'Mainpage' // костылёк ^_^
 );
