@@ -1,0 +1,1 @@
+<h2>Welcome to Riichi Statboard</h2>
