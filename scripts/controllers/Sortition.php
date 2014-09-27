@@ -61,6 +61,6 @@ class Sortition extends Controller {
 
         $sortition = array_values(array_merge($bestWinnersMap, $bestLosersMap));
 
-        include "templates/sortition.php";
+        include "templates/Sortition.php";
     }
 }
