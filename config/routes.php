@@ -9,5 +9,5 @@ return array(
     '/nominations/'   => 'Nominations',
     '/reg/'           => 'PlayerRegistration',
     '/stat/'          => 'PlayersStat',
-    '/timer/'         => 'Timer'
+    '/timer/.*'       => 'Timer'
 );
