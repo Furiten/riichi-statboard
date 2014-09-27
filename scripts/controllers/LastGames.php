@@ -1,5 +1,7 @@
 <?php
 
+require_once 'scripts/ArrayHelpers.php';
+
 class LastGames extends Controller
 {
     protected function _run()
