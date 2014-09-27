@@ -46,7 +46,7 @@ class AddGame extends Controller {
             $this->_showForm();
         } else {
             // иначе пытаемся сохранить игру в базу
-            if ($_COOKIE['secret'] != 'kldfmewmd9vbeiogbjsdvjepklsdmnvmn') {
+            if ($_COOKIE['secret'] != ADMIN_COOKIE) {
                 $this->_showForm("Секретное слово неправильное");
                 return;
             }
@@ -84,7 +84,7 @@ class AddGame extends Controller {
             $this->_updatePlayerRatings($playerPlaces, $resultScores, $gameId);
 
             echo "<h4>Игра успешно добавлена!</h4><br>";
-			echo "Идем обратно через 3 секунды... <script type='text/javascript'>window.setTimeout(function() {window.location = 'add.php';}, 3000);</script>";
+			echo "Идем обратно через 3 секунды... <script type='text/javascript'>window.setTimeout(function() {window.location = '/add/';}, 3000);</script>";
         }
     }
 

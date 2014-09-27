@@ -3,7 +3,7 @@
 class Nominations extends Controller {
     protected function _run()
     {
-		// 1) крокодил
+		// 1) Номинация "Мимокрокодил": за наименьшее число выплат
 		$allUsers = Db::get("SELECT players.username, count(DISTINCT round.id) as cnt FROM players LEFT JOIN round ON round.username = players.username GROUP BY players.username HAVING cnt > 0");
 		$winners = Db::get("SELECT username, COUNT( * ) AS cnt FROM  `round` WHERE username !=  '' GROUP BY username ORDER BY cnt ASC");
 		$losers = Db::get("SELECT loser, COUNT( * ) AS cnt FROM  `round` WHERE loser !=  '' GROUP BY loser ORDER BY cnt ASC");
@@ -49,7 +49,7 @@ class Nominations extends Controller {
 		$krokodil = reset(array_keys($winCounts));
 		$krokodilCount = reset(array_values($winCounts));
 
-		// 2) орёл
+		// 2) Номинация "Жив, цел, орёл" - за выживание после мощного удара
 		$bigHits = Db::get("
 			SELECT * FROM `round`
 			LEFT JOIN result_score ON result_score.game_id = round.game_id AND result_score.username = round.loser

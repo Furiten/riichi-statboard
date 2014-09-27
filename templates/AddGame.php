@@ -27,13 +27,14 @@
 Пример:<br>
 <pre>
 heilage:12300 Chaos:32000 Frontier:-2000 Manabi:30000
-1 ron heilage 2han 30fu
-2 ron Chaos 2han 40fu dealer
+1 ron heilage from Chaos 2han 30fu
+2 ron Chaos from Frontier 2han 40fu dealer
 3 tsumo Frontier yakuman
-4 draw
+4 draw tempai nobody
 4 tsumo heilage 5han
-4 ron heilage yakuman dealer
+4 ron heilage from Chaos yakuman dealer
 итд
+Повторяющий номер раунда - ренчан.
 </pre>
 <?php if(!empty($error)) { ?>
 <div class="alert alert-error"><?php echo $error; ?></div>
