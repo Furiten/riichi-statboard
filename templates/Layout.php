@@ -51,8 +51,11 @@
                     <li><a href="/last/">Последние игры</a></li>
                     <li><a href="/stat/">Рейтинг игроков</a></li>
                     <li><a href="/graphs/">Графики рейтинга</a></li>
+                    <li><a href="/nominations/">Номинации</a></li>
                     <li><a href="/add/">Добавить игру&nbsp;&nbsp;<span style="opacity: 0.5" class="icon-lock icon-white"></span></a></li>
                     <li><a href="/reg/">Добавить игрока&nbsp;&nbsp;<span style="opacity: 0.5" class="icon-lock icon-white"></span></a></li>
+                    <li><a href="/login/">Вход&nbsp;&nbsp;<span style="opacity: 0.5" class="icon-lock icon-white"></span></a></li>
+                    <li><a href="/timer/" target="_blank">Таймер</a></li>
                 </ul>
             </div>
         </div>
