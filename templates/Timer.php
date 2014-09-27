@@ -150,7 +150,7 @@
 </div>
 
 <div class="timer">
-    <span id="time">45:00</span>
+    <span id="time"><?php if (!empty($_GET['init'])) { echo $_GET['init']; } else echo '45:00'; ?></span>
 </div>
 
 
