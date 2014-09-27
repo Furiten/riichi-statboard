@@ -9,7 +9,6 @@
 
     <link href="/assets/css/bootstrap.css" rel="stylesheet">
     <script src="/assets/js/jquery.js"></script>
-    <script src="/assets/js/checkform.js"></script>
     <script src="/assets/js/bootstrap.js"></script>
     <script type="text/javascript" src="/assets/js/jquery.jqplot.min.js"></script>
     <script type="text/javascript" src="/assets/js/jqplot.categoryAxisRenderer.min.js"></script>
