@@ -35,7 +35,7 @@ abstract class Controller {
      */
     public static function makeInstance($url) {
         $routes = require_once 'config/routes.php';
-        $matches = [];
+        $matches = array();
         foreach ($routes as $regex => $controller) {
             if (preg_match($regex, $url, $matches)) {
                 require_once 'scripts/controllers/' . $controller . '.php';

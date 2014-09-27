@@ -13,9 +13,9 @@ define("DIVIDER", 100); // делитель для очков; на tenhou ра�
 define("RESULT_DIVIDER", 10.); // дополнительный делитель для вывода результатов на экран
 
 define('DB_TYPE', 'mysql');
-define('DB_NAME', 'turnir2013');
-define('DB_USER', 'turnir2013');
-define('DB_PASSWORD', 'turnir2013');
+define('DB_NAME', 'statboard');
+define('DB_USER', 'statboard');
+define('DB_PASSWORD', 'statboard');
 define('DB_HOST', 'localhost');
 
 define('ADMIN_PASSWORD', 'hjpjdstckjybrb');

@@ -9,7 +9,7 @@ switch (DB_TYPE) {
 }
 
 function installMysql() {
-    $tables = [
+    $tables = array(
         'game' => "
         CREATE TABLE IF NOT EXISTS `game` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -84,7 +84,7 @@ function installMysql() {
             PRIMARY KEY (`id`),
             KEY `title` (`title`)
         ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;"
-    ];
+    );
 
     $yakuData = "
         INSERT INTO `yaku` (`id`, `title`) VALUES
@@ -133,12 +133,12 @@ function installMysql() {
             (17, 'Якухай 5');
     ";
 
-    foreach ($tables as $table => $sql) {
-        if (!Db::exec($sql)) {
-            echo "Failed to create table " . $table . "! Check your connection." . PHP_EOL;
+    try {
+        foreach ($tables as $table => $sql) {
+            Db::exec($sql);
         }
-    }
-    if (!Db::exec($yakuData)) {
-        echo "Failed to import yaku data! Check your connection." . PHP_EOL;
+        Db::exec($yakuData);
+    } catch (Exception $e) {
+        echo "Couldn't install database." . PHP_EOL . $e->getMessage();
     }
 }

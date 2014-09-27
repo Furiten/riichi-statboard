@@ -1,6 +1,6 @@
 <?php
 
-return [
+return array(
     '#/#'               => 'Mainpage',
     '#/login/#'         => 'AdminLogin',
     '#/last/#'          => 'LastGames',
@@ -10,4 +10,4 @@ return [
     '#/reg/#'           => 'PlayerRegistration',
     '#/stat/#'          => 'PlayersStat',
     '#/timer/#'         => 'Timer'
-];
+);
