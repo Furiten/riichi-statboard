@@ -11,6 +11,7 @@ return array(
     '/stat/.*'        => 'PlayersStat',
     '/timer/.*'       => 'Timer',
     '/sortition/'     => 'Sortition',
+    '/logs/'          => 'Logs',
 
     '/favicon.ico'    => 'Mainpage' // костылёк ^_^
 );
