@@ -5,6 +5,7 @@ return array(
     '/login/'         => 'AdminLogin',
     '/last/.*'        => 'LastGames',
     '/add/'           => 'AddGame',
+    '/addonline/'     => 'AddOnlineGame',
     '/graphs/.*'      => 'Graphs',
     '/nominations/'   => 'Nominations',
     '/reg/'           => 'PlayerRegistration',
