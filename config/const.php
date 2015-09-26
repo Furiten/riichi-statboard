@@ -20,3 +20,5 @@ define('DB_HOST', 'localhost');
 
 define('ADMIN_PASSWORD', 'hjpjdstckjybrb');
 define('ADMIN_COOKIE', 'kldfmewmd9vbeiogbjsdvjepklsdmnvmn');
+
+define('ALLOWED_LOBBY', '7994');

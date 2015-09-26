@@ -48,12 +48,13 @@
             <div class="nav-collapse">
                 <ul class="nav">
                     <li><a href="/last/">Последние игры</a></li>
-                    <li><a href="/stat/">Рейтинг игроков</a></li>
-                    <li><a href="/graphs/">Графики рейтинга</a></li>
+                    <li><a href="/stat/">Рейтинг</a></li>
+                    <li><a href="/graphs/">Графики</a></li>
                     <li><a href="/nominations/">Номинации</a></li>
                     <li><a href="/logs/">Логи</a></li>
-                    <li><a href="/add/">Добавить игру&nbsp;&nbsp;<span style="opacity: 0.5" class="icon-lock icon-white"></span></a></li>
-                    <li><a href="/reg/">Добавить игрока&nbsp;&nbsp;<span style="opacity: 0.5" class="icon-lock icon-white"></span></a></li>
+                    <li><a href="/add/">+Игра&nbsp;&nbsp;<span style="opacity: 0.5" class="icon-lock icon-white"></span></a></li>
+                    <li><a href="/addonline/">+Онлайн-игра&nbsp;&nbsp;<span style="opacity: 0.5" class="icon-lock icon-white"></span></a></li>
+                    <li><a href="/reg/">+Игрок&nbsp;&nbsp;<span style="opacity: 0.5" class="icon-lock icon-white"></span></a></li>
                     <li><a href="/login/">Вход&nbsp;&nbsp;<span style="opacity: 0.5" class="icon-lock icon-white"></span></a></li>
                     <li><a href="/timer/" target="_blank">Таймер</a></li>
                     <li><a href="/sortition/" target="_blank">Рассадка</a></li>
