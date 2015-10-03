@@ -3,24 +3,33 @@
 class PlayersStat extends Controller {
     protected function _run()
     {
-		$users = Db::get("SELECT username, alias FROM players");
-		$aliases = array();
-		foreach ($users as $v) {
-			$aliases[$v['username']] = $v['alias'];
-		}
+        $users = Db::get("SELECT username, alias FROM players");
+        $aliases = array();
+        foreach ($users as $v) {
+            $aliases[$v['username']] = $v['alias'];
+        }
 
         if (!isset($_GET['sort'])) {
             $_GET['sort'] = '';
         }
+
+        $query = "SELECT players.*, STD(result_score.place) AS stddev
+            FROM players
+            LEFT JOIN result_score ON (players.username = result_score.username)
+            GROUP BY result_score.username
+        ";
+
         switch ($_GET['sort']) {
             case 'avg':
-                $usersData = Db::get("SELECT * FROM players ORDER BY place_avg ASC, rating DESC");
+                $query .= "ORDER BY place_avg ASC, rating DESC";
                 break;
             case 'rating':
             default:
-                $usersData = Db::get("SELECT * FROM players ORDER BY rating DESC, place_avg ASC");
+                $query .= "ORDER BY rating DESC, place_avg ASC";
         }
 
+        $usersData = Db::get($query);
         include "templates/PlayersStat.php";
     }
 }
+
