@@ -27,6 +27,15 @@ class Sortition extends Controller {
         return $factor;
     }
 
+    protected function _beforeRun() {
+        if (empty($this->_path['seed'])) {
+            header('Location: /sortition/' . substr(md5(microtime(true)), 3, 8) . '/');
+            return false;
+        }
+
+        return true;
+    }
+
     protected function _run()
     {
         $users = db::get("SELECT username, alias FROM players");
@@ -45,9 +54,10 @@ class Sortition extends Controller {
         $bestWinnersMap = array();
         $bestLosersMap = array();
         $factor = 100500;
+        $randFactor = hexdec($this->_path['seed']);
 
         for ($i = 0; $i < $maxIterations; $i++) {
-            srand((int)microtime(true));
+            srand($randFactor += 5);
             shuffle($winners);
             shuffle($losers);
 
