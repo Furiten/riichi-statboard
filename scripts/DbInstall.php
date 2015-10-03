@@ -85,6 +85,12 @@ function installMysql() {
             `title` varchar(255) NOT NULL,
             PRIMARY KEY (`id`),
             KEY `title` (`title`)
+        ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;",
+        'sortition_cache' => "
+        CREATE TABLE IF NOT EXISTS `sortition_cache` (
+            `hash` varchar(24) NOT NULL,
+            `data` TEXT NOT NULL,
+            PRIMARY KEY (`hash`)
         ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;"
     );
 

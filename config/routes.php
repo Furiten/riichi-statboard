@@ -11,7 +11,7 @@ return array(
     '/reg/'           => 'PlayerRegistration',
     '/stat/.*'        => 'PlayersStat',
     '/timer/.*'       => 'Timer',
-    '/sortition/'     => 'Sortition',
+    '/sortition/gennew/'     => 'Sortition',
     '/sortition/(?<seed>[0-9a-f]+)/' => 'Sortition',
     '/logs/'          => 'Logs',
 
