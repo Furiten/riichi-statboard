@@ -468,10 +468,10 @@ class AddOnlineGame extends Controller {
                 case 'UN':
                     if (count($usernames) == 0) {
                         $usernames = array(
-                            rawurldecode($reader->getAttribute('n0')),
-                            rawurldecode($reader->getAttribute('n1')),
-                            rawurldecode($reader->getAttribute('n2')),
-                            rawurldecode($reader->getAttribute('n3'))
+                            base64_encode(rawurldecode($reader->getAttribute('n0'))),
+                            base64_encode(rawurldecode($reader->getAttribute('n1'))),
+                            base64_encode(rawurldecode($reader->getAttribute('n2'))),
+                            base64_encode(rawurldecode($reader->getAttribute('n3')))
                         );
 
                         if (in_array('NoName', $usernames)) {

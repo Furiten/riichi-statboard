@@ -9,7 +9,7 @@ class LastGames extends Controller
         $users = Db::get("SELECT username, alias FROM players");
         $aliases = array();
         foreach ($users as $v) {
-            $aliases[$v['username']] = $v['alias'];
+            $aliases[$v['username']] = base64_decode($v['alias']);
         }
 
         $limit = 10;
