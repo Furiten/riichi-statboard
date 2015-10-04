@@ -128,10 +128,9 @@ class AddOnlineGame extends Controller {
                 list($replayHash, $paifuContent) = $this->_getContent($_POST['log']);
                 // пример: http://e.mjv.jp/0/log/plainfiles.cgi?2015082718gm-0009-7994-2254c66d
                 $this->_checkLobby($paifuContent);
-                $usernames = $this->_parseUsernames($paifuContent);
-				$players = array_combine($usernames, $this->_parseOutcome($paifuContent));
-				$counts = $this->_parseRounds($paifuContent);
-			} catch (Exception $e) {
+                list($counts, $usernames) = $this->_parseRounds($paifuContent);
+                $players = array_combine($usernames, $this->_parseOutcome($paifuContent));
+            } catch (Exception $e) {
 				$this->_showForm($e->getMessage());
 				return;
 			}
@@ -337,6 +336,8 @@ class AddOnlineGame extends Controller {
             }
             $parts[3] = dechex($hexparts[0] ^ $hexparts[1] ^ $t[$hexparts[3] + 0]) .
                 dechex($hexparts[1] ^ $t[$hexparts[3] + 0] ^ $hexparts[2] ^ $t[$hexparts[3] + 1]);
+
+            $parts[3] = str_repeat('0', 8 - strlen($parts[3])) . $parts[3];
         }
 
         return join('-', $parts);
@@ -369,27 +370,6 @@ class AddOnlineGame extends Controller {
         }
 
         return array($logHash, $content);
-    }
-
-    /**
-     * Парсим имена пользователей из содержимого ответа
-     *
-     * @param $content
-     * @return array|bool
-     */
-    protected function _parseUsernames($content) {
-        $regex = "#<UN n0=\"([^\"]*)\" n1=\"([^\"]*)\" n2=\"([^\"]*)\" n3=\"([^\"]*)\"#";
-        $matches = array();
-        if (preg_match($regex, $content, $matches)) {
-            return array(
-                rawurldecode($matches[1]),
-                rawurldecode($matches[2]),
-                rawurldecode($matches[3]),
-                rawurldecode($matches[4])
-            );
-        }
-
-        return false;
     }
 
     /**
@@ -482,12 +462,14 @@ class AddOnlineGame extends Controller {
             if ($reader->nodeType != XMLReader::ELEMENT) continue;
             switch($reader->localName) {
                 case 'UN':
-                    $usernames = array(
-                        rawurldecode($reader->getAttribute('n0')),
-                        rawurldecode($reader->getAttribute('n1')),
-                        rawurldecode($reader->getAttribute('n2')),
-                        rawurldecode($reader->getAttribute('n3'))
-                    );
+                    if (count($usernames) == 0) {
+                        $usernames = array(
+                            rawurldecode($reader->getAttribute('n0')),
+                            rawurldecode($reader->getAttribute('n1')),
+                            rawurldecode($reader->getAttribute('n2')),
+                            rawurldecode($reader->getAttribute('n3'))
+                        );
+                    }
                     break;
                 case 'INIT':
                     $newDealer = $reader->getAttribute('oya');
@@ -559,6 +541,6 @@ class AddOnlineGame extends Controller {
             }
         }
 
-        return $counts;
+        return array($counts, $usernames);
     }
 }

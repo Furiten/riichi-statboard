@@ -258,7 +258,24 @@ class AddGame extends Controller {
     // турнир: все линейно, ничего не делаем
     protected function _calculateRatingChange($playerName, $playerPlaces, $resultScores, $currentRatings)
     {
+        // простая формула:
         return $resultScores[$playerName] / RESULT_DIVIDER;
+
+        // сложная формула с учетом истории и прочего:
+//        $ratingsSum = 0;
+//        foreach ($currentRatings as $row) {
+//            $ratingsSum += $row['rating'];
+//        }
+//        $ratingAvg = $ratingsSum / 4.;
+//
+//        if ($currentRatings[$playerName]['games_played'] < 40) {
+//            $adj = 1 - $currentRatings[$playerName]['games_played'] * 0.02;
+//        } else {
+//            $adj = 0.2;
+//        }
+//
+//        return $adj * ($resultScores[$playerName] / 20.
+//            + ($ratingAvg - $currentRatings[$playerName]['rating']) / 2.2);
     }
 
     /**
