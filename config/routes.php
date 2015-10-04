@@ -13,7 +13,6 @@ return array(
     '/timer/.*'       => 'Timer',
     '/sortition/gennew/'     => 'Sortition',
     '/sortition/(?<seed>[0-9a-f]+)/' => 'Sortition',
-    '/logs/'          => 'Logs',
 
     '/favicon.ico'    => 'Mainpage' // костылёк ^_^
 );

@@ -142,6 +142,7 @@ class AddOnlineGame extends Controller {
             $this->_registerUsers($usernames);
 
             $gameId = $this->_addToDb(array(
+                'originalLink' => $_POST['log'],
                 'replayHash' => $replayHash,
                 'players' => $players,
                 'scores' => $resultScores,
@@ -277,7 +278,10 @@ class AddOnlineGame extends Controller {
      * @return string
      */
     protected function _addToDb($data) {
-        $gameInsert = "INSERT INTO game (replay_hash, play_date, ron_count, tsumo_count, drawn_count) VALUES ('{$data['replayHash']}', CURRENT_TIMESTAMP(), {$data['counts']['ron']}, {$data['counts']['tsumo']}, {$data['counts']['draw']})";
+        $gameInsert = "INSERT INTO game (orig_link, replay_hash, play_date, ron_count, tsumo_count, drawn_count) VALUES (
+            '{$data['originalLink']}', '{$data['replayHash']}', CURRENT_TIMESTAMP(),
+            {$data['counts']['ron']}, {$data['counts']['tsumo']}, {$data['counts']['draw']}
+        )";
         Db::exec($gameInsert);
         $gameId = Db::connection()->lastInsertId();
 

@@ -99,16 +99,92 @@ foreach ($gamesData as $game) {
         $chombosLi = "<li>В игре было {$chomboCount}</li>";
     }
 
+    $fullLog = '';
+    foreach ($roundsData as $round) {
+        if ($game['id'] != $round['game_id']) {
+            continue;
+        }
+
+        $fullLog .= '<div>';
+        if ($round['round'] <= 4) {
+            $fullLog .= '東' . $round['round'];
+        } else {
+            $fullLog .= '南' . ($round['round'] - 4);
+        }
+
+        $fullLog .= ': ';
+
+        switch ($round['result']) {
+            case 'ron':
+                if ($round['dora'] > 0) {
+                    $dora = ', дора ' . $round['dora'];
+                } else $dora = '';
+
+                if ($round['han'] < 5) {
+                    $fu = ', ' . $round['fu'] . ' фу';
+                } else $fu = '';
+
+                if ($round['dealer']) {
+                    $dealer = ' (дилерское)';
+                } else $dealer = '';
+
+                $round['yaku_list'] = str_replace(',', ', ', $round['yaku_list']);
+                $fullLog .= "<b>{$aliases[$round['username']]}</b> - {$round['yaku_list']}{$dora} (<b>{$aliases[$round['loser']]}</b>), {$round['han']} хан{$fu}{$dealer}";
+                break;
+            case 'tsumo':
+                if ($round['dora'] > 0) {
+                    $dora = ', дора ' . $round['dora'];
+                } else $dora = '';
+
+                if ($round['han'] < 5) {
+                    $fu = ', ' . $round['fu'] . ' фу';
+                } else $fu = '';
+
+                if ($round['dealer']) {
+                    $dealer = ' (дилерское)';
+                } else $dealer = '';
+
+                $round['yaku_list'] = str_replace(',', ', ', $round['yaku_list']);
+                $fullLog .= "<b>{$aliases[$round['username']]}</b> - {$round['yaku_list']}{$dora} (цумо), {$round['han']} хан{$fu}{$dealer}";
+                break;
+            case 'draw':
+                $tempaiList = array();
+                $round['tempai_list'] = @unserialize($round['tempai_list']);
+                foreach ($round['tempai_list'] as $name => $r) {
+                    if ($r == 'tempai') {
+                        $tempaiList []= $aliases[$name];
+                    }
+                }
+                $tempaiList = implode(', ', $tempaiList);
+                $fullLog .= "Ничья (темпай: {$tempaiList})";
+                break;
+            case 'chombo':
+                if ($round['dealer']) {
+                    $dealer = ' (дилерское)';
+                } else $dealer = '';
+
+                $fullLog .= "Чомбо: {$aliases[$round['username']]}{$dealer}";
+                break;
+            default:;
+        }
+        $fullLog .= "</div>";
+    }
+
     echo "<tr>
         <td>{$gamesCounter}</td>
         <td>{$game['play_date']}</td>
         <td>{$players}</td>
         <td>
             <ul>
+                <li><a href='{$game['orig_link']}' target='_blank'>Посмотреть реплей</a></li>
                 <li>Лучшая рука собрана игроком <b>" . $player . "</b> - {$cost}</li>
                 <li>В игре было {$ronWins} по рон и {$tsumoWins} по цумо</li>
                 <li>В игре было {$draws}</li>
+                <li>Полный лог игры:</li>
                 {$chombosLi}
+                <div class='fullLog'>
+                    {$fullLog}
+                </div>
             </ul>
         </td>
     </tr>";

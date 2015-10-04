@@ -51,7 +51,6 @@
                     <li><a href="/stat/">Рейтинг</a></li>
                     <li><a href="/graphs/">Графики</a></li>
                     <li><a href="/nominations/">Номинации</a></li>
-                    <li><a href="/logs/">Логи</a></li>
                     <li><a href="/add/">+Игра&nbsp;&nbsp;<span style="opacity: 0.5" class="icon-lock icon-white"></span></a></li>
                     <li><a href="/addonline/">+Онлайн-игра&nbsp;&nbsp;<span style="opacity: 0.5" class="icon-lock icon-white"></span></a></li>
                     <li><a href="/reg/">+Игрок&nbsp;&nbsp;<span style="opacity: 0.5" class="icon-lock icon-white"></span></a></li>

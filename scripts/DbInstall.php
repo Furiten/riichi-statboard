@@ -14,6 +14,7 @@ function installMysql() {
         CREATE TABLE IF NOT EXISTS `game` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `replay_hash` varchar(255),
+            `orig_link` text,
             `play_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
             `ron_count` int(11) NOT NULL DEFAULT '0',
             `tsumo_count` int(11) NOT NULL DEFAULT '0',

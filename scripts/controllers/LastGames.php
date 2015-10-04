@@ -37,7 +37,12 @@ class LastGames extends Controller
         $scoresData = Db::get($resultScores);
         $scoresData = ArrayHelpers::elm2Key($scoresData, 'id');
 
-        $rounds = "SELECT * FROM round WHERE game_id IN({$gameIds})";
+        $rounds = "SELECT round.*, group_concat(yaku.title) as yaku_list
+            FROM round
+            LEFT JOIN yaku ON FIND_IN_SET(yaku.id, round.yaku)
+			WHERE round.game_id IN({$gameIds})
+			GROUP BY round.id
+        ";
         $roundsData = Db::get($rounds);
         $roundsData = ArrayHelpers::elm2Key($roundsData, 'id');
 
