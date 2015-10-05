@@ -473,6 +473,10 @@ class AddOnlineGame extends Controller {
                             rawurldecode($reader->getAttribute('n2')),
                             rawurldecode($reader->getAttribute('n3'))
                         );
+
+                        if (in_array('NoName', $usernames)) {
+                            throw new Exception('В рейтинг не допускаются игры с безымянными игроками.');
+                        }
                     }
                     break;
                 case 'INIT':
