@@ -21,6 +21,9 @@
         text-align:center;
         border: 1px solid #333;
     }
+    td.intsect.gray {
+        background-color: #888;
+    }
 </style>
 <h2>Жеребьёвка</h2>
 <br>
@@ -76,7 +79,11 @@
                         }
                         echo '<td class="intsect"><span class="' . implode(' ', $classesList) . '">' . $cnt . '</span></td>';
                     } else {
-                        echo '<td class="intsect">0</td>';
+                        if ($item1['username'] == $item2['username']) {
+                            echo '<td class="intsect gray">&nbsp;</td>';
+                        } else {
+                            echo '<td class="intsect">0</td>';
+                        }
                     }
                 ?>
             <?php } ?>
