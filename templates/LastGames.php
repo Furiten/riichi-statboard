@@ -153,14 +153,20 @@ foreach ($gamesData as $game) {
                 break;
             case 'draw':
                 $tempaiList = array();
-                $round['tempai_list'] = @unserialize($round['tempai_list']);
-                foreach ($round['tempai_list'] as $name => $r) {
-                    if ($r == 'tempai') {
-                        $tempaiList []= $aliases[$name];
+                if ($round['tempai_list']) {
+                    // ничья
+                    $round['tempai_list'] = @unserialize($round['tempai_list']);
+                    foreach ($round['tempai_list'] as $name => $r) {
+                        if ($r == 'tempai') {
+                            $tempaiList []= $aliases[$name];
+                        }
                     }
+                    $tempaiList = implode(', ', $tempaiList);
+                    $fullLog .= "Ничья (темпай: {$tempaiList})";
+                } else {
+                    // пересдача
+                    $fullLog .= "Пересдача";
                 }
-                $tempaiList = implode(', ', $tempaiList);
-                $fullLog .= "Ничья (темпай: {$tempaiList})";
                 break;
             case 'chombo':
                 if ($round['dealer']) {

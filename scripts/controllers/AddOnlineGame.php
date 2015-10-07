@@ -439,7 +439,11 @@ class AddOnlineGame extends Controller {
      */
     public function cb_roundDrawn($roundData /*$round*/) {
         $round = $roundData['round'];
-        $players = serialize($roundData['players_tempai']);
+        if ($roundData['players_tempai']) {
+            $players = serialize($roundData['players_tempai']);
+        } else {
+            $players = '';
+        }
         $this->_loggedRounds []= "(#GAMEID#, '', '', '{$players}', 0, 0, 0, 0, '{$round}', 'draw', '', 0)";
     }
 
@@ -565,7 +569,9 @@ class AddOnlineGame extends Controller {
                 case 'RYUUKYOKU':
                     if ($reader->getAttribute('type')) {
                         // пересдача
-                        $this->cb_roundDrawn(array());
+                        $this->cb_roundDrawn(array(
+                            'round' => $currentRound
+                        ));
                     } else {
                         $scores = array_filter(explode(',', $reader->getAttribute('sc')));
                         $users = array();
