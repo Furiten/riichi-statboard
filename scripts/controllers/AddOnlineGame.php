@@ -132,9 +132,15 @@ class AddOnlineGame extends Controller {
         throw new Exception('Добавляемая игра сыграна более чем сутки назад. Игра не принята из-за истечения срока годности.');
     }
 
-    protected function _addGame($link) {
+    /**
+     * @param $link
+     * @param $isReplay если добавление игры происходит в процессе перезаливки пайфу
+     */
+    protected function _addGame($link, $isReplay = false) {
         list($replayHash, $paifuContent) = $this->_getContent($link);
-        $this->_checkGameExpired($replayHash);
+        if (!$isReplay) {
+            $this->_checkGameExpired($replayHash);
+        }
         // пример: http://e.mjv.jp/0/log/plainfiles.cgi?2015082718gm-0009-7994-2254c66d
         $this->_checkLobby($paifuContent);
         list($counts, $usernames) = $this->_parseRounds($paifuContent);
@@ -159,7 +165,8 @@ class AddOnlineGame extends Controller {
     }
 
     public function externalAddGame($link) { // паблик морозов
-        $this->_addGame($link);
+        $this->_loggedRounds = array();
+        $this->_addGame($link, true);
     }
 
     /**
@@ -345,7 +352,8 @@ class AddOnlineGame extends Controller {
      * @return bool
      */
     protected function _alreadyAdded($replayHash) {
-        $checkQuery = reset(Db::get("SELECT COUNT(*) as cnt FROM game WHERE replay_hash = '{$replayHash}'"));
+        $game = Db::get("SELECT COUNT(*) as cnt FROM game WHERE replay_hash = '{$replayHash}'");
+        $checkQuery = reset($game);
         return isset($checkQuery['cnt']) && $checkQuery['cnt'] > 0;
     }
 
@@ -439,7 +447,7 @@ class AddOnlineGame extends Controller {
      */
     public function cb_roundDrawn($roundData /*$round*/) {
         $round = $roundData['round'];
-        if ($roundData['players_tempai']) {
+        if (!empty($roundData['players_tempai'])) {
             $players = serialize($roundData['players_tempai']);
         } else {
             $players = '';
@@ -575,7 +583,7 @@ class AddOnlineGame extends Controller {
                     } else {
                         $scores = array_filter(explode(',', $reader->getAttribute('sc')));
                         $users = array();
-                        for ($i = 0; $i < count($scores); $i++) {
+                        for ($i = 0; $i < count($usernames); $i++) {
                             if (empty($usernames[$i])) continue;
                             $users[$usernames[$i]] = (intval($scores[$i*2+1]) >= 0 ? 'tempai' : 'noten');
                         }
