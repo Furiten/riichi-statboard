@@ -108,8 +108,12 @@ foreach ($gamesData as $game) {
         $fullLog .= '<div>';
         if ($round['round'] <= 4) {
             $fullLog .= '東' . $round['round'];
-        } else {
+        } else if ($round['round'] <= 8) {
             $fullLog .= '南' . ($round['round'] - 4);
+        } else if ($round['round'] <= 12) {
+            $fullLog .= '西' . ($round['round'] - 8);
+        } else if ($round['round'] <= 16) {
+            $fullLog .= '北' . ($round['round'] - 12);
         }
 
         $fullLog .= ': ';
