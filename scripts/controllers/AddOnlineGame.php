@@ -112,9 +112,24 @@ class AddOnlineGame extends Controller {
         $regex = "#<GO.*?lobby=\"(\d+)\"/>#is";
         $matches = array();
         if (preg_match($regex, $paifu, $matches)) {
-            if ($matches[1] == ALLOWED_LOBBY) return;
+            if ($matches[1] == ALLOWED_LOBBY) {
+                return;
+            }
         }
         throw new Exception('This replay is not from this tournament');
+    }
+
+    protected function _checkGameExpired($replayHash) {
+        $regex = '#(?<year>\d{4})(?<month>\d{2})(?<day>\d{2})(?<hour>\d{2})gm#is';
+        $matches = array();
+        if (preg_match($regex, $replayHash, $matches)) {
+            $date = mktime($matches['hour'], 0, 0, $matches['month'], $matches['day'], $matches['year']);
+            if (time() - $date > 27*60*60) { // 27 часов, чтобы покрыть разницу с JST
+                return;
+            }
+        }
+
+        throw new Exception('Добавляемая игра сыграна более чем сутки назад. Игра не принята из-за истечения срока годности.');
     }
 
     /**
@@ -126,6 +141,7 @@ class AddOnlineGame extends Controller {
         } else {
 			try {
                 list($replayHash, $paifuContent) = $this->_getContent($_POST['log']);
+                $this->_checkGameExpired($replayHash);
                 // пример: http://e.mjv.jp/0/log/plainfiles.cgi?2015082718gm-0009-7994-2254c66d
                 $this->_checkLobby($paifuContent);
                 list($counts, $usernames) = $this->_parseRounds($paifuContent);
@@ -232,7 +248,13 @@ class AddOnlineGame extends Controller {
 
     // турнир: все линейно, ничего не делаем
     protected function _calculateRatingChange($playerName, $playerPlaces, $resultScores, $currentRatings) {
-        return $resultScores[$playerName] / RESULT_DIVIDER;
+        if ($currentRatings[$playerName]['games_played'] < 60) {
+            $adj = 1 - $currentRatings[$playerName]['games_played'] * 0.01;
+        } else {
+            $adj = 0.4;
+        }
+
+        return $adj * ($resultScores[$playerName] / 20.);
     }
 
     /**
