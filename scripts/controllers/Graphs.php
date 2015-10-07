@@ -39,7 +39,6 @@ class Graphs extends Controller {
         } else {
             if (!empty($user)) {
                 $gameResults = $this->_getGameResults($ratingResults);
-
                 $gamesData = $this->_getGamesData($gameResults);
 
                 $data = $this->_getPlacesData($gameResults, $user);

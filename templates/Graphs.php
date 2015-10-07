@@ -22,9 +22,17 @@
 <script type="text/javascript">
     $(document).ready(function(){
         ////// rating plot
-        var points = <?php echo str_replace(array_keys($aliases), array_values($aliases), json_encode($graphData)); ?>;
-        var games = <?php echo str_replace(array_keys($aliases), array_values($aliases), json_encode($gamesData)); ?>;
-        var user = '<?php echo str_replace(array_keys($aliases), array_values($aliases), $user); ?>';
+        <?php
+            $substituteAliases = function(&$item) use ($aliases) {
+                foreach ($item as &$playerRecord) {
+                    $playerRecord['username'] = $aliases[$playerRecord['username']];
+                }
+                return $item;
+            };
+        ?>
+        var points = <?php echo json_encode(array_map($substituteAliases, $graphData)); ?>;
+        var games = <?php echo json_encode(array_map($substituteAliases, $gamesData)); ?>;
+        var user = '<?php echo str_replace("'", "\\'", $aliases[$user]); ?>';
         var plot_rating = $.jqplot('chart_rating', [points], {
             axes:{
                 xaxis:{

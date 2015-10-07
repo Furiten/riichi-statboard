@@ -112,9 +112,54 @@ class AddOnlineGame extends Controller {
         $regex = "#<GO.*?lobby=\"(\d+)\"/>#is";
         $matches = array();
         if (preg_match($regex, $paifu, $matches)) {
-            if ($matches[1] == ALLOWED_LOBBY) return;
+            if ($matches[1] == ALLOWED_LOBBY) {
+                return;
+            }
         }
         throw new Exception('This replay is not from this tournament');
+    }
+
+    protected function _checkGameExpired($replayHash) {
+        $regex = '#(?<year>\d{4})(?<month>\d{2})(?<day>\d{2})(?<hour>\d{2})gm#is';
+        $matches = array();
+        if (preg_match($regex, $replayHash, $matches)) {
+            $date = mktime($matches['hour'], 0, 0, $matches['month'], $matches['day'], $matches['year']);
+            if (time() - $date > 27*60*60) { // 27 часов, чтобы покрыть разницу с JST
+                return;
+            }
+        }
+
+        throw new Exception('Добавляемая игра сыграна более чем сутки назад. Игра не принята из-за истечения срока годности.');
+    }
+
+    protected function _addGame($link) {
+        list($replayHash, $paifuContent) = $this->_getContent($link);
+        $this->_checkGameExpired($replayHash);
+        // пример: http://e.mjv.jp/0/log/plainfiles.cgi?2015082718gm-0009-7994-2254c66d
+        $this->_checkLobby($paifuContent);
+        list($counts, $usernames) = $this->_parseRounds($paifuContent);
+        $players = array_combine($usernames, $this->_parseOutcome($paifuContent));
+
+        //////////////////////////////////////////////////////////////////////////////////
+
+        $playerPlaces = $this->_calcPlaces($players);
+        $resultScores = $this->_countResultScore($players, $playerPlaces);
+        $this->_registerUsers($usernames);
+
+        $gameId = $this->_addToDb(array(
+            'originalLink' => $link,
+            'replayHash' => $replayHash,
+            'players' => $players,
+            'scores' => $resultScores,
+            'rounds' => $this->_loggedRounds,
+            'counts' => $counts
+        ));
+
+        $this->_updatePlayerRatings($playerPlaces, $resultScores, $gameId);
+    }
+
+    public function externalAddGame($link) { // паблик морозов
+        $this->_addGame($link);
     }
 
     /**
@@ -124,36 +169,15 @@ class AddOnlineGame extends Controller {
         if (empty($_POST['log'])) { // пусто - показываем форму
             $this->_showForm();
         } else {
-			try {
-                list($replayHash, $paifuContent) = $this->_getContent($_POST['log']);
-                // пример: http://e.mjv.jp/0/log/plainfiles.cgi?2015082718gm-0009-7994-2254c66d
-                $this->_checkLobby($paifuContent);
-                list($counts, $usernames) = $this->_parseRounds($paifuContent);
-                $players = array_combine($usernames, $this->_parseOutcome($paifuContent));
+            try {
+                $this->_addGame($_POST['log']);
             } catch (Exception $e) {
-				$this->_showForm($e->getMessage());
-				return;
-			}
-
-			//////////////////////////////////////////////////////////////////////////////////
-
-            $playerPlaces = $this->_calcPlaces($players);
-            $resultScores = $this->_countResultScore($players, $playerPlaces);
-            $this->_registerUsers($usernames);
-
-            $gameId = $this->_addToDb(array(
-                'originalLink' => $_POST['log'],
-                'replayHash' => $replayHash,
-                'players' => $players,
-                'scores' => $resultScores,
-                'rounds' => $this->_loggedRounds,
-                'counts' => $counts
-            ));
-
-            $this->_updatePlayerRatings($playerPlaces, $resultScores, $gameId);
+                $this->_showForm($e->getMessage());
+                return;
+            }
 
             echo "<h4>Игра успешно добавлена!</h4><br>";
-			echo "Идем обратно через 3 секунды... <script type='text/javascript'>window.setTimeout(function() {window.location = '/addonline/';}, 3000);</script>";
+            echo "Идем обратно через 3 секунды... <script type='text/javascript'>window.setTimeout(function() {window.location = '/addonline/';}, 3000);</script>";
         }
     }
 
@@ -232,7 +256,13 @@ class AddOnlineGame extends Controller {
 
     // турнир: все линейно, ничего не делаем
     protected function _calculateRatingChange($playerName, $playerPlaces, $resultScores, $currentRatings) {
-        return $resultScores[$playerName] / RESULT_DIVIDER;
+        if ($currentRatings[$playerName]['games_played'] < 60) {
+            $adj = 1 - $currentRatings[$playerName]['games_played'] * 0.01;
+        } else {
+            $adj = 0.4;
+        }
+
+        return $adj * ($resultScores[$playerName] / 20.);
     }
 
     /**
@@ -274,10 +304,15 @@ class AddOnlineGame extends Controller {
     /**
      * Добавляем в БД запись об игре и всех ее раундах
      *
+     * @throws Exception
      * @param $data
      * @return string
      */
     protected function _addToDb($data) {
+        if ($this->_alreadyAdded($data['replayHash'])) {
+            throw new Exception('Упц. Эта игра уже зарегистрирована в нашей базе. Кто-то успел раньше вас? :)');
+        }
+
         $gameInsert = "INSERT INTO game (orig_link, replay_hash, play_date, ron_count, tsumo_count, drawn_count) VALUES (
             '{$data['originalLink']}', '{$data['replayHash']}', CURRENT_TIMESTAMP(),
             {$data['counts']['ron']}, {$data['counts']['tsumo']}, {$data['counts']['draw']}
@@ -404,7 +439,11 @@ class AddOnlineGame extends Controller {
      */
     public function cb_roundDrawn($roundData /*$round*/) {
         $round = $roundData['round'];
-        $players = serialize($roundData['players_tempai']);
+        if ($roundData['players_tempai']) {
+            $players = serialize($roundData['players_tempai']);
+        } else {
+            $players = '';
+        }
         $this->_loggedRounds []= "(#GAMEID#, '', '', '{$players}', 0, 0, 0, 0, '{$round}', 'draw', '', 0)";
     }
 
@@ -530,7 +569,9 @@ class AddOnlineGame extends Controller {
                 case 'RYUUKYOKU':
                     if ($reader->getAttribute('type')) {
                         // пересдача
-                        $this->cb_roundDrawn(array());
+                        $this->cb_roundDrawn(array(
+                            'round' => $currentRound
+                        ));
                     } else {
                         $scores = array_filter(explode(',', $reader->getAttribute('sc')));
                         $users = array();
