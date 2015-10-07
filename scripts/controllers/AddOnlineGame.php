@@ -124,7 +124,7 @@ class AddOnlineGame extends Controller {
         $matches = array();
         if (preg_match($regex, $replayHash, $matches)) {
             $date = mktime($matches['hour'], 0, 0, $matches['month'], $matches['day'], $matches['year']);
-            if (time() - $date > 27*60*60) { // 27 часов, чтобы покрыть разницу с JST
+            if (time() - $date < 27*60*60) { // 27 часов, чтобы покрыть разницу с JST
                 return;
             }
         }
