@@ -132,6 +132,36 @@ class AddOnlineGame extends Controller {
         throw new Exception('Добавляемая игра сыграна более чем сутки назад. Игра не принята из-за истечения срока годности.');
     }
 
+    protected function _addGame($link) {
+        list($replayHash, $paifuContent) = $this->_getContent($link);
+        $this->_checkGameExpired($replayHash);
+        // пример: http://e.mjv.jp/0/log/plainfiles.cgi?2015082718gm-0009-7994-2254c66d
+        $this->_checkLobby($paifuContent);
+        list($counts, $usernames) = $this->_parseRounds($paifuContent);
+        $players = array_combine($usernames, $this->_parseOutcome($paifuContent));
+
+        //////////////////////////////////////////////////////////////////////////////////
+
+        $playerPlaces = $this->_calcPlaces($players);
+        $resultScores = $this->_countResultScore($players, $playerPlaces);
+        $this->_registerUsers($usernames);
+
+        $gameId = $this->_addToDb(array(
+            'originalLink' => $link,
+            'replayHash' => $replayHash,
+            'players' => $players,
+            'scores' => $resultScores,
+            'rounds' => $this->_loggedRounds,
+            'counts' => $counts
+        ));
+
+        $this->_updatePlayerRatings($playerPlaces, $resultScores, $gameId);
+    }
+
+    public function externalAddGame($link) { // паблик морозов
+        $this->_addGame($link);
+    }
+
     /**
      * Основной метод контроллера
      */
@@ -140,29 +170,7 @@ class AddOnlineGame extends Controller {
             $this->_showForm();
         } else {
             try {
-                list($replayHash, $paifuContent) = $this->_getContent($_POST['log']);
-                $this->_checkGameExpired($replayHash);
-                // пример: http://e.mjv.jp/0/log/plainfiles.cgi?2015082718gm-0009-7994-2254c66d
-                $this->_checkLobby($paifuContent);
-                list($counts, $usernames) = $this->_parseRounds($paifuContent);
-                $players = array_combine($usernames, $this->_parseOutcome($paifuContent));
-
-                //////////////////////////////////////////////////////////////////////////////////
-
-                $playerPlaces = $this->_calcPlaces($players);
-                $resultScores = $this->_countResultScore($players, $playerPlaces);
-                $this->_registerUsers($usernames);
-
-                $gameId = $this->_addToDb(array(
-                    'originalLink' => $_POST['log'],
-                    'replayHash' => $replayHash,
-                    'players' => $players,
-                    'scores' => $resultScores,
-                    'rounds' => $this->_loggedRounds,
-                    'counts' => $counts
-                ));
-
-                $this->_updatePlayerRatings($playerPlaces, $resultScores, $gameId);
+                $this->_addGame($_POST['log']);
             } catch (Exception $e) {
                 $this->_showForm($e->getMessage());
                 return;
