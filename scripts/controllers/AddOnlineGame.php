@@ -6,7 +6,7 @@ include_once "scripts/ArrayHelpers.php";
  * Добавление онлайн-игры
  */
 class AddOnlineGame extends Controller {
-    protected function _toLocalYaku($yakuList) {
+    protected function _toLocalYaku($yakuList, $yakumanList) {
         $tenhouYakuMap = array(
             0  => 36,
             1  => 33,
@@ -72,6 +72,8 @@ class AddOnlineGame extends Controller {
             'dora' => 0
         );
         $yakuhaiCount = 0;
+
+        $yakuList = array_merge($yakuList, $yakumanList);
         for ($i = 0; $i < count($yakuList); $i+=2) {
             $key = $yakuList[$i];
             $value = $yakuList[$i+1];
@@ -542,15 +544,16 @@ class AddOnlineGame extends Controller {
                     $counts[$outcomeType]++;
 
                     list($fu, $points) = explode(',', $reader->getAttribute('ten'));
-                    $yakuList = explode(',', $reader->getAttribute('yaku'));
+                    $yakuList = array_filter(explode(',', $reader->getAttribute('yaku')));
+                    $yakumanList = array_filter(explode(',', $reader->getAttribute('yakuman')));
 
                     $hanSum = 0;
                     for ($i = 1; $i < count($yakuList); $i+=2) {
                         $hanSum += $yakuList[$i];
                     }
-                    $yakuAndDora = $this->_toLocalYaku($yakuList);
+                    $yakuAndDora = $this->_toLocalYaku($yakuList, $yakumanList);
 
-                    if ($hanSum > 12) {
+                    if ($hanSum > 12 || !empty($yakumanList)) {
                         $this->cb_yakuman(array(
                             'round' => $currentRound,
                             'outcome' => $outcomeType,

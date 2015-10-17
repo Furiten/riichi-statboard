@@ -133,7 +133,11 @@ foreach ($gamesData as $game) {
                 } else $dealer = '';
 
                 $round['yaku_list'] = str_replace(',', ', ', $round['yaku_list']);
-                $fullLog .= "<b>{$aliases[$round['username']]}</b> - {$round['yaku_list']}{$dora} (<b>{$aliases[$round['loser']]}</b>), {$round['han']} хан{$fu}{$dealer}";
+                if (!empty($round['yakuman'])) {
+                    $fullLog .= "<b>{$aliases[$round['username']]}</b> - {$round['yaku_list']} (<b>{$aliases[$round['loser']]}</b>), якуман! {$dealer}";
+                } else {
+                    $fullLog .= "<b>{$aliases[$round['username']]}</b> - {$round['yaku_list']}{$dora} (<b>{$aliases[$round['loser']]}</b>), {$round['han']} хан{$fu}{$dealer}";
+                }
                 break;
             case 'tsumo':
                 if ($round['dora'] > 0) {
@@ -149,7 +153,11 @@ foreach ($gamesData as $game) {
                 } else $dealer = '';
 
                 $round['yaku_list'] = str_replace(',', ', ', $round['yaku_list']);
-                $fullLog .= "<b>{$aliases[$round['username']]}</b> - {$round['yaku_list']}{$dora} (цумо), {$round['han']} хан{$fu}{$dealer}";
+                if (!empty($round['yakuman'])) {
+                    $fullLog .= "<b>{$aliases[$round['username']]}</b> - {$round['yaku_list']} (цумо), якуман! {$dealer}";
+                } else {
+                    $fullLog .= "<b>{$aliases[$round['username']]}</b> - {$round['yaku_list']}{$dora} (цумо), {$round['han']} хан{$fu}{$dealer}";
+                }
                 break;
             case 'draw':
                 $tempaiList = array();
