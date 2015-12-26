@@ -91,7 +91,16 @@ function installMysql() {
         CREATE TABLE IF NOT EXISTS `sortition_cache` (
             `hash` varchar(24) NOT NULL,
             `data` TEXT NOT NULL,
+            `is_confirmed` tinyint(4) NOT NULL DEFAULT '0',
             PRIMARY KEY (`hash`)
+        ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;",
+        'tables' => "
+        CREATE TABLE IF NOT EXISTS `tables` (
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `player_num` int(11) NOT NULL,
+            `username` varchar(255) NOT NULL,
+            PRIMARY KEY (`id`),
+            KEY `username` (`username`)
         ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;"
     );
 

@@ -26,6 +26,14 @@
     }
 </style>
 <h2>Жеребьёвка</h2>
+<?php if (!$isApproved) { ?>
+<form action="" method="post">
+    <input type="hidden" name="factor" value="<?php echo dechex($randFactor); ?>" />
+    <input type="submit" class="btn btn-success" value="Утвердить!"
+           onclick="javascript: return prompt('Утвердить эту рассадку для следующей игры?');" />
+</form>
+<a href='/sortition/gennew/' class="btn btn-warning" style="float: right">Следующая рассадка</a>
+<?php } else echo 'Утвержденная рассадка. '; ?>
 <br>
 <table class="table table-striped">
     <tr>
@@ -39,15 +47,18 @@
         <th>СЕВЕР</th>
         <th></th>
     </tr>
-    <?php foreach ($sortition as $idx => $item) { ?>
-        <?php if ($idx % 4 == 0) { ?><tr><td>Стол № <?php echo ($idx / 4) + 1; ?></td><?php } ?>
-        <td>
-            <?php echo $aliases[$item['username']];?>
-        </td>
-        <td>
-            <span class="badge<?php if ($item['rating'] >= 1500) { echo ' badge-success'; } else {echo ' badge-important';}; ?>"><?php echo $item['rating'];?></span>
-        </td>
-        <?php if ($idx % 4 == 3) { ?></tr><?php } ?>
+    <?php foreach ($tables as $idx => $table) { ?>
+        <tr>
+            <td>Стол № <?php echo $idx + 1; ?></td>
+            <?php foreach ($table as $item) { ?>
+            <td>
+                <?php echo $aliases[$item['username']];?>
+            </td>
+            <td>
+                <span class="badge<?php if ($item['rating'] >= 1500) { echo ' badge-success'; } else {echo ' badge-important';}; ?>"><?php echo $item['rating'];?></span>
+            </td>
+            <?php } ?>
+        </tr>
     <?php } ?>
 </table>
 <hr />
