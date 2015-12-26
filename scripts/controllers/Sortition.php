@@ -64,12 +64,12 @@ class Sortition extends Controller {
 
                 $tablesData = [];
                 foreach ($sortition[0] as $table) {
-                    $tablesData []= [
+                    $tablesData = array_merge($tablesData, [
                         ['username' => $table[0]['username'], 'player_num' => 0],
                         ['username' => $table[1]['username'], 'player_num' => 1],
                         ['username' => $table[2]['username'], 'player_num' => 2],
                         ['username' => $table[3]['username'], 'player_num' => 3],
-                    ];
+                    ]);
                 }
                 $query = "INSERT INTO tables (username, player_num) VALUES " . implode(', ', array_map(function($item) {
                     return "('{$item['username']}', {$item['player_num']})";
