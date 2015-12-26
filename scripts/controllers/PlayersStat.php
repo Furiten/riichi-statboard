@@ -6,7 +6,7 @@ class PlayersStat extends Controller {
         $users = Db::get("SELECT username, alias FROM players");
         $aliases = array();
         foreach ($users as $v) {
-            $aliases[$v['username']] = base64_decode($v['alias']);
+            $aliases[$v['username']] = IS_ONLINE ? base64_decode($v['alias']) : $v['alias'];
         }
 
         if (!isset($_GET['sort'])) {

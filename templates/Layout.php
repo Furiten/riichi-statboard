@@ -51,12 +51,15 @@
                     <li><a href="/stat/">Рейтинг</a></li>
                     <li><a href="/graphs/">Графики</a></li>
                     <li><a href="/nominations/">Номинации</a></li>
-                    <li><a href="/add/">+Игра&nbsp;&nbsp;<span style="opacity: 0.5" class="icon-lock icon-white"></span></a></li>
+                    <?php if (IS_ONLINE) { ?>
                     <li><a href="/addonline/">+Онлайн-игра&nbsp;&nbsp;<span style="opacity: 0.5" class="icon-lock icon-white"></span></a></li>
+                    <?php } else { ?>
+                    <li><a href="/add/">+Игра&nbsp;&nbsp;<span style="opacity: 0.5" class="icon-lock icon-white"></span></a></li>
+                    <?php } ?>
                     <li><a href="/reg/">+Игрок&nbsp;&nbsp;<span style="opacity: 0.5" class="icon-lock icon-white"></span></a></li>
                     <li><a href="/login/">Вход&nbsp;&nbsp;<span style="opacity: 0.5" class="icon-lock icon-white"></span></a></li>
                     <li><a href="/timer/" target="_blank">Таймер</a></li>
-                    <li><a href="/sortition/" target="_blank">Рассадка</a></li>
+                    <li><a href="/sortition/gennew/" target="_blank"><span style="opacity: 0.5" class="icon-lock icon-white">Рассадка</a></li>
                 </ul>
             </div>
         </div>

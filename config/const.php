@@ -1,5 +1,7 @@
 <?php
 
+define('IS_ONLINE', false);
+
 define("CHOMBO_PENALTY", 200);
 define("UMA_1PLACE", 150);
 define("UMA_2PLACE", 50);

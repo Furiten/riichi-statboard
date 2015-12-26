@@ -10,7 +10,7 @@
     </tr>
     <?php foreach ($usersData as $item) { ?>
     <tr>
-        <td><a href="/graphs/?user=<?php echo rawurlencode(base64_decode($item['username']));?>"><?php echo $aliases[$item['username']];?></a></td>
+        <td><a href="/graphs/?user=<?php echo rawurlencode(IS_ONLINE ? base64_decode($item['username']) : $item['username']);?>"><?php echo $aliases[$item['username']];?></a></td>
         <td><span class="badge<?php if ($item['rating'] >= 1500) { echo ' badge-success'; } else {echo ' badge-important';}; ?>"><?php echo $item['rating'];?></span></td>
         <td><?php echo $item['place_avg'];?></td>
         <td><?php echo $item['stddev'];?></td>

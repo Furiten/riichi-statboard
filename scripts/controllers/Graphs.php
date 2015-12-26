@@ -13,11 +13,11 @@ class Graphs extends Controller {
 		$users = Db::get("SELECT username, alias FROM players");
 		$aliases = array();
 		foreach ($users as $v) {
-			$aliases[$v['username']] = base64_decode($v['alias']);
+			$aliases[$v['username']] = IS_ONLINE ? base64_decode($v['alias']) : $v['alias'];
 		}
 
         if (!empty($_GET['user'])) {
-            $user = base64_encode(rawurldecode($_GET['user']));
+            $user = IS_ONLINE ? base64_encode(rawurldecode($_GET['user'])) : rawurldecode($_GET['user']);
         } else {
             $user = '';
         }
