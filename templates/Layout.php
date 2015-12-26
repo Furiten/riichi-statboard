@@ -59,7 +59,7 @@
                     <li><a href="/reg/">+Игрок&nbsp;&nbsp;<span style="opacity: 0.5" class="icon-lock icon-white"></span></a></li>
                     <li><a href="/login/">Вход&nbsp;&nbsp;<span style="opacity: 0.5" class="icon-lock icon-white"></span></a></li>
                     <li><a href="/timer/" target="_blank">Таймер</a></li>
-                    <li><a href="/sortition/gennew/" target="_blank"><span style="opacity: 0.5" class="icon-lock icon-white">Рассадка</a></li>
+                    <li><a href="/sortition/gennew/" target="_blank">Рассадка&nbsp;&nbsp;<span style="opacity: 0.5" class="icon-lock icon-white"></a></li>
                 </ul>
             </div>
         </div>
