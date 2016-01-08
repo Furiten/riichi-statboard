@@ -71,11 +71,9 @@ class AddGame extends Controller
 
                 $calculatedPoints = $calc->getResultPoints();
                 if (count(array_intersect_assoc($players, $calculatedPoints)) != 4) {
-                    $lostRiichiCount = (array_sum($calculatedPoints) - 120000) / 1000;
                     throw new Exception("Несовпадение рассчитанных и вводимых очков! <br>"
                             . print_r($calculatedPoints, 1)
-                            . ($lostRiichiCount > 0 ? "<br>Вероятно незаписанных ричей: " . $lostRiichiCount : '')
-                            . '<br><pre>' . print_r($calc->getLog(), 1) . '</pre>'
+//                            . '<br><pre>' . print_r($calc->getLog(), 1) . '</pre>'
                     );
                 }
             } catch (Exception $e) {
