@@ -2,7 +2,8 @@
 
 require_once __DIR__ . '/Parser.php';
 
-class ParserTest extends PHPUnit_Framework_TestCase {
+class ParserTest extends PHPUnit_Framework_TestCase
+{
     protected $_users = [
         'heilage' => 1,
         'jun' => 1,
@@ -16,30 +17,32 @@ class ParserTest extends PHPUnit_Framework_TestCase {
     protected $_callbacks = [];
     protected $_hooks = [];
 
-    public function __construct() {
-        $this->_callbacks['usual'] = function($input) {
+    public function __construct()
+    {
+        $this->_callbacks['usual'] = function ($input) {
             if (is_callable($this->_hooks['usual'])) {
                 $this->_hooks['usual']($input);
             }
         };
-        $this->_callbacks['yakuman'] = function($input) {
+        $this->_callbacks['yakuman'] = function ($input) {
             if (is_callable($this->_hooks['yakuman'])) {
                 $this->_hooks['yakuman']($input);
             }
         };
-        $this->_callbacks['draw'] = function($input) {
+        $this->_callbacks['draw'] = function ($input) {
             if (is_callable($this->_hooks['draw'])) {
                 $this->_hooks['draw']($input);
             }
         };
-        $this->_callbacks['chombo'] = function($input) {
+        $this->_callbacks['chombo'] = function ($input) {
             if (is_callable($this->_hooks['chombo'])) {
                 $this->_hooks['chombo']($input);
             }
         };
     }
 
-    public function setUp() {
+    public function setUp()
+    {
         $this->_parser = new Parser(
             $this->_callbacks['usual'],
             $this->_callbacks['yakuman'],
@@ -48,25 +51,28 @@ class ParserTest extends PHPUnit_Framework_TestCase {
             $this->_users
         );
     }
-    public function tearDown() {
+
+    public function tearDown()
+    {
         $this->_parser = null;
         $this->_hooks = [
-            'usual' => function() {
+            'usual' => function () {
                 throw new Exception('Unexpected handler call: usual');
             },
-            'yakuman' => function() {
+            'yakuman' => function () {
                 throw new Exception('Unexpected handler call: yakuman');
             },
-            'draw' => function() {
+            'draw' => function () {
                 throw new Exception('Unexpected handler call: draw');
             },
-            'chombo' => function() {
+            'chombo' => function () {
                 throw new Exception('Unexpected handler call: chombo');
             }
         ];
     }
 
-    public function testEmptyLog() {
+    public function testEmptyLog()
+    {
         $validText = 'heilage:23200 frontier:23300 jun:43000 manabi:12000';
         $expected = [
             'heilage' => '23200',
@@ -85,7 +91,8 @@ class ParserTest extends PHPUnit_Framework_TestCase {
      * @expectedException Exception
      * @expectedExceptionCode 100
      */
-    public function testInvalidHeader() {
+    public function testInvalidHeader()
+    {
         $invalidText = 'heilage: 23300 frontier:33200';
         $this->_parser->parse($invalidText);
     }
@@ -94,7 +101,8 @@ class ParserTest extends PHPUnit_Framework_TestCase {
      * @expectedException Exception
      * @expectedExceptionCode 101
      */
-    public function testMistypedUserHeader() {
+    public function testMistypedUserHeader()
+    {
         $mistypedUserText = 'heliage:23200 frontier:23300 jun:43000 manabi:12000';
         $this->_parser->parse($mistypedUserText);
     }
@@ -103,13 +111,15 @@ class ParserTest extends PHPUnit_Framework_TestCase {
      * @expectedException Exception
      * @expectedExceptionCode 106
      */
-    public function testInvalidOutcome() {
+    public function testInvalidOutcome()
+    {
         $invalidText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
                       rodn heilage 1han 30fu riichi manabi jun';
         $this->_parser->parse($invalidText);
     }
 
-    public function testBasicRon() {
+    public function testBasicRon()
+    {
         $validText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
                       ron heilage from frontier 1han 30fu';
         $expected = [
@@ -120,11 +130,12 @@ class ParserTest extends PHPUnit_Framework_TestCase {
             'outcome' => 'ron',
             'riichi' => [],
             'riichi_totalCount' => 0,
+            'round' => 1,
             'winner' => 'heilage',
             'loser' => 'frontier',
             'yakuman' => false
         ];
-        $this->_hooks['usual'] = function($data) use ($expected) {
+        $this->_hooks['usual'] = function ($data) use ($expected) {
             ksort($data);
             ksort($expected);
             $this->assertEquals($data, $expected);
@@ -135,7 +146,8 @@ class ParserTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($this->_parser->_getHonba(), 0);
     }
 
-    public function testDealerRon() {
+    public function testDealerRon()
+    {
         $validText = 'heilage:23200 frontier:23300 jun:43000 manabi:12000
                       ron heilage from frontier 1han 30fu';
         $expected = [
@@ -146,11 +158,12 @@ class ParserTest extends PHPUnit_Framework_TestCase {
             'outcome' => 'ron',
             'riichi' => [],
             'riichi_totalCount' => 0,
+            'round' => 1,
             'winner' => 'heilage',
             'loser' => 'frontier',
             'yakuman' => false
         ];
-        $this->_hooks['usual'] = function($data) use ($expected) {
+        $this->_hooks['usual'] = function ($data) use ($expected) {
             ksort($data);
             ksort($expected);
             $this->assertEquals($data, $expected);
@@ -161,7 +174,8 @@ class ParserTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($this->_parser->_getHonba(), 1);
     }
 
-    public function testRonWithRiichi() {
+    public function testRonWithRiichi()
+    {
         $validText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
                       ron heilage from frontier 1han 30fu riichi manabi jun';
         $expected = [
@@ -172,11 +186,12 @@ class ParserTest extends PHPUnit_Framework_TestCase {
             'outcome' => 'ron',
             'riichi' => ['manabi', 'jun'],
             'riichi_totalCount' => 2,
+            'round' => 1,
             'winner' => 'heilage',
             'loser' => 'frontier',
             'yakuman' => false
         ];
-        $this->_hooks['usual'] = function($data) use ($expected) {
+        $this->_hooks['usual'] = function ($data) use ($expected) {
             ksort($data);
             ksort($expected);
             $this->assertEquals($data, $expected);
@@ -191,7 +206,8 @@ class ParserTest extends PHPUnit_Framework_TestCase {
      * @expectedException Exception
      * @expectedExceptionCode 103
      */
-    public function testInvalidRonNoLoser() {
+    public function testInvalidRonNoLoser()
+    {
         $invalidText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
                       ron heilage 1han 30fu riichi manabi jun';
         $this->_parser->parse($invalidText);
@@ -201,7 +217,8 @@ class ParserTest extends PHPUnit_Framework_TestCase {
      * @expectedException Exception
      * @expectedExceptionCode 104
      */
-    public function testInvalidRonMistypedWinner() {
+    public function testInvalidRonMistypedWinner()
+    {
         $invalidText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
                       ron heliage from frontier 1han 30fu riichi manabi jun';
         $this->_parser->parse($invalidText);
@@ -211,7 +228,8 @@ class ParserTest extends PHPUnit_Framework_TestCase {
      * @expectedException Exception
      * @expectedExceptionCode 105
      */
-    public function testInvalidRonMistypedLoser() {
+    public function testInvalidRonMistypedLoser()
+    {
         $invalidText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
                       ron heilage from forntier 1han 30fu riichi manabi jun';
         $this->_parser->parse($invalidText);
@@ -221,7 +239,8 @@ class ParserTest extends PHPUnit_Framework_TestCase {
      * @expectedException Exception
      * @expectedExceptionCode 107
      */
-    public function testInvalidRonMistypedRiichi() {
+    public function testInvalidRonMistypedRiichi()
+    {
         $invalidText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
                       ron heilage from frontier 1han 30fu riichi mpnabi jun';
         $this->_parser->parse($invalidText);
@@ -231,13 +250,15 @@ class ParserTest extends PHPUnit_Framework_TestCase {
      * @expectedException Exception
      * @expectedExceptionCode 108
      */
-    public function testInvalidRonWrongRiichi() {
+    public function testInvalidRonWrongRiichi()
+    {
         $invalidText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
                       ron heilage from frontier 1han 30fu richi manabi jun';
         $this->_parser->parse($invalidText);
     }
 
-    public function testBasicTsumo() {
+    public function testBasicTsumo()
+    {
         $validText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
                       tsumo heilage 1han 30fu';
         $expected = [
@@ -248,10 +269,11 @@ class ParserTest extends PHPUnit_Framework_TestCase {
             'outcome' => 'tsumo',
             'riichi' => [],
             'riichi_totalCount' => 0,
+            'round' => 1,
             'winner' => 'heilage',
             'yakuman' => false
         ];
-        $this->_hooks['usual'] = function($data) use ($expected) {
+        $this->_hooks['usual'] = function ($data) use ($expected) {
             ksort($data);
             ksort($expected);
             $this->assertEquals($data, $expected);
@@ -262,7 +284,8 @@ class ParserTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($this->_parser->_getHonba(), 0);
     }
 
-    public function testDealerTsumo() {
+    public function testDealerTsumo()
+    {
         $validText = 'heilage:23200 frontier:23300 jun:43000 manabi:12000
                       tsumo heilage 1han 30fu';
         $expected = [
@@ -273,10 +296,11 @@ class ParserTest extends PHPUnit_Framework_TestCase {
             'outcome' => 'tsumo',
             'riichi' => [],
             'riichi_totalCount' => 0,
+            'round' => 1,
             'winner' => 'heilage',
             'yakuman' => false
         ];
-        $this->_hooks['usual'] = function($data) use ($expected) {
+        $this->_hooks['usual'] = function ($data) use ($expected) {
             ksort($data);
             ksort($expected);
             $this->assertEquals($data, $expected);
@@ -287,7 +311,8 @@ class ParserTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($this->_parser->_getHonba(), 1);
     }
 
-    public function testTsumoWithRiichi() {
+    public function testTsumoWithRiichi()
+    {
         $validText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
                       tsumo heilage 1han 30fu riichi manabi jun';
         $expected = [
@@ -298,10 +323,11 @@ class ParserTest extends PHPUnit_Framework_TestCase {
             'outcome' => 'tsumo',
             'riichi' => ['manabi', 'jun'],
             'riichi_totalCount' => 2,
+            'round' => 1,
             'winner' => 'heilage',
             'yakuman' => false
         ];
-        $this->_hooks['usual'] = function($data) use ($expected) {
+        $this->_hooks['usual'] = function ($data) use ($expected) {
             ksort($data);
             ksort($expected);
             $this->assertEquals($data, $expected);
@@ -316,7 +342,8 @@ class ParserTest extends PHPUnit_Framework_TestCase {
      * @expectedException Exception
      * @expectedExceptionCode 104
      */
-    public function testInvalidTsumoMistypedWinner() {
+    public function testInvalidTsumoMistypedWinner()
+    {
         $invalidText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
                       tsumo heliage 1han 30fu riichi manabi jun';
         $this->_parser->parse($invalidText);
@@ -326,7 +353,8 @@ class ParserTest extends PHPUnit_Framework_TestCase {
      * @expectedException Exception
      * @expectedExceptionCode 107
      */
-    public function testInvalidTsumoMistypedRiichi() {
+    public function testInvalidTsumoMistypedRiichi()
+    {
         $invalidText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
                       tsumo heilage 1han 30fu riichi mpnabi jun';
         $this->_parser->parse($invalidText);
@@ -336,13 +364,15 @@ class ParserTest extends PHPUnit_Framework_TestCase {
      * @expectedException Exception
      * @expectedExceptionCode 108
      */
-    public function testInvalidTsumoWrongRiichi() {
+    public function testInvalidTsumoWrongRiichi()
+    {
         $invalidText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
                       tsumo heilage 1han 30fu richi manabi jun';
         $this->_parser->parse($invalidText);
     }
 
-    public function testBasicDraw() {
+    public function testBasicDraw()
+    {
         $validText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
                       draw tempai heilage jun';
         $expected = [
@@ -350,6 +380,7 @@ class ParserTest extends PHPUnit_Framework_TestCase {
             'outcome' => 'draw',
             'riichi' => [],
             'riichi_totalCount' => 0,
+            'round' => 1,
             'players_tempai' => [
                 'frontier' => 'noten',
                 'heilage' => 'tempai',
@@ -358,7 +389,7 @@ class ParserTest extends PHPUnit_Framework_TestCase {
             ]
         ];
 
-        $this->_hooks['draw'] = function($data) use ($expected) {
+        $this->_hooks['draw'] = function ($data) use ($expected) {
             ksort($data);
             ksort($expected);
             $this->assertEquals($data, $expected);
@@ -369,7 +400,8 @@ class ParserTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($this->_parser->_getHonba(), 1);
     }
 
-    public function testDealerTempaiDraw() {
+    public function testDealerTempaiDraw()
+    {
         $validText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
                       draw tempai frontier';
         $expected = [
@@ -377,6 +409,7 @@ class ParserTest extends PHPUnit_Framework_TestCase {
             'outcome' => 'draw',
             'riichi' => [],
             'riichi_totalCount' => 0,
+            'round' => 1,
             'players_tempai' => [
                 'frontier' => 'tempai',
                 'heilage' => 'noten',
@@ -385,7 +418,7 @@ class ParserTest extends PHPUnit_Framework_TestCase {
             ]
         ];
 
-        $this->_hooks['draw'] = function($data) use ($expected) {
+        $this->_hooks['draw'] = function ($data) use ($expected) {
             ksort($data);
             ksort($expected);
             $this->assertEquals($data, $expected);
@@ -396,7 +429,8 @@ class ParserTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($this->_parser->_getHonba(), 1);
     }
 
-    public function testDrawTempaiAll() {
+    public function testDrawTempaiAll()
+    {
         $validText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
                       draw tempai all';
         $expected = [
@@ -404,6 +438,7 @@ class ParserTest extends PHPUnit_Framework_TestCase {
             'outcome' => 'draw',
             'riichi' => [],
             'riichi_totalCount' => 0,
+            'round' => 1,
             'players_tempai' => [
                 'frontier' => 'tempai',
                 'heilage' => 'tempai',
@@ -412,7 +447,7 @@ class ParserTest extends PHPUnit_Framework_TestCase {
             ]
         ];
 
-        $this->_hooks['draw'] = function($data) use ($expected) {
+        $this->_hooks['draw'] = function ($data) use ($expected) {
             ksort($data);
             ksort($expected);
             $this->assertEquals($data, $expected);
@@ -423,7 +458,8 @@ class ParserTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($this->_parser->_getHonba(), 1);
     }
 
-    public function testDrawTempaiNone() {
+    public function testDrawTempaiNone()
+    {
         $validText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
                       draw tempai nobody';
         $expected = [
@@ -431,6 +467,7 @@ class ParserTest extends PHPUnit_Framework_TestCase {
             'outcome' => 'draw',
             'riichi' => [],
             'riichi_totalCount' => 0,
+            'round' => 1,
             'players_tempai' => [
                 'frontier' => 'noten',
                 'heilage' => 'noten',
@@ -439,7 +476,7 @@ class ParserTest extends PHPUnit_Framework_TestCase {
             ]
         ];
 
-        $this->_hooks['draw'] = function($data) use ($expected) {
+        $this->_hooks['draw'] = function ($data) use ($expected) {
             ksort($data);
             ksort($expected);
             $this->assertEquals($data, $expected);
@@ -450,7 +487,8 @@ class ParserTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($this->_parser->_getHonba(), 1);
     }
 
-    public function testDrawWithRiichi() {
+    public function testDrawWithRiichi()
+    {
         $validText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
                       draw tempai nobody riichi jun manabi';
         $expected = [
@@ -458,6 +496,7 @@ class ParserTest extends PHPUnit_Framework_TestCase {
             'outcome' => 'draw',
             'riichi' => ['jun', 'manabi'],
             'riichi_totalCount' => 2,
+            'round' => 1,
             'players_tempai' => [
                 'frontier' => 'noten',
                 'heilage' => 'noten',
@@ -466,7 +505,7 @@ class ParserTest extends PHPUnit_Framework_TestCase {
             ]
         ];
 
-        $this->_hooks['draw'] = function($data) use ($expected) {
+        $this->_hooks['draw'] = function ($data) use ($expected) {
             ksort($data);
             ksort($expected);
             $this->assertEquals($data, $expected);
@@ -481,7 +520,8 @@ class ParserTest extends PHPUnit_Framework_TestCase {
      * @expectedException Exception
      * @expectedExceptionCode 109
      */
-    public function testInvalidDrawNoTempaiList() {
+    public function testInvalidDrawNoTempaiList()
+    {
         $invalidText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
                       draw all riichi mpnabi jun';
         $this->_parser->parse($invalidText);
@@ -491,7 +531,8 @@ class ParserTest extends PHPUnit_Framework_TestCase {
      * @expectedException Exception
      * @expectedExceptionCode 104
      */
-    public function testInvalidDrawMistypedTempai() {
+    public function testInvalidDrawMistypedTempai()
+    {
         $invalidText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
                       draw tempai mpnabi jun';
         $this->_parser->parse($invalidText);
@@ -501,7 +542,8 @@ class ParserTest extends PHPUnit_Framework_TestCase {
      * @expectedException Exception
      * @expectedExceptionCode 107
      */
-    public function testInvalidDrawMistypedRiichi() {
+    public function testInvalidDrawMistypedRiichi()
+    {
         $invalidText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
                       draw tempai all riichi mpnabi jun';
         $this->_parser->parse($invalidText);
@@ -511,13 +553,15 @@ class ParserTest extends PHPUnit_Framework_TestCase {
      * @expectedException Exception
      * @expectedExceptionCode 108
      */
-    public function testInvalidDrawWrongRiichi() {
+    public function testInvalidDrawWrongRiichi()
+    {
         $invalidText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
                       draw tempai all richi manabi jun';
         $this->_parser->parse($invalidText);
     }
 
-    public function testWinAfterDrawWithRiichi() {
+    public function testWinAfterDrawWithRiichi()
+    {
         $validText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
                       draw tempai nobody riichi jun manabi
                       ron manabi from jun 1han 30fu';
@@ -526,6 +570,7 @@ class ParserTest extends PHPUnit_Framework_TestCase {
             'outcome' => 'draw',
             'riichi' => ['jun', 'manabi'],
             'riichi_totalCount' => 2,
+            'round' => 1,
             'players_tempai' => [
                 'frontier' => 'noten',
                 'heilage' => 'noten',
@@ -542,18 +587,19 @@ class ParserTest extends PHPUnit_Framework_TestCase {
             'outcome' => 'ron',
             'riichi' => [],
             'riichi_totalCount' => 2,
+            'round' => 2,
             'winner' => 'manabi',
             'loser' => 'jun',
             'yakuman' => false
         ];
 
-        $this->_hooks['draw'] = function($data) use ($expectedDraw) {
+        $this->_hooks['draw'] = function ($data) use ($expectedDraw) {
             ksort($data);
             ksort($expectedDraw);
             $this->assertEquals($data, $expectedDraw);
         };
 
-        $this->_hooks['usual'] = function($data) use ($expectedUsual) {
+        $this->_hooks['usual'] = function ($data) use ($expectedUsual) {
             ksort($data);
             ksort($expectedUsual);
             $this->assertEquals($data, $expectedUsual);
@@ -566,16 +612,18 @@ class ParserTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($this->_parser->_getRiichi(), 0);
     }
 
-    public function testBasicChombo() {
+    public function testBasicChombo()
+    {
         $validText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
                       chombo heilage';
         $expected = [
             'dealer' => false,
             'loser' => 'heilage',
-            'outcome' => 'chombo'
+            'outcome' => 'chombo',
+            'round' => 1
         ];
 
-        $this->_hooks['chombo'] = function($data) use ($expected) {
+        $this->_hooks['chombo'] = function ($data) use ($expected) {
             ksort($data);
             ksort($expected);
             $this->assertEquals($data, $expected);
@@ -586,16 +634,18 @@ class ParserTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($this->_parser->_getHonba(), 0);
     }
 
-    public function testDealerChombo() {
+    public function testDealerChombo()
+    {
         $validText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
                       chombo frontier';
         $expected = [
             'dealer' => true,
             'loser' => 'frontier',
-            'outcome' => 'chombo'
+            'outcome' => 'chombo',
+            'round' => 1
         ];
 
-        $this->_hooks['chombo'] = function($data) use ($expected) {
+        $this->_hooks['chombo'] = function ($data) use ($expected) {
             ksort($data);
             ksort($expected);
             $this->assertEquals($data, $expected);
@@ -610,7 +660,8 @@ class ParserTest extends PHPUnit_Framework_TestCase {
      * @expectedException Exception
      * @expectedExceptionCode 104
      */
-    public function testInvalidChomboMistyped() {
+    public function testInvalidChomboMistyped()
+    {
         $invalidText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
                       chombo forntier';
         $this->_parser->parse($invalidText);

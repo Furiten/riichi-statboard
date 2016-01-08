@@ -7,7 +7,8 @@ include_once "scripts/helpers/Array.php";
 /**
  * Добавление игры
  */
-class AddGame extends Controller {
+class AddGame extends Controller
+{
     /**
      * Член класса для сохранения данны о раундах, прилетевших из колбэков
      *
@@ -29,11 +30,11 @@ class AddGame extends Controller {
      */
     protected function _showForm($error = '')
     {
-		$users = Db::get("SELECT username, alias FROM players ORDER BY alias");
-		$aliases = array();
-		foreach ($users as $v) {
-			$aliases[$v['username']] = $v['alias'];
-		}
+        $users = Db::get("SELECT username, alias FROM players ORDER BY alias");
+        $aliases = array();
+        foreach ($users as $v) {
+            $aliases[$v['username']] = $v['alias'];
+        }
 
         include 'templates/AddGame.php';
     }
@@ -52,32 +53,37 @@ class AddGame extends Controller {
                 return;
             }
 
-			try {
-				$parser = new Parser(
-					array($this, 'cb_usualWin'),
-					array($this, 'cb_yakuman'),
-					array($this, 'cb_roundDrawn'),
-					array($this, 'cb_chombo'),
-					$this->_getRegisteredUsersList()
-				);
+            try {
+                $parser = new Parser(
+                    array($this, 'cb_usualWin'),
+                    array($this, 'cb_yakuman'),
+                    array($this, 'cb_roundDrawn'),
+                    array($this, 'cb_chombo'),
+                    $this->_getRegisteredUsersList()
+                );
                 $calc = new PointsCalc($this->_getRegisteredUsersList());
                 $parser->setCalc($calc);
 
                 $this->_loggedRounds = array();
-				$results = $parser->parse($_POST['content']);
-				$players = $results['scores'];
-				$counts = $results['counts'];
+                $results = $parser->parse($_POST['content']);
+                $players = $results['scores'];
+                $counts = $results['counts'];
 
                 $calculatedPoints = $calc->getResultPoints();
                 if (count(array_intersect_assoc($players, $calculatedPoints)) != 4) {
-                    throw new Exception("Несовпадение рассчитанных и вводимых очков! \n" . print_r($calculatedPoints, 1));
+                    $lostRiichiCount = (array_sum($calculatedPoints) - 120000) / 1000;
+                    throw new Exception("Несовпадение рассчитанных и вводимых очков! <br>"
+                            . print_r($calculatedPoints, 1)
+                            . ($lostRiichiCount > 0 ? "<br>Вероятно незаписанных ричей: " . $lostRiichiCount : '')
+                            . '<br><pre>' . print_r($calc->getLog(), 1) . '</pre>'
+                    );
                 }
-			} catch (Exception $e) {
-				$this->_showForm($e->getMessage());
-				return;
-			}
+            } catch (Exception $e) {
+                $this->_showForm($e->getMessage());
+                return;
+            }
 
-			//////////////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////////////
 
             $playerPlaces = $this->_calcPlaces($players);
             $resultScores = $this->_countResultScore($players, $playerPlaces);
@@ -92,15 +98,15 @@ class AddGame extends Controller {
             $this->_updatePlayerRatings($playerPlaces, $resultScores, $gameId);
 
             echo "<h4>Игра успешно добавлена!</h4><br>";
-			echo "Идем обратно через 3 секунды... <script type='text/javascript'>window.setTimeout(function() {window.location = '/add/';}, 3000);</script>";
+            echo "Идем обратно через 3 секунды... <script type='text/javascript'>window.setTimeout(function() {window.location = '/add/';}, 3000);</script>";
         }
     }
 
     /**
      * Получение полного списка зарегистрированных юзеров
      */
-	protected function _getRegisteredUsersList()
-	{
+    protected function _getRegisteredUsersList()
+    {
         $result = Db::get("SELECT username, alias FROM `players`");
         $regged = array();
         foreach ($result as $row) {
@@ -108,7 +114,7 @@ class AddGame extends Controller {
         }
 
         return $regged;
-	}
+    }
 
     /**
      * Колбэк "ничья"
@@ -117,7 +123,7 @@ class AddGame extends Controller {
     {
         $round = $roundData['round'];
         $players = serialize($roundData['players_tempai']);
-        $this->_loggedRounds []= "(#GAMEID#, '', '', '{$players}', 0, 0, 0, 0, '{$round}', 'draw')";
+        $this->_loggedRounds [] = "(#GAMEID#, '', '', '{$players}', 0, 0, 0, 0, '{$round}', 'draw')";
     }
 
     /**
@@ -136,7 +142,7 @@ class AddGame extends Controller {
             $dealer = '0';
         }
 
-        $this->_loggedRounds []= "(#GAMEID#, '{$player}', '{$loser}', '', 0, 0, 1, {$dealer}, '{$round}', '{$outcome}')";
+        $this->_loggedRounds [] = "(#GAMEID#, '{$player}', '{$loser}', '', 0, 0, 1, {$dealer}, '{$round}', '{$outcome}')";
     }
 
     /**
@@ -154,12 +160,12 @@ class AddGame extends Controller {
             $dealer = '0';
         }
 
-        $this->_loggedRounds []= "(#GAMEID#, '{$player}', '', '', 0, 0, 0, {$dealer}, '{$round}', '{$outcome}')";
-		if (empty($this->_chomboPenalties[$player])) {
-			$this->_chomboPenalties[$player] = -CHOMBO_PENALTY;
-		} else {
-			$this->_chomboPenalties[$player] -= CHOMBO_PENALTY;
-		}
+        $this->_loggedRounds [] = "(#GAMEID#, '{$player}', '', '', 0, 0, 0, {$dealer}, '{$round}', '{$outcome}')";
+        if (empty($this->_chomboPenalties[$player])) {
+            $this->_chomboPenalties[$player] = -CHOMBO_PENALTY;
+        } else {
+            $this->_chomboPenalties[$player] -= CHOMBO_PENALTY;
+        }
     }
 
     /**
@@ -170,7 +176,7 @@ class AddGame extends Controller {
         $round = $roundData['round'];
         $outcome = $roundData['outcome'];
         $player = $roundData['winner'];
-		$loser = empty($roundData['loser']) ? '' : $roundData['loser'];
+        $loser = empty($roundData['loser']) ? '' : $roundData['loser'];
 
         $hanCount = $roundData['han'];
         $fuCount = empty($roundData['fu']) ? '0' : $roundData['fu'];
@@ -181,7 +187,7 @@ class AddGame extends Controller {
             $dealer = '0';
         }
 
-        $this->_loggedRounds []= "(#GAMEID#, '{$player}', '{$loser}', '', {$hanCount}, {$fuCount}, 0, {$dealer}, '{$round}', '{$outcome}')";
+        $this->_loggedRounds [] = "(#GAMEID#, '{$player}', '{$loser}', '', {$hanCount}, {$fuCount}, 0, {$dealer}, '{$round}', '{$outcome}')";
     }
 
     /**
@@ -202,9 +208,9 @@ class AddGame extends Controller {
         $resultScores = array();
         foreach ($players as $k => $v) {
             $resultScores[$k] = (($v - START_POINTS) / DIVIDER) + $places[$k];
-			if (!empty($this->_chomboPenalties[$k])) {
-				$resultScores[$k] += $this->_chomboPenalties[$k];
-			}
+            if (!empty($this->_chomboPenalties[$k])) {
+                $resultScores[$k] += $this->_chomboPenalties[$k];
+            }
         }
 
         return $resultScores;
@@ -256,7 +262,7 @@ class AddGame extends Controller {
         // заполняем дефолтным рейтингом новичков, а неновичкам - добавляем значения
         foreach (array_keys($resultScores) as $player) {
             $currentRatings[$player]['rating'] += $this->_calculateRatingChange($player, $playerPlaces, $resultScores, $currentRatings);
-            $currentRatings[$player]['games_played'] ++;
+            $currentRatings[$player]['games_played']++;
             $currentRatings[$player]['places_sum'] += $playerPlaces[$player];
         }
 
@@ -328,13 +334,15 @@ class AddGame extends Controller {
         arsort($data['players']);
         $index = 1;
         foreach ($data['players'] as $name => $score) {
-            $scores []= "({$gameId}, '{$name}', '{$score}', '{$data['scores'][$name]}', " . ($index++) . ")";
+            $scores [] = "({$gameId}, '{$name}', '{$score}', '{$data['scores'][$name]}', " . ($index++) . ")";
         }
 
         $scoreInsert = "INSERT INTO result_score (game_id, username, score, result_score, place) VALUES " . implode(', ', $scores);
         Db::exec($scoreInsert);
 
-        $rounds = array_map(function($el) use($gameId) {return str_replace("#GAMEID#", $gameId, $el);}, $data['rounds']);
+        $rounds = array_map(function ($el) use ($gameId) {
+            return str_replace("#GAMEID#", $gameId, $el);
+        }, $data['rounds']);
         $roundsInsert = "INSERT INTO round (game_id, username, loser, tempai_list, han, fu, yakuman, dealer, round, result) VALUES " . implode(', ', $rounds);
         Db::exec($roundsInsert);
 

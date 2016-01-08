@@ -2,7 +2,8 @@
 
 require_once __DIR__ . '/PointsCalc.php';
 
-class PointsCalcTest extends PHPUnit_Framework_TestCase {
+class PointsCalcTest extends PHPUnit_Framework_TestCase
+{
     protected $_users = [
         'heilage',
         'jun',
@@ -13,39 +14,45 @@ class PointsCalcTest extends PHPUnit_Framework_TestCase {
     /** @var PointsCalc */
     protected $_calc;
 
-    public function setUp() {
+    public function setUp()
+    {
         $this->_calc = new PointsCalc();
         $this->_calc->setPlayersList($this->_users);
     }
 
-    public function tearDown() {
+    public function tearDown()
+    {
         $this->_calc = null;
     }
 
     // ron
 
-    public function testRon() {
+    public function testRon()
+    {
         $this->_calc->registerRon(3, 40, 'jun', 'frontier', 0, [], 0, 'heilage');
         $result = $this->_calc->getResultPoints();
         $this->assertEquals($result['jun'], 35200);
         $this->assertEquals($result['frontier'], 24800);
     }
 
-    public function testRonWithHonba() {
+    public function testRonWithHonba()
+    {
         $this->_calc->registerRon(3, 40, 'jun', 'frontier', 2, [], 0, 'heilage');
         $result = $this->_calc->getResultPoints();
         $this->assertEquals($result['jun'], 35800);
         $this->assertEquals($result['frontier'], 24200);
     }
 
-    public function testRonWithRiichiFromPrevRound() {
+    public function testRonWithRiichiFromPrevRound()
+    {
         $this->_calc->registerRon(3, 40, 'jun', 'frontier', 0, [], 1, 'heilage');
         $result = $this->_calc->getResultPoints();
         $this->assertEquals($result['jun'], 36200);
         $this->assertEquals($result['frontier'], 24800);
     }
 
-    public function testRonWithRiichi() {
+    public function testRonWithRiichi()
+    {
         $this->_calc->registerRon(3, 40, 'jun', 'frontier', 0, ['heilage'], 1, 'heilage');
         $result = $this->_calc->getResultPoints();
         $this->assertEquals($result['jun'], 36200);
@@ -55,28 +62,32 @@ class PointsCalcTest extends PHPUnit_Framework_TestCase {
 
     // dealer ron
 
-    public function testDealerRon() {
+    public function testDealerRon()
+    {
         $this->_calc->registerRon(3, 40, 'jun', 'frontier', 0, [], 0, 'jun');
         $result = $this->_calc->getResultPoints();
         $this->assertEquals($result['jun'], 37700);
         $this->assertEquals($result['frontier'], 22300);
     }
 
-    public function testDealerRonWithHonba() {
+    public function testDealerRonWithHonba()
+    {
         $this->_calc->registerRon(3, 40, 'jun', 'frontier', 2, [], 0, 'jun');
         $result = $this->_calc->getResultPoints();
         $this->assertEquals($result['jun'], 38300);
         $this->assertEquals($result['frontier'], 21700);
     }
 
-    public function testDealerRonWithRiichiFromPrevRound() {
+    public function testDealerRonWithRiichiFromPrevRound()
+    {
         $this->_calc->registerRon(3, 40, 'jun', 'frontier', 0, [], 1, 'jun');
         $result = $this->_calc->getResultPoints();
         $this->assertEquals($result['jun'], 38700);
         $this->assertEquals($result['frontier'], 22300);
     }
 
-    public function testDealerRonWithRiichi() {
+    public function testDealerRonWithRiichi()
+    {
         $this->_calc->registerRon(3, 40, 'jun', 'frontier', 0, ['heilage'], 1, 'jun');
         $result = $this->_calc->getResultPoints();
         $this->assertEquals($result['jun'], 38700);
@@ -86,7 +97,8 @@ class PointsCalcTest extends PHPUnit_Framework_TestCase {
 
     // tsumo
 
-    public function testTsumo() {
+    public function testTsumo()
+    {
         $this->_calc->registerTsumo(3, 40, 'jun', 0, [], 0, 'heilage');
         $result = $this->_calc->getResultPoints();
         $this->assertEquals($result['jun'], 35200);
@@ -95,7 +107,8 @@ class PointsCalcTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($result['manabi'], 28700);
     }
 
-    public function testTsumoWithHonba() {
+    public function testTsumoWithHonba()
+    {
         $this->_calc->registerTsumo(3, 40, 'jun', 2, [], 0, 'heilage');
         $result = $this->_calc->getResultPoints();
         $this->assertEquals($result['jun'], 35800);
@@ -104,7 +117,8 @@ class PointsCalcTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($result['manabi'], 28500);
     }
 
-    public function testTsumoWithRiichiFromPrevRound() {
+    public function testTsumoWithRiichiFromPrevRound()
+    {
         $this->_calc->registerTsumo(3, 40, 'jun', 0, [], 1, 'heilage');
         $result = $this->_calc->getResultPoints();
         $this->assertEquals($result['jun'], 36200);
@@ -113,7 +127,8 @@ class PointsCalcTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($result['manabi'], 28700);
     }
 
-    public function testTsumoWithRiichi() {
+    public function testTsumoWithRiichi()
+    {
         $this->_calc->registerTsumo(3, 40, 'jun', 0, ['heilage'], 1, 'heilage');
         $result = $this->_calc->getResultPoints();
         $this->assertEquals($result['jun'], 36200);
@@ -124,7 +139,8 @@ class PointsCalcTest extends PHPUnit_Framework_TestCase {
 
     // dealer tsumo
 
-    public function testDealerTsumo() {
+    public function testDealerTsumo()
+    {
         $this->_calc->registerTsumo(3, 40, 'jun', 0, [], 0, 'jun');
         $result = $this->_calc->getResultPoints();
         $this->assertEquals($result['jun'], 37800);
@@ -133,7 +149,8 @@ class PointsCalcTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($result['manabi'], 27400);
     }
 
-    public function testDealerTsumoWithHonba() {
+    public function testDealerTsumoWithHonba()
+    {
         $this->_calc->registerTsumo(3, 40, 'jun', 2, [], 0, 'jun');
         $result = $this->_calc->getResultPoints();
         $this->assertEquals($result['jun'], 38400);
@@ -142,7 +159,8 @@ class PointsCalcTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($result['manabi'], 27200);
     }
 
-    public function testDealerTsumoWithRiichiFromPrevRound() {
+    public function testDealerTsumoWithRiichiFromPrevRound()
+    {
         $this->_calc->registerTsumo(3, 40, 'jun', 0, [], 1, 'jun');
         $result = $this->_calc->getResultPoints();
         $this->assertEquals($result['jun'], 38800);
@@ -151,7 +169,8 @@ class PointsCalcTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($result['manabi'], 27400);
     }
 
-    public function testDealerTsumoWithRiichi() {
+    public function testDealerTsumoWithRiichi()
+    {
         $this->_calc->registerTsumo(3, 40, 'jun', 0, ['heilage'], 1, 'jun');
         $result = $this->_calc->getResultPoints();
         $this->assertEquals($result['jun'], 38800);
@@ -162,7 +181,8 @@ class PointsCalcTest extends PHPUnit_Framework_TestCase {
 
     // draw
 
-    public function testDrawNoTempai() {
+    public function testDrawNoTempai()
+    {
         $this->_calc->registerDraw([
             'jun' => 'noten',
             'frontier' => 'noten',
@@ -176,7 +196,8 @@ class PointsCalcTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($result['manabi'], 30000);
     }
 
-    public function testDrawSingleTempai() {
+    public function testDrawSingleTempai()
+    {
         $this->_calc->registerDraw([
             'jun' => 'tempai',
             'frontier' => 'noten',
@@ -190,7 +211,8 @@ class PointsCalcTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($result['manabi'], 29000);
     }
 
-    public function testDrawTwoTempai() {
+    public function testDrawTwoTempai()
+    {
         $this->_calc->registerDraw([
             'jun' => 'tempai',
             'frontier' => 'noten',
@@ -204,7 +226,8 @@ class PointsCalcTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($result['manabi'], 31500);
     }
 
-    public function testDrawThreeTempai() {
+    public function testDrawThreeTempai()
+    {
         $this->_calc->registerDraw([
             'jun' => 'tempai',
             'frontier' => 'noten',
@@ -218,7 +241,8 @@ class PointsCalcTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($result['manabi'], 31000);
     }
 
-    public function testDrawAllTempai() {
+    public function testDrawAllTempai()
+    {
         $this->_calc->registerDraw([
             'jun' => 'tempai',
             'frontier' => 'tempai',
@@ -232,7 +256,8 @@ class PointsCalcTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($result['manabi'], 30000);
     }
 
-    public function testDrawWithRiichi() {
+    public function testDrawWithRiichi()
+    {
         $this->_calc->registerDraw([
             'jun' => 'tempai',
             'frontier' => 'tempai',
@@ -248,7 +273,8 @@ class PointsCalcTest extends PHPUnit_Framework_TestCase {
 
     // chombo
 
-    public function testChombo() {
+    public function testChombo()
+    {
         $this->_calc->registerChombo('jun', 'heilage');
         $result = $this->_calc->getResultPoints();
         $this->assertEquals($result['jun'], 22000);
@@ -257,7 +283,8 @@ class PointsCalcTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($result['manabi'], 32000);
     }
 
-    public function testDealerChombo() {
+    public function testDealerChombo()
+    {
         $this->_calc->registerChombo('jun', 'jun');
         $result = $this->_calc->getResultPoints();
         $this->assertEquals($result['jun'], 18000);
