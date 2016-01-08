@@ -59,6 +59,8 @@ class AddGame extends Controller {
 					array($this, 'cb_chombo'),
 					$this->_getRegisteredUsersList()
 				);
+                $calc = new PointsCalc($this->_getRegisteredUsersList());
+                $parser->setCalc($calc);
 
                 $this->_loggedRounds = array();
 				$results = $parser->parse($_POST['content']);

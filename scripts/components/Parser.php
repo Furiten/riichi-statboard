@@ -18,6 +18,11 @@ chombo [player]
  */
 
 class Parser {
+    /**
+     * @var PointsCalc
+     */
+    protected $_calc;
+
 	protected $_usualWin;
 	protected $_yakuman;
 	protected $_draw;
@@ -51,6 +56,10 @@ class Parser {
 		$this->_users = $registeredUsers;
 	}
 
+    public function setCalc(PointsCalc $calc) {
+        $this->_calc = $calc;
+    }
+
 	public function parse($text)
 	{
 		$rows = array_filter(array_map('trim', explode("\n", $text)));
@@ -59,6 +68,9 @@ class Parser {
 		$resultScores =  $this->_parseHeader($header);
 
         $this->_players = array_keys($resultScores);
+        if ($this->_calc) {
+            $this->_calc->setPlayersList($this->_players);
+        }
 
 		foreach ($rows as $row) {
 			$this->_parseRow($row, $resultScores);
@@ -141,6 +153,20 @@ class Parser {
         $resultData['riichi_totalCount'] = $this->_riichi;
         $this->_riichi = 0;
 
+        if ($this->_calc) {
+            $this->_calc->registerRon(
+                $resultData['han'],
+                $resultData['fu'],
+                $winner,
+                $loser,
+                $this->_honba,
+                $resultData['riichi'],
+                $resultData['riichi_totalCount'],
+                $this->_players[$this->_currentDealer % 4],
+                !empty($resultData['yakuman'])
+            );
+        }
+
         if ($resultData['dealer'] = $this->_checkDealer($winner)) {
             $this->_honba ++;
         } else {
@@ -173,6 +199,19 @@ class Parser {
 		$this->_counts['tsumo'] ++;
         $resultData['riichi_totalCount'] = $this->_riichi;
         $this->_riichi = 0;
+
+        if ($this->_calc) {
+            $this->_calc->registerTsumo(
+                $resultData['han'],
+                $resultData['fu'],
+                $winner,
+                $this->_honba,
+                $resultData['riichi'],
+                $resultData['riichi_totalCount'],
+                $this->_players[$this->_currentDealer % 4],
+                !empty($resultData['yakuman'])
+            );
+        }
 
         if ($this->_checkDealer($winner)) {
             $this->_honba ++;
@@ -222,6 +261,13 @@ class Parser {
         $resultData['riichi_totalCount'] = $this->_riichi;
 		$this->_counts['draw'] ++;
 
+        if ($this->_calc) {
+            $this->_calc->registerDraw(
+                $playersStatus,
+                $resultData['riichi']
+            );
+        }
+
         $this->_honba ++;
         if ($playersStatus[$this->_players[$this->_currentDealer]] != 'tempai') {
             $this->_currentDealer ++;
@@ -242,6 +288,13 @@ class Parser {
 
 		$resultData['loser'] = $loser;
         $resultData['dealer'] = $this->_checkDealer($loser);
+
+        if ($this->_calc) {
+            $this->_calc->registerChombo(
+                $loser,
+                $this->_players[$this->_currentDealer % 4]
+            );
+        }
 
 		$this->_counts['chombo'] ++;
 		call_user_func_array($this->_chombo, array($resultData));
