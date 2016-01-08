@@ -120,8 +120,9 @@ class AddGame extends Controller
     public function cb_roundDrawn($roundData /*$round*/)
     {
         $round = $roundData['round'];
+        $riichiList = serialize($roundData['riichi']);
         $players = serialize($roundData['players_tempai']);
-        $this->_loggedRounds [] = "(#GAMEID#, '', '', '{$players}', 0, 0, 0, 0, '{$round}', 'draw')";
+        $this->_loggedRounds [] = "(#GAMEID#, '', '', '{$players}', 0, 0, 0, 0, '{$round}', 'draw', '{$riichiList}')";
     }
 
     /**
@@ -131,6 +132,7 @@ class AddGame extends Controller
     {
         $round = $roundData['round'];
         $outcome = $roundData['outcome'];
+        $riichiList = serialize($roundData['riichi']);
         $player = $roundData['winner'];
         $loser = empty($roundData['loser']) ? '' : $roundData['loser'];
 
@@ -140,7 +142,7 @@ class AddGame extends Controller
             $dealer = '0';
         }
 
-        $this->_loggedRounds [] = "(#GAMEID#, '{$player}', '{$loser}', '', 0, 0, 1, {$dealer}, '{$round}', '{$outcome}')";
+        $this->_loggedRounds [] = "(#GAMEID#, '{$player}', '{$loser}', '', 0, 0, 1, {$dealer}, '{$round}', '{$outcome}', '{$riichiList}')";
     }
 
     /**
@@ -173,6 +175,7 @@ class AddGame extends Controller
     {
         $round = $roundData['round'];
         $outcome = $roundData['outcome'];
+        $riichiList = serialize($roundData['riichi']);
         $player = $roundData['winner'];
         $loser = empty($roundData['loser']) ? '' : $roundData['loser'];
 
@@ -185,7 +188,7 @@ class AddGame extends Controller
             $dealer = '0';
         }
 
-        $this->_loggedRounds [] = "(#GAMEID#, '{$player}', '{$loser}', '', {$hanCount}, {$fuCount}, 0, {$dealer}, '{$round}', '{$outcome}')";
+        $this->_loggedRounds [] = "(#GAMEID#, '{$player}', '{$loser}', '', {$hanCount}, {$fuCount}, 0, {$dealer}, '{$round}', '{$outcome}', '{$riichiList}')";
     }
 
     /**
@@ -341,7 +344,7 @@ class AddGame extends Controller
         $rounds = array_map(function ($el) use ($gameId) {
             return str_replace("#GAMEID#", $gameId, $el);
         }, $data['rounds']);
-        $roundsInsert = "INSERT INTO round (game_id, username, loser, tempai_list, han, fu, yakuman, dealer, round, result) VALUES " . implode(', ', $rounds);
+        $roundsInsert = "INSERT INTO round (game_id, username, loser, tempai_list, han, fu, yakuman, dealer, round, result, riichi) VALUES " . implode(', ', $rounds);
         Db::exec($roundsInsert);
 
         return $gameId;

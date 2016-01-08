@@ -71,6 +71,7 @@ function installMysql() {
             `tempai_list` varchar(255) NOT NULL DEFAULT '',
             `yaku` varchar(255) NOT NULL,
             `dora` int(11) NOT NULL DEFAULT '0',
+            `riichi` varchar(255) NOT NULL DEFAULT '',
             PRIMARY KEY (`id`),
             KEY `game_id` (`game_id`),
             KEY `username` (`username`),
