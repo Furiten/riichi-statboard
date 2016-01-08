@@ -1,6 +1,6 @@
 <?php
 
-require_once 'scripts/ArrayHelpers.php';
+include_once "scripts/helpers/Array.php";
 
 class Sortition extends Controller {
     protected $_possibleIntersections = array(

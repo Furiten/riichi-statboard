@@ -1,7 +1,7 @@
 <?php
 
-require_once 'scripts/Layout.php';
-require_once 'scripts/Db.php';
+require_once 'scripts/base/Layout.php';
+require_once 'scripts/base/Db.php';
 
 abstract class Controller {
     protected $_url;

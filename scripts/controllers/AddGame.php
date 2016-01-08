@@ -1,7 +1,7 @@
 <?php
 
-include_once "scripts/Parser.php";
-include_once "scripts/ArrayHelpers.php";
+include_once "scripts/components/Parser.php";
+include_once "scripts/helpers/Array.php";
 
 /**
  * Добавление игры

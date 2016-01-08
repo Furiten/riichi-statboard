@@ -1,6 +1,6 @@
 <?php
 
-require_once 'scripts/Db.php';
+require_once 'scripts/base/Db.php';
 
 switch (DB_TYPE) {
     case 'mysql':

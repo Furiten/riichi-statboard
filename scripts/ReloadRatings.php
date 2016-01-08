@@ -3,8 +3,8 @@ error_reporting(8191);
 ini_set('display_errors', 'on');
 
 
-require_once 'scripts/Db.php';
-require_once 'scripts/Controller.php';
+require_once 'scripts/base/Db.php';
+require_once 'scripts/base/Controller.php';
 require_once 'scripts/controllers/AddOnlineGame.php';
 
 $controllerInstance = new AddOnlineGame('', array());

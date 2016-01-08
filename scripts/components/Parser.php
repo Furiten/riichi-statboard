@@ -1,37 +1,21 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: heilage
- * Date: 15.12.12
- * Time: 13:57
- * To change this template use File | Settings | File Templates.
- */
-
 /*
 
 [player][:][(-)?\d{,5}] [player][:][(-)?\d{,5}] [player][:][(-)?\d{,5}] [player][:][(-)?\d{,5}]
-[1-4] ron [player] from [player] [5-12]han
-[1-4] ron [player] from [player] [5-12]han dealer
-[1-4] ron [player] from [player] [1-4]han \d{2,3}fu
-[1-4] ron [player] from [player] [1-4]han \d{2,3}fu dealer
-[1-4] ron [player] from [player] yakuman
-[1-4] ron [player] from [player] yakuman dealer
-[1-4] tsumo [player] [5-12]han
-[1-4] tsumo [player] [5-12]han dealer
-[1-4] tsumo [player] [1-4]han \d{2,3}fu
-[1-4] tsumo [player] [1-4]han \d{2,3}fu dealer
-[1-4] tsumo [player] yakuman
-[1-4] tsumo [player] yakuman dealer
-[1-4] draw tempai nobody
-[1-4] draw tempai [player]
-[1-4] draw tempai [player] [player]
-[1-4] draw tempai [player] [player] [player]
-[1-4] draw tempai all
-[1-4] chombo [player]
-[1-4] chombo [player] dealer
+ron [player] from [player] [5-12]han
+ron [player] from [player] [1-4]han \d{2,3}fu
+ron [player] from [player] yakuman
+tsumo [player] [5-12]han
+tsumo [player] [1-4]han \d{2,3}fu
+tsumo [player] yakuman
+draw tempai nobody
+draw tempai [player]
+draw tempai [player] [player]
+draw tempai [player] [player] [player]
+draw tempai all
+chombo [player]
 
  */
-
 
 class Parser {
 	protected $_usualWin;

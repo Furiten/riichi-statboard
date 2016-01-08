@@ -1,6 +1,6 @@
 <?php
 
-include_once "scripts/ArrayHelpers.php";
+include_once "scripts/helpers/Array.php";
 include_once "scripts/helpers/Yaku.php";
 
 /**
