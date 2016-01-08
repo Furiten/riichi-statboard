@@ -66,6 +66,11 @@ class AddGame extends Controller {
 				$results = $parser->parse($_POST['content']);
 				$players = $results['scores'];
 				$counts = $results['counts'];
+
+                $calculatedPoints = $calc->getResultPoints();
+                if (count(array_intersect_assoc($players, $calculatedPoints)) != 4) {
+                    throw new Exception("Несовпадение рассчитанных и вводимых очков! \n" . print_r($calculatedPoints, 1));
+                }
 			} catch (Exception $e) {
 				$this->_showForm($e->getMessage());
 				return;

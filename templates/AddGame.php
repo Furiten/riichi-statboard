@@ -4,37 +4,32 @@
 Формат:<br>
 <pre>
 [player][:][(-)?\d{,5}] [player][:][(-)?\d{,5}] [player][:][(-)?\d{,5}] [player][:][(-)?\d{,5}]
-[1-4] ron [player] from [player] [5-12]han
-[1-4] ron [player] from [player] [5-12]han dealer
-[1-4] ron [player] from [player] [1-4]han \d{2,3}fu
-[1-4] ron [player] from [player] [1-4]han \d{2,3}fu dealer
-[1-4] ron [player] from [player] yakuman
-[1-4] ron [player] from [player] yakuman dealer
-[1-4] tsumo [player] [5-12]han
-[1-4] tsumo [player] [5-12]han dealer
-[1-4] tsumo [player] [1-4]han \d{2,3}fu
-[1-4] tsumo [player] [1-4]han \d{2,3}fu dealer
-[1-4] tsumo [player] yakuman
-[1-4] tsumo [player] yakuman dealer
-[1-4] draw tempai nobody
-[1-4] draw tempai [player]
-[1-4] draw tempai [player] [player]
-[1-4] draw tempai [player] [player] [player]
-[1-4] draw tempai all
-[1-4] chombo [player]
-[1-4] chombo [player] dealer
+ron [player] from [player] [5-12]han riichi [player] [player]
+ron [player] from [player] [5-12]han
+ron [player] from [player] [1-4]han \d{2,3}fu
+ron [player] from [player] yakuman
+tsumo [player] [5-12]han riichi [player] [player]
+tsumo [player] [5-12]han
+tsumo [player] [1-4]han \d{2,3}fu
+tsumo [player] yakuman
+draw tempai nobody
+draw tempai [player] riichi [player] [player]
+draw tempai [player] [player]
+draw tempai [player] [player] [player]
+draw tempai all
+chombo [player]
 </pre>
 Пример:<br>
 <pre>
 heilage:12300 Chaos:32000 Frontier:-2000 Manabi:30000
-1 ron heilage from Chaos 2han 30fu
-2 ron Chaos from Frontier 2han 40fu dealer
-3 tsumo Frontier yakuman
-4 draw tempai nobody
-4 tsumo heilage 5han
-4 ron heilage from Chaos yakuman dealer
+ron heilage from Chaos 2han 30fu riichi Frontier
+ron Chaos from Frontier 2han 40fu
+tsumo Frontier yakuman riichi heilage Chaos
+draw tempai nobody riichi Manabi
+tsumo heilage 5han
+ron heilage from Chaos yakuman
 итд
-Повторяющий номер раунда - ренчан.
+Ренчаны и хонба высчитываются автоматически. Также производится проверка начисленных очков и выводится предупреждение в случае несоответствия.
 </pre>
 <?php if(!empty($error)) { ?>
 <div class="alert alert-error"><?php echo $error; ?></div>
