@@ -128,7 +128,7 @@ class Parser {
 
 	protected function _parseOutcomeRon($tokens, $participants)
 	{
-        $resultData = ['outcome' => 'ron'];
+        $resultData = ['outcome' => 'ron', 'round' => $this->_currentRound];
 		$winner = array_shift($tokens);
 		if (empty($participants[$winner])) {
 			throw new Exception("Игрок {$winner} не указан в заголовке лога. Опечатка?", 104);
@@ -185,7 +185,7 @@ class Parser {
 
 	protected function _parseOutcomeTsumo($tokens, $participants)
 	{
-        $resultData = ['outcome' => 'tsumo'];
+        $resultData = ['outcome' => 'tsumo', 'round' => $this->_currentRound];
 		$winner = array_shift($tokens);
 		if (empty($participants[$winner])) {
 			throw new Exception("Игрок {$winner} не указан в заголовке лога. Опечатка?", 104);
@@ -231,14 +231,14 @@ class Parser {
 
 	protected function _parseOutcomeDraw($tokens, $participants)
 	{
-        $resultData = ['outcome' => 'draw'];
+        $resultData = ['outcome' => 'draw', 'round' => $this->_currentRound];
 		$tempai = array_shift($tokens);
 		if ($tempai != 'tempai') {
 			throw new Exception("Не найден список темпай игроков; ошибка синтаксиса - пропущено ключевое слово tempai", 109);
 		}
 
 		$playersStatus = array_combine(array_keys($participants), array('noten', 'noten', 'noten', 'noten'));
-		while (!empty($tokens)) {
+		while (!empty($tokens) && $tokens[0] != 'riichi') {
 			$player = array_shift($tokens);
 
 			if ($player == 'nobody') {
@@ -269,7 +269,7 @@ class Parser {
         }
 
         $this->_honba ++;
-        if ($playersStatus[$this->_players[$this->_currentDealer]] != 'tempai') {
+        if ($playersStatus[$this->_players[$this->_currentDealer % 4]] != 'tempai') {
             $this->_currentDealer ++;
             $this->_currentRound ++;
         }
@@ -280,7 +280,7 @@ class Parser {
 
 	protected function _parseOutcomeChombo($tokens, $participants)
 	{
-        $resultData = ['outcome' => 'chombo'];
+        $resultData = ['outcome' => 'chombo', 'round' => $this->_currentRound];
 		$loser = array_shift($tokens);
 		if (empty($participants[$loser])) {
 			throw new Exception("Игрок {$loser} не указан в заголовке лога. Опечатка?", 104);

@@ -1,6 +1,7 @@
 <?php
 
 include_once "scripts/components/Parser.php";
+include_once "scripts/components/PointsCalc.php";
 include_once "scripts/helpers/Array.php";
 
 /**
