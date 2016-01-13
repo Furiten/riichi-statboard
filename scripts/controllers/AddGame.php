@@ -160,7 +160,7 @@ class AddGame extends Controller
             $dealer = '0';
         }
 
-        $this->_loggedRounds [] = "(#GAMEID#, '{$player}', '', '', 0, 0, 0, {$dealer}, '{$round}', '{$outcome}')";
+        $this->_loggedRounds [] = "(#GAMEID#, '{$player}', '', '', 0, 0, 0, {$dealer}, '{$round}', '{$outcome}', '')";
         if (empty($this->_chomboPenalties[$player])) {
             $this->_chomboPenalties[$player] = -CHOMBO_PENALTY;
         } else {
