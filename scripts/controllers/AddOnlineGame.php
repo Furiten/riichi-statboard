@@ -296,10 +296,12 @@ class AddOnlineGame extends Controller {
             if ($parts[0] >= base64_decode('MjAxMDA0MTExMWdt')) {
                 $hexparts[3] = intval("3" . substr($parts[0], 4, 6)) % (17 * 2 - intval(substr($parts[0], 9, 1)) - 1);
             }
-            $parts[3] = dechex($hexparts[0] ^ $hexparts[1] ^ $t[$hexparts[3] + 0]) .
-                dechex($hexparts[1] ^ $t[$hexparts[3] + 0] ^ $hexparts[2] ^ $t[$hexparts[3] + 1]);
 
-            $parts[3] = str_repeat('0', 8 - strlen($parts[3])) . $parts[3];
+            $hashHead = dechex($hexparts[0] ^ $hexparts[1] ^ $t[$hexparts[3] + 0]);
+            $hashTail = dechex($hexparts[1] ^ $t[$hexparts[3] + 0] ^ $hexparts[2] ^ $t[$hexparts[3] + 1]);
+            $hashHead = str_repeat('0', 4 - strlen($hashHead)) . $hashHead;
+            $hashTail = str_repeat('0', 4 - strlen($hashTail)) . $hashTail;
+            $parts[3] = $hashHead . $hashTail;
         }
 
         return join('-', $parts);
