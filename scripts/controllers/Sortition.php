@@ -1,6 +1,5 @@
 <?php
-
-include_once "scripts/helpers/Array.php";
+require_once 'scripts/helpers/Array.php';
 
 class Sortition extends Controller {
     protected $_possibleIntersections = array(
@@ -111,7 +110,7 @@ class Sortition extends Controller {
             $buckets[$idx] ++;
 
             foreach ($playerData as $item) {
-                $buckets[$item['player_num'] - 1] ++;
+                $buckets[$item['player_num']] ++;
             }
 
             $totalsum += (
@@ -196,33 +195,43 @@ class Sortition extends Controller {
             }
 
             $usersData = db::get("SELECT * FROM players ORDER BY rating DESC, place_avg ASC");
-            $winners = array_slice($usersData, 0, count($usersData) / 2);
-            $losers = array_slice($usersData, count($usersData) / 2);
+            $groups = array_chunk($usersData, ceil(count($usersData) / SORTITION_GROUPS_COUNT), true);
 
             $playData = db::get("SELECT game_id, username, rating FROM rating_history");
             $previousPlacements = db::get("SELECT * FROM tables");
             $previousPlacements = ArrayHelpers::elm2Key($previousPlacements, 'username', true);
 
             $maxIterations = 3000;
-            $bestWinnersMap = array();
-            $bestLosersMap = array();
+            $bestGroupsMap = array();
             $factor = 100500;
 
             for ($i = 0; $i < $maxIterations; $i++) {
                 srand($randFactor + $i*5);
-                shuffle($winners);
-                shuffle($losers);
+                foreach ($groups as $k => $v) {
+                    shuffle($groups[$k]);
+                }
 
-                $newFactor = $this->_calculateFactor(array_merge($winners, $losers), $playData);
+                $newFactor = $this->_calculateFactor(array_reduce($groups, function($acc, $el) {
+                    return array_merge($acc, $el);
+                }, []) , $playData);
                 if ($newFactor < $factor) {
                     $factor = $newFactor;
-                    $bestLosersMap = $losers;
-                    $bestWinnersMap = $winners;
+                    $bestGroupsMap = $groups;
                 }
             }
 
-            $sortition = array_values(array_merge($bestWinnersMap, $bestLosersMap));
+            $sortition = array_values(array_reduce($bestGroupsMap, function($acc, $el) {
+                return array_merge($acc, $el);
+            }, []));
             $bestIntersection = $this->_calcIntersection($playData, $sortition);
+            $bestIntersectionSets = array_reduce($bestIntersection, function($acc, $el) {
+                if (empty($acc[$el])) {
+                    $acc[$el] = 0;
+                }
+                $acc[$el]++;
+                return $acc;
+            }, []);
+            unset($bestIntersectionSets[1]);
 
             $tables = array_chunk($sortition, 4);
             foreach ($tables as $k => $v) {
@@ -230,11 +239,11 @@ class Sortition extends Controller {
             }
 
             // store to cache
-            $cacheData = base64_encode(serialize(array($tables, $sortition, $bestIntersection, $usersData)));
+            $cacheData = base64_encode(serialize(array($tables, $sortition, $bestIntersection, $bestIntersectionSets, $usersData)));
             db::exec("INSERT INTO sortition_cache(hash, data) VALUES ('{$randFactor}', '{$cacheData}')");
         } else {
             $isApproved = !!$cachedSortition[0]['is_confirmed'];
-            list($tables, $sortition, $bestIntersection, $usersData) = unserialize(base64_decode($cachedSortition[0]['data']));
+            list($tables, $sortition, $bestIntersection, $bestIntersectionSets, $usersData) = unserialize(base64_decode($cachedSortition[0]['data']));
         }
 
         include "templates/Sortition.php";

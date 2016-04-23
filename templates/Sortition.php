@@ -26,7 +26,7 @@
     }
 </style>
 <h2>Жеребьёвка</h2>
-<?php if (!$isApproved) { ?>
+<?php if (empty($isApproved)) { ?>
 <form action="" method="post">
     <input type="hidden" name="factor" value="<?php echo dechex($randFactor); ?>" />
     <input type="submit" class="btn btn-success" value="Утвердить!"
@@ -64,6 +64,8 @@
 <hr />
 <h3>Пересечения</h3>
 <br>
+Фактор лучших пересечений, меньше = лучше: <?php echo implode(' : ', $bestIntersectionSets); ?>
+<br><br><br>
 <table cellpadding="3">
     <tr>
         <th>&nbsp;</th>
