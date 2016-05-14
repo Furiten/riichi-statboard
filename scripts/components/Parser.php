@@ -288,9 +288,19 @@ class Parser
 
     protected function _parseOutcomeRon($tokens, $participants)
     {
+        // check if double/triple ron occured
+        $multiRon = !!$this->_findByType($tokens, Tokenizer::ALSO)->token();
+        if ($multiRon) {
+            $this->_parseOutcomeMultiRon($tokens, $participants);
+        } else {
+            $this->_parseOutcomeSingleRon($tokens, $participants);
+        }
+    }
+
+    protected function _parseOutcomeSingleRon($tokens, $participants) {
         /** @var $winner Token
-          * @var $from Token
-          * @var $loser Token */
+         * @var $from Token
+         * @var $loser Token */
         list(/*ron*/, $winner, $from, $loser) = $tokens;
         if (empty($participants[$winner->token()])) {
             throw new Exception("Игрок {$winner} не указан в заголовке лога. Опечатка?", 104);
@@ -301,7 +311,6 @@ class Parser
         if (empty($participants[$loser->token()])) {
             throw new Exception("Игрок {$loser} не указан в заголовке лога. Опечатка?", 105);
         }
-
         $resultData = [
             'outcome' => 'ron',
             'round' => $this->_currentRound,
@@ -346,6 +355,180 @@ class Parser
             call_user_func_array($this->_yakuman, array($resultData));
         } else {
             call_user_func_array($this->_usualWin, array($resultData));
+        }
+    }
+
+    /**
+     * @param $tokens Token[]
+     * @return array
+     * @throws Exception
+     */
+    protected function _splitMultiRon($tokens)
+    {
+        /** @var $loser Token
+         *  @var $from Token */
+        list(/*ron*/, /*winner*/, $from, $loser) = $tokens;
+        if ($from->type() != Tokenizer::FROM) {
+            throw new Exception("Не указан игрок, с которого взят рон", 103);
+        }
+
+        $chunks = [[]];
+        $idx = 0;
+        foreach ($tokens as $k => $t) {
+            if (
+                $t->type() == Tokenizer::OUTCOME ||
+                $t->type() == Tokenizer::FROM
+            ) continue; // unify statements, cut unused keywords
+
+            if (
+                $k > 0 &&
+                $tokens[$k-1]->type() == Tokenizer::FROM &&
+                $t->type() == Tokenizer::USER_ALIAS &&
+                $t->token() == $loser->token()
+            ) continue; // saved separately
+
+            if ($t->type() == Tokenizer::ALSO) {
+                $idx ++;
+                $chunks []= [];
+                continue;
+            }
+            $chunks[$idx] []= $t;
+        }
+
+        return [$chunks, $loser];
+    }
+
+    /**
+     * @param $rons Token[][]
+     * @param $loser Token
+     * @param $participants
+     * @return array
+     * @throws Exception
+     */
+    protected function _assignRiichiBets($rons, $loser, $participants) {
+        $riichiOnTable = $this->_riichi; // save this one as it's erased with this->_getRiichi
+        $bets = [];
+        $winners = [];
+
+        /** @var $ron Token[] */
+        foreach ($rons as $ron) {
+            $winners[$ron[0]->token()] = [];
+            $bets = array_merge($bets, $this->_getRiichi($ron, $participants));
+        }
+
+        // Find player who gets non-winning riichi bets
+        $playersRing = array_merge(array_keys($participants), array_keys($participants)); // double the array to form a ring
+        $closestWinner = null;
+        for ($i = 0; $i < count($playersRing); $i++) {
+            if ($loser->token() == $playersRing[$i]) {
+                for ($j = $i + 1; $j < count($playersRing); $j++) {
+                    if (isset($winners[$playersRing[$j]])) {
+                        $closestWinner = $playersRing[$j];
+                        break 2;
+                    }
+                }
+            }
+        }
+
+        if (!$closestWinner) {
+            throw new Exception('Не найден ближайший победитель для риичи-ставок: такого не должно было произойти!', 119);
+        }
+
+        foreach ($bets as $k => $player) {
+            if (!empty($winners[$player])) {
+                $winners[$player] []= $ron[0]->token(); // winner always gets back his bet
+                unset($bets[$k]);
+            }
+        }
+
+        $winners[$closestWinner] = array_merge($winners[$closestWinner], $bets);
+
+        // assign riichi counts, add riichi on table for first winner
+        foreach ($winners as $name => $bets) {
+            if ($name == $closestWinner) {
+                $winners[$name] = [
+                    'riichi_totalCount' => $riichiOnTable + count($winners[$name]),
+                    'riichi' => $winners[$name]
+                ];
+            } else {
+                $winners[$name] = [
+                    'riichi_totalCount' => count($winners[$name]),
+                    'riichi' => $winners[$name]
+                ];
+            }
+        }
+
+        return $winners;
+    }
+
+    protected function _parseOutcomeMultiRon($tokens, $participants)
+    {
+        /** @var $loser Token */
+        list($rons, $loser) = $this->_splitMultiRon($tokens);
+        if (empty($participants[$loser->token()])) {
+            throw new Exception("Игрок {$loser} не указан в заголовке лога. Опечатка?", 105);
+        }
+
+        $riichiGoesTo = $this->_assignRiichiBets($rons, $loser, $participants);
+
+        $honbaAdded = false;
+        foreach ($rons as $ron) {
+            /** @var $winner Token */
+            $winner = $ron[0];
+            if (empty($participants[$winner->token()])) {
+                throw new Exception("Игрок {$winner} не указан в заголовке лога. Опечатка?", 104);
+            }
+
+            $resultData = [
+                'outcome' => 'ron',
+                'multiRon' => count($rons),
+                'round' => $this->_currentRound,
+                'winner' => $winner->token(),
+                'loser' => $loser->token(),
+                'honba' => $this->_honba,
+                'han' => $this->_findByType($ron, Tokenizer::HAN_COUNT)->clean(),
+                'fu' => $this->_findByType($ron, Tokenizer::FU_COUNT)->clean(),
+                'yakuman' => !!$this->_findByType($ron, Tokenizer::YAKUMAN)->token(),
+                'dealer' => $this->_checkDealer($winner)
+            ];
+            $resultData = array_merge($resultData, $riichiGoesTo[$winner->token()]);
+
+            if ($this->_calc) {
+                $this->_calc->registerRon(
+                    $resultData['han'],
+                    $resultData['fu'],
+                    $winner,
+                    $loser,
+                    $this->_honba,
+                    $resultData['riichi'],
+                    $resultData['riichi_totalCount'],
+                    $this->_players[$this->_currentDealer % 4],
+                    !empty($resultData['yakuman'])
+                );
+            }
+
+            if ($resultData['dealer']) {
+                $this->_honba++;
+                $honbaAdded = true;
+            }
+
+            if (!empty($resultData['yakuman'])) {
+                $resultData['han'] = 13; // TODO: remove
+                $this->_counts['yakuman']++;
+                call_user_func_array($this->_yakuman, array($resultData));
+            } else {
+                call_user_func_array($this->_usualWin, array($resultData));
+            }
+        }
+
+        $this->_riichi = 0;
+        if (count($rons) == 2) $this->_counts['doubleRon']++;
+        if (count($rons) == 3) $this->_counts['tripleRon']++;
+
+        if (!$honbaAdded) {
+            $this->_currentRound++;
+            $this->_honba = 0;
+            $this->_currentDealer++;
         }
     }
 
@@ -477,7 +660,7 @@ class Parser
         return ($userWon == $this->_players[$this->_currentDealer % 4]);
     }
 
-    // For testing only!!!
+    //<editor-fold desc="For testing only!!!">
     public function _getCurrentRound()
     {
         return $this->_currentRound;
@@ -507,4 +690,16 @@ class Parser
     {
         return $this->_getTempai($tokens, $participants);
     }
+
+    public function _iSplitMultiRon($tokens)
+    {
+        return $this->_splitMultiRon($tokens);
+    }
+
+    public function _iAssignRiichiBets($tokens, $participants)
+    {
+        list($rons, $loser) = $this->_splitMultiRon($tokens);
+        return $this->_assignRiichiBets($rons, $loser, $participants);
+    }
+    //</editor-fold>
 }

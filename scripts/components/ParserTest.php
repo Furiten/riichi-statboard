@@ -102,6 +102,44 @@ class ParserTest extends PHPUnit_Framework_TestCase
         return reset($tokens);
     }
 
+    public function testSplitMultiRon()
+    {
+        $validTokens = $this->_tokenize('ron heilage from frontier 1han 30fu riichi heilage manabi
+                                         also jun 2han 30fu riichi frontier');
+
+        list($actual, $loser) = $this->_parser->_iSplitMultiRon($validTokens);
+        $strActual = array_map(function($el) {
+            return array_reduce($el, function($acc, $el2) {
+                return $acc . ' ' . (string)$el2;
+            }, '');
+        }, $actual);
+
+        $this->assertEquals('frontier', $loser);
+        $this->assertEquals('heilage 1han 30fu riichi heilage manabi', trim($strActual[0]));
+        $this->assertEquals('jun 2han 30fu riichi frontier', trim($strActual[1]));
+    }
+
+    public function testAssignRiichiBets()
+    {
+        $validTokens = $this->_tokenize('ron heilage from frontier 1han 30fu riichi heilage manabi
+                                         also jun 2han 30fu riichi frontier');
+
+        $actual = $this->_parser->_iAssignRiichiBets($validTokens, ['frontier' => 1, 'heilage' => 1, 'jun' => 1, 'manabi' => 1]);
+        $expected = [
+            'heilage' => [
+                'riichi' => ['heilage', 'manabi', 'frontier'],
+                'riichi_totalCount' => 3
+            ],
+            'jun' => [
+                'riichi' => [],
+                'riichi_totalCount' => 0
+            ]
+        ];
+
+        $this->assertEquals($expected, $actual);
+    }
+
+
     public function testTempaiParse()
     {
         $validTokens = $this->_tokenize('draw tempai manabi jun');
@@ -205,6 +243,55 @@ class ParserTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0, $this->_parser->_getHonba());
     }
 
+    public function testBasicDoubleRon()
+    {
+        $validText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
+                      ron heilage from frontier 1han 30fu
+                      also jun 2han 30fu';
+
+        $idx = 0;
+        $expected = [
+            [
+                'dealer' => false,
+                'multiRon' => 2,
+                'fu' => '30',
+                'han' => '1',
+                'honba' => 0,
+                'outcome' => 'ron',
+                'riichi' => [],
+                'riichi_totalCount' => 0,
+                'round' => 1,
+                'winner' => 'heilage',
+                'loser' => 'frontier',
+                'yakuman' => false
+            ],
+            [
+                'dealer' => false,
+                'multiRon' => 2,
+                'fu' => '30',
+                'han' => '2',
+                'honba' => 0,
+                'outcome' => 'ron',
+                'riichi' => [],
+                'riichi_totalCount' => 0,
+                'round' => 1,
+                'winner' => 'jun',
+                'loser' => 'frontier',
+                'yakuman' => false
+            ]
+        ];
+        $this->_hooks['usual'] = function ($data) use ($expected, &$idx) {
+            ksort($data);
+            ksort($expected);
+            $this->assertEquals($expected[$idx++], $data);
+        };
+
+        $this->_parser->parse($validText);
+        $this->assertEquals(2, $this->_parser->_getCurrentRound()); // starting from 1
+        $this->assertEquals(1, $this->_parser->_getCurrentDealer()); // starting from 0
+        $this->assertEquals(0, $this->_parser->_getHonba());
+    }
+
     public function testDealerRon()
     {
         $validText = 'heilage:23200 frontier:23300 jun:43000 manabi:12000
@@ -233,6 +320,55 @@ class ParserTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, $this->_parser->_getHonba());
     }
 
+    public function testDealerDoubleRon()
+    {
+        $validText = 'heilage:23200 frontier:23300 jun:43000 manabi:12000
+                      ron jun from frontier 1han 30fu
+                      also heilage 2han 30fu';
+
+        $idx = 0;
+        $expected = [
+            [
+                'dealer' => false,
+                'multiRon' => 2,
+                'fu' => '30',
+                'han' => '1',
+                'honba' => 0,
+                'outcome' => 'ron',
+                'riichi' => [],
+                'riichi_totalCount' => 0,
+                'round' => 1,
+                'winner' => 'jun',
+                'loser' => 'frontier',
+                'yakuman' => false
+            ],
+            [
+                'dealer' => true,
+                'multiRon' => 2,
+                'fu' => '30',
+                'han' => '2',
+                'honba' => 0,
+                'outcome' => 'ron',
+                'riichi' => [],
+                'riichi_totalCount' => 0,
+                'round' => 1,
+                'winner' => 'heilage',
+                'loser' => 'frontier',
+                'yakuman' => false
+            ]
+        ];
+        $this->_hooks['usual'] = function ($data) use ($expected, &$idx) {
+            ksort($data);
+            ksort($expected);
+            $this->assertEquals($expected[$idx++], $data);
+        };
+
+        $this->_parser->parse($validText);
+        $this->assertEquals(1, $this->_parser->_getCurrentRound()); // starting from 1
+        $this->assertEquals(0, $this->_parser->_getCurrentDealer()); // starting from 0
+        $this->assertEquals(1, $this->_parser->_getHonba());
+    }
+
     public function testRonWithRiichi()
     {
         $validText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
@@ -255,6 +391,55 @@ class ParserTest extends PHPUnit_Framework_TestCase
             ksort($expected);
             $this->assertEquals($expected, $data);
         };
+        $this->_parser->parse($validText);
+        $this->assertEquals(2, $this->_parser->_getCurrentRound()); // starting from 1
+        $this->assertEquals(1, $this->_parser->_getCurrentDealer()); // starting from 0
+        $this->assertEquals(0, $this->_parser->_getHonba());
+    }
+
+    public function testDoubleRonWithRiichi()
+    {
+        $validText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
+                      ron heilage from frontier 1han 30fu riichi heilage manabi
+                      also jun 2han 30fu riichi frontier';
+
+        $idx = 0;
+        $expected = [
+            [
+                'dealer' => false,
+                'multiRon' => 2,
+                'fu' => '30',
+                'han' => '1',
+                'honba' => 0,
+                'outcome' => 'ron',
+                'riichi' => ['heilage', 'manabi', 'frontier'],
+                'riichi_totalCount' => 3,
+                'round' => 1,
+                'winner' => 'heilage',
+                'loser' => 'frontier',
+                'yakuman' => false
+            ],
+            [
+                'dealer' => false,
+                'multiRon' => 2,
+                'fu' => '30',
+                'han' => '2',
+                'honba' => 0,
+                'outcome' => 'ron',
+                'riichi' => [],
+                'riichi_totalCount' => 0,
+                'round' => 1,
+                'winner' => 'jun',
+                'loser' => 'frontier',
+                'yakuman' => false
+            ]
+        ];
+        $this->_hooks['usual'] = function ($data) use ($expected, &$idx) {
+            ksort($data);
+            ksort($expected);
+            $this->assertEquals($expected[$idx++], $data);
+        };
+
         $this->_parser->parse($validText);
         $this->assertEquals(2, $this->_parser->_getCurrentRound()); // starting from 1
         $this->assertEquals(1, $this->_parser->_getCurrentDealer()); // starting from 0
