@@ -435,7 +435,7 @@ class Parser
         }
 
         foreach ($bets as $k => $player) {
-            if ($winners[$player]) {
+            if (!empty($winners[$player])) {
                 $winners[$player] []= $ron[0]->token(); // winner always gets back his bet
                 unset($bets[$k]);
             }

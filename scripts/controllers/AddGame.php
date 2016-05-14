@@ -177,6 +177,7 @@ class AddGame extends Controller
         $outcome = $roundData['outcome'];
         $riichiList = serialize($roundData['riichi']);
         $player = $roundData['winner'];
+        $multiRon = $roundData['multiRon'];
         $loser = empty($roundData['loser']) ? '' : $roundData['loser'];
 
         $hanCount = $roundData['han'];
@@ -188,7 +189,7 @@ class AddGame extends Controller
             $dealer = '0';
         }
 
-        $this->_loggedRounds [] = "(#GAMEID#, '{$player}', '{$loser}', '', {$hanCount}, {$fuCount}, 0, {$dealer}, '{$round}', '{$outcome}', '{$riichiList}')";
+        $this->_loggedRounds [] = "(#GAMEID#, '{$player}', '{$loser}', '', {$hanCount}, {$fuCount}, 0, {$dealer}, '{$round}', '{$outcome}', '{$riichiList}', {$multiRon})";
     }
 
     /**
@@ -326,7 +327,14 @@ class AddGame extends Controller
      */
     protected function _addToDb($data)
     {
-        $gameInsert = "INSERT INTO game (play_date, ron_count, tsumo_count, drawn_count) VALUES (CURRENT_TIMESTAMP(), {$data['counts']['ron']}, {$data['counts']['tsumo']}, {$data['counts']['draw']})";
+        $gameInsert = "INSERT INTO game (play_date, ron_count, doubleron_count, tripleron_count, tsumo_count, drawn_count) VALUES (
+                            CURRENT_TIMESTAMP(),
+                            {$data['counts']['ron']},
+                            {$data['counts']['doubleRon']},
+                            {$data['counts']['tripleRon']},
+                            {$data['counts']['tsumo']},
+                            {$data['counts']['draw']}
+                       )";
         Db::exec($gameInsert);
         $gameId = Db::connection()->lastInsertId();
 
@@ -344,7 +352,7 @@ class AddGame extends Controller
         $rounds = array_map(function ($el) use ($gameId) {
             return str_replace("#GAMEID#", $gameId, $el);
         }, $data['rounds']);
-        $roundsInsert = "INSERT INTO round (game_id, username, loser, tempai_list, han, fu, yakuman, dealer, round, result, riichi) VALUES " . implode(', ', $rounds);
+        $roundsInsert = "INSERT INTO round (game_id, username, loser, tempai_list, han, fu, yakuman, dealer, round, result, riichi, multiRon) VALUES " . implode(', ', $rounds);
         Db::exec($roundsInsert);
 
         return $gameId;

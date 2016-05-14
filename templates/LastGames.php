@@ -90,6 +90,8 @@ foreach ($gamesData as $game) {
     }
 
     $ronWins = $game['ron_count'] . ' ' . plural($game['ron_count'], 'победа', 'победы', 'побед');
+    $doubleronWins = $game['doubleron_count'] . ' ' . plural($game['doubleron_count'], 'победа', 'победы', 'побед');
+    $tripleronWins = $game['tripleron_count'] . ' ' . plural($game['tripleron_count'], 'победа', 'победы', 'побед');
     $tsumoWins = $game['tsumo_count'] . ' ' . plural($game['tsumo_count'], 'победа', 'победы', 'побед');
     $draws = $game['drawn_count'] . ' ' . plural($game['drawn_count'], 'ничья/пересдача', 'ничьи/пересдачи', 'ничьих/пересдач');
 
@@ -197,6 +199,8 @@ foreach ($gamesData as $game) {
                 <li><a href='{$game['orig_link']}' target='_blank'>Посмотреть реплей</a></li>
                 <li>Лучшая рука собрана игроком <b>" . $player . "</b> - {$cost}</li>
                 <li>В игре было {$ronWins} по рон и {$tsumoWins} по цумо</li>
+                ". ($game['doubleron_count'] ? "<li>Кроме того, {$doubleronWins} по дабл-рон!</li>" : "")."
+                ". ($game['tripleron_count'] ? "<li>Кроме того, {$tripleronWins} по трипл-рон!</li>" : "")."
                 <li>В игре было {$draws}</li>
                 <li>Полный лог игры:</li>
                 {$chombosLi}
