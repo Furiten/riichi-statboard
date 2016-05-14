@@ -230,7 +230,8 @@ class ParserTest extends PHPUnit_Framework_TestCase
             'round' => 1,
             'winner' => 'heilage',
             'loser' => 'frontier',
-            'yakuman' => false
+            'yakuman' => false,
+            'yakuList' => []
         ];
         $this->_hooks['usual'] = function ($data) use ($expected) {
             ksort($data);
@@ -263,7 +264,8 @@ class ParserTest extends PHPUnit_Framework_TestCase
                 'round' => 1,
                 'winner' => 'heilage',
                 'loser' => 'frontier',
-                'yakuman' => false
+                'yakuman' => false,
+                'yakuList' => []
             ],
             [
                 'dealer' => false,
@@ -277,7 +279,8 @@ class ParserTest extends PHPUnit_Framework_TestCase
                 'round' => 1,
                 'winner' => 'jun',
                 'loser' => 'frontier',
-                'yakuman' => false
+                'yakuman' => false,
+                'yakuList' => []
             ]
         ];
         $this->_hooks['usual'] = function ($data) use ($expected, &$idx) {
@@ -307,7 +310,8 @@ class ParserTest extends PHPUnit_Framework_TestCase
             'round' => 1,
             'winner' => 'heilage',
             'loser' => 'frontier',
-            'yakuman' => false
+            'yakuman' => false,
+            'yakuList' => []
         ];
         $this->_hooks['usual'] = function ($data) use ($expected) {
             ksort($data);
@@ -340,7 +344,8 @@ class ParserTest extends PHPUnit_Framework_TestCase
                 'round' => 1,
                 'winner' => 'jun',
                 'loser' => 'frontier',
-                'yakuman' => false
+                'yakuman' => false,
+                'yakuList' => []
             ],
             [
                 'dealer' => true,
@@ -354,7 +359,8 @@ class ParserTest extends PHPUnit_Framework_TestCase
                 'round' => 1,
                 'winner' => 'heilage',
                 'loser' => 'frontier',
-                'yakuman' => false
+                'yakuman' => false,
+                'yakuList' => []
             ]
         ];
         $this->_hooks['usual'] = function ($data) use ($expected, &$idx) {
@@ -384,7 +390,8 @@ class ParserTest extends PHPUnit_Framework_TestCase
             'round' => 1,
             'winner' => 'heilage',
             'loser' => 'frontier',
-            'yakuman' => false
+            'yakuman' => false,
+            'yakuList' => []
         ];
         $this->_hooks['usual'] = function ($data) use ($expected) {
             ksort($data);
@@ -417,7 +424,8 @@ class ParserTest extends PHPUnit_Framework_TestCase
                 'round' => 1,
                 'winner' => 'heilage',
                 'loser' => 'frontier',
-                'yakuman' => false
+                'yakuman' => false,
+                'yakuList' => []
             ],
             [
                 'dealer' => false,
@@ -431,7 +439,8 @@ class ParserTest extends PHPUnit_Framework_TestCase
                 'round' => 1,
                 'winner' => 'jun',
                 'loser' => 'frontier',
-                'yakuman' => false
+                'yakuman' => false,
+                'yakuList' => []
             ]
         ];
         $this->_hooks['usual'] = function ($data) use ($expected, &$idx) {
@@ -497,7 +506,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
     public function testInvalidRonWrongRiichi()
     {
         $invalidText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
-                      ron heilage from frontier 1han 30fu richi manabi jun';
+                      ron heilage from frontier 1han 30fu reachi manabi jun';
         $this->_parser->parse($invalidText);
     }
 
@@ -515,7 +524,8 @@ class ParserTest extends PHPUnit_Framework_TestCase
             'riichi_totalCount' => 0,
             'round' => 1,
             'winner' => 'heilage',
-            'yakuman' => false
+            'yakuman' => false,
+            'yakuList' => []
         ];
         $this->_hooks['usual'] = function ($data) use ($expected) {
             ksort($data);
@@ -542,7 +552,8 @@ class ParserTest extends PHPUnit_Framework_TestCase
             'riichi_totalCount' => 0,
             'round' => 1,
             'winner' => 'heilage',
-            'yakuman' => false
+            'yakuman' => false,
+            'yakuList' => []
         ];
         $this->_hooks['usual'] = function ($data) use ($expected) {
             ksort($data);
@@ -569,7 +580,8 @@ class ParserTest extends PHPUnit_Framework_TestCase
             'riichi_totalCount' => 2,
             'round' => 1,
             'winner' => 'heilage',
-            'yakuman' => false
+            'yakuman' => false,
+            'yakuList' => []
         ];
         $this->_hooks['usual'] = function ($data) use ($expected) {
             ksort($data);
@@ -611,7 +623,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
     public function testInvalidTsumoWrongRiichi()
     {
         $invalidText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
-                      tsumo heilage 1han 30fu richi manabi jun';
+                      tsumo heilage 1han 30fu reachi manabi jun';
         $this->_parser->parse($invalidText);
     }
 
@@ -800,7 +812,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
     public function testInvalidDrawWrongRiichi()
     {
         $invalidText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
-                      draw tempai all richi manabi jun';
+                      draw tempai all reachi manabi jun';
         $this->_parser->parse($invalidText);
     }
 
@@ -834,7 +846,8 @@ class ParserTest extends PHPUnit_Framework_TestCase
             'round' => 2,
             'winner' => 'manabi',
             'loser' => 'jun',
-            'yakuman' => false
+            'yakuman' => false,
+            'yakuList' => []
         ];
 
         $this->_hooks['draw'] = function ($data) use ($expectedDraw) {
@@ -909,6 +922,92 @@ class ParserTest extends PHPUnit_Framework_TestCase
         $invalidText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
                       chombo forntier';
         $this->_parser->parse($invalidText);
+    }
+
+    public function testBasicTsumoWithYaku()
+    {
+        $validText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
+                      tsumo heilage 4han 20fu (richi tsumo pin-fu tanyao)';
+        $expected = [
+            'dealer' => false,
+            'fu' => '20',
+            'han' => '4',
+            'honba' => 0,
+            'outcome' => 'tsumo',
+            'riichi' => [],
+            'riichi_totalCount' => 0,
+            'round' => 1,
+            'winner' => 'heilage',
+            'yakuman' => false,
+            'yakuList' => [8, 33, 23, 36]
+        ];
+        $this->_hooks['usual'] = function ($data) use ($expected) {
+            ksort($data);
+            ksort($expected);
+            sort($data['yakuList']);
+            sort($expected['yakuList']);
+            $this->assertEquals($expected, $data);
+        };
+        $this->_parser->parse($validText);
+        $this->assertEquals(2, $this->_parser->_getCurrentRound()); // starting from 1
+        $this->assertEquals(1, $this->_parser->_getCurrentDealer()); // starting from 0
+        $this->assertEquals(0, $this->_parser->_getHonba());
+    }
+
+    /**
+     * @group yaku
+     */
+    public function testDoubleRonWithYakuAndRiichi()
+    {
+        $validText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
+                      ron heilage from frontier 1han 30fu (yakuhai1) riichi heilage manabi
+                      also jun 2han 30fu (double_reach sanshoku) riichi frontier';
+
+        $idx = 0;
+        $expected = [
+            [
+                'dealer' => false,
+                'multiRon' => 2,
+                'fu' => '30',
+                'han' => '1',
+                'honba' => 0,
+                'outcome' => 'ron',
+                'riichi' => ['heilage', 'manabi', 'frontier'],
+                'riichi_totalCount' => 3,
+                'round' => 1,
+                'winner' => 'heilage',
+                'loser' => 'frontier',
+                'yakuman' => false,
+                'yakuList' => [13]
+            ],
+            [
+                'dealer' => false,
+                'multiRon' => 2,
+                'fu' => '30',
+                'han' => '2',
+                'honba' => 0,
+                'outcome' => 'ron',
+                'riichi' => [],
+                'riichi_totalCount' => 0,
+                'round' => 1,
+                'winner' => 'jun',
+                'loser' => 'frontier',
+                'yakuman' => false,
+                'yakuList' => [34, 11]
+            ]
+        ];
+        $this->_hooks['usual'] = function ($data) use ($expected, &$idx) {
+            ksort($data);
+            ksort($expected[$idx]);
+            sort($data['yakuList']);
+            sort($expected[$idx]['yakuList']);
+            $this->assertEquals($expected[$idx++], $data);
+        };
+
+        $this->_parser->parse($validText);
+        $this->assertEquals(2, $this->_parser->_getCurrentRound()); // starting from 1
+        $this->assertEquals(1, $this->_parser->_getCurrentDealer()); // starting from 0
+        $this->assertEquals(0, $this->_parser->_getHonba());
     }
 }
 

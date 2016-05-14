@@ -122,7 +122,7 @@ class AddGame extends Controller
         $round = $roundData['round'];
         $riichiList = serialize($roundData['riichi']);
         $players = serialize($roundData['players_tempai']);
-        $this->_loggedRounds [] = "(#GAMEID#, '', '', '{$players}', 0, 0, 0, 0, '{$round}', 'draw', '{$riichiList}')";
+        $this->_loggedRounds [] = "(#GAMEID#, '', '', '{$players}', 0, 0, 0, 0, '{$round}', 'draw', '{$riichiList}', NULL, '')";
     }
 
     /**
@@ -134,7 +134,9 @@ class AddGame extends Controller
         $outcome = $roundData['outcome'];
         $riichiList = serialize($roundData['riichi']);
         $player = $roundData['winner'];
+        $multiRon = $roundData['multiRon'];
         $loser = empty($roundData['loser']) ? '' : $roundData['loser'];
+        $yakuList = implode(',', $roundData['yakuList']);
 
         if (!empty($roundData['dealer'])) {
             $dealer = '1';
@@ -142,7 +144,7 @@ class AddGame extends Controller
             $dealer = '0';
         }
 
-        $this->_loggedRounds [] = "(#GAMEID#, '{$player}', '{$loser}', '', 0, 0, 1, {$dealer}, '{$round}', '{$outcome}', '{$riichiList}')";
+        $this->_loggedRounds [] = "(#GAMEID#, '{$player}', '{$loser}', '', 0, 0, 1, {$dealer}, '{$round}', '{$outcome}', '{$riichiList}', {$multiRon}, '{$yakuList}')";
     }
 
     /**
@@ -160,7 +162,7 @@ class AddGame extends Controller
             $dealer = '0';
         }
 
-        $this->_loggedRounds [] = "(#GAMEID#, '{$player}', '', '', 0, 0, 0, {$dealer}, '{$round}', '{$outcome}', '')";
+        $this->_loggedRounds [] = "(#GAMEID#, '{$player}', '', '', 0, 0, 0, {$dealer}, '{$round}', '{$outcome}', '', NULL, '')";
         if (empty($this->_chomboPenalties[$player])) {
             $this->_chomboPenalties[$player] = -CHOMBO_PENALTY;
         } else {
@@ -179,6 +181,7 @@ class AddGame extends Controller
         $player = $roundData['winner'];
         $multiRon = $roundData['multiRon'];
         $loser = empty($roundData['loser']) ? '' : $roundData['loser'];
+        $yakuList = implode(',', $roundData['yakuList']);
 
         $hanCount = $roundData['han'];
         $fuCount = empty($roundData['fu']) ? '0' : $roundData['fu'];
@@ -189,7 +192,7 @@ class AddGame extends Controller
             $dealer = '0';
         }
 
-        $this->_loggedRounds [] = "(#GAMEID#, '{$player}', '{$loser}', '', {$hanCount}, {$fuCount}, 0, {$dealer}, '{$round}', '{$outcome}', '{$riichiList}', {$multiRon})";
+        $this->_loggedRounds [] = "(#GAMEID#, '{$player}', '{$loser}', '', {$hanCount}, {$fuCount}, 0, {$dealer}, '{$round}', '{$outcome}', '{$riichiList}', {$multiRon}, '{$yakuList}')";
     }
 
     /**
@@ -352,7 +355,7 @@ class AddGame extends Controller
         $rounds = array_map(function ($el) use ($gameId) {
             return str_replace("#GAMEID#", $gameId, $el);
         }, $data['rounds']);
-        $roundsInsert = "INSERT INTO round (game_id, username, loser, tempai_list, han, fu, yakuman, dealer, round, result, riichi, multiRon) VALUES " . implode(', ', $rounds);
+        $roundsInsert = "INSERT INTO round (game_id, username, loser, tempai_list, han, fu, yakuman, dealer, round, result, riichi, multiRon, yaku) VALUES " . implode(', ', $rounds);
         Db::exec($roundsInsert);
 
         return $gameId;
