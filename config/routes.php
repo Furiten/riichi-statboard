@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
     '/'               => 'Mainpage',
     '/login/'         => 'AdminLogin',
     '/last/.*'        => 'LastGames',
@@ -15,4 +15,4 @@ return array(
     '/sortition/(?<seed>[0-9a-f]+)/' => 'Sortition',
 
     '/favicon.ico'    => 'Mainpage' // костылёк ^_^
-);
+];

@@ -162,7 +162,7 @@ foreach ($gamesData as $game) {
                 }
                 break;
             case 'draw':
-                $tempaiList = array();
+                $tempaiList = [];
                 if ($round['tempai_list']) {
                     // ничья
                     $round['tempai_list'] = @unserialize($round['tempai_list']);

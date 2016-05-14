@@ -2,14 +2,14 @@
 require_once 'scripts/helpers/Array.php';
 
 class Sortition extends Controller {
-    protected $_possibleIntersections = array(
-        array(0, 1),
-        array(0, 2),
-        array(0, 3),
-        array(1, 2),
-        array(1, 3),
-        array(2, 3)
-    );
+    protected $_possibleIntersections = [
+        [0, 1],
+        [0, 2],
+        [0, 3],
+        [1, 2],
+        [1, 3],
+        [2, 3]
+    ];
 
     protected function _calculateFactor($playersMap, $playData)
     {
@@ -35,7 +35,7 @@ class Sortition extends Controller {
     }
 
     protected function _calcIntersection($playData, $sortition) {
-        $intersectionData = array();
+        $intersectionData = [];
 
         $data = ArrayHelpers::elm2Key($playData, 'game_id', true);
         $data = array_merge($data, array_chunk($sortition, 4));
@@ -181,7 +181,7 @@ class Sortition extends Controller {
     protected function _run()
     {
         $users = db::get("SELECT username, alias FROM players");
-        $aliases = array();
+        $aliases = [];
         foreach ($users as $v) {
             $aliases[$v['username']] = IS_ONLINE ? base64_decode($v['alias']) : $v['alias'];
         }
@@ -202,7 +202,7 @@ class Sortition extends Controller {
             $previousPlacements = ArrayHelpers::elm2Key($previousPlacements, 'username', true);
 
             $maxIterations = 3000;
-            $bestGroupsMap = array();
+            $bestGroupsMap = [];
             $factor = 100500;
 
             for ($i = 0; $i < $maxIterations; $i++) {
@@ -239,7 +239,7 @@ class Sortition extends Controller {
             }
 
             // store to cache
-            $cacheData = base64_encode(serialize(array($tables, $sortition, $bestIntersection, $bestIntersectionSets, $usersData)));
+            $cacheData = base64_encode(serialize([$tables, $sortition, $bestIntersection, $bestIntersectionSets, $usersData]));
             db::exec("INSERT INTO sortition_cache(hash, data) VALUES ('{$randFactor}', '{$cacheData}')");
         } else {
             $isApproved = !!$cachedSortition[0]['is_confirmed'];

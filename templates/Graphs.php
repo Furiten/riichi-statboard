@@ -88,7 +88,7 @@
         $(document).ready(function(){
             var han_data = [
                 <?php
-                    $output = array();
+                    $output = [];
                     foreach ($handsData['hands'] as $han => $count) {
                         $output []= "['{$han}', {$count}]";
                     }

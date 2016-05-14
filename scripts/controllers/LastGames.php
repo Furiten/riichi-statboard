@@ -7,7 +7,7 @@ class LastGames extends Controller
     protected function _run()
     {
         $users = Db::get("SELECT username, alias FROM players");
-        $aliases = array();
+        $aliases = [];
         foreach ($users as $v) {
             $aliases[$v['username']] = IS_ONLINE ? base64_decode($v['alias']) : $v['alias'];
         }

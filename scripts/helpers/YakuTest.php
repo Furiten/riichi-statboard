@@ -8,7 +8,7 @@ class ToLocalYakuTest extends PHPUnit_Framework_TestCase {
 
     public function testValidConvert() {
         $actual = YakuHelper::getLocalYaku('1,1,2,1,0,1,54,1,53,3', null);
-        $expected = array('yaku' => array(33, 36, 35), 'dora' => '4');
+        $expected = ['yaku' => [33, 36, 35], 'dora' => '4'];
         sort($actual['yaku']);
         sort($expected['yaku']);
         $this->assertEquals($actual['dora'], $expected['dora']);

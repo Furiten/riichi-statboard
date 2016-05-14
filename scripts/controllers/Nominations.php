@@ -9,7 +9,7 @@ class Nominations extends Controller {
 		$losers = Db::get("SELECT loser, COUNT( * ) AS cnt FROM  `round` WHERE loser !=  '' GROUP BY loser ORDER BY cnt ASC");
 		$tempai = Db::get("SELECT tempai_list FROM `round` WHERE tempai_list != ''");
 
-		$winCounts = array();
+		$winCounts = [];
 		foreach ($allUsers as $u) {
 			$winCounts[$u['username']] = 0;
 		}

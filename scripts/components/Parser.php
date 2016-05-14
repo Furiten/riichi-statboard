@@ -39,12 +39,12 @@ class Parser
      * Количество разнообразных исходов
      * @var array
      */
-    protected $_counts = array();
+    protected $_counts = [];
     /**
      * Результирующие очки
      * @var array
      */
-    protected $_resultScores = array();
+    protected $_resultScores = [];
 
     /**
      * Коллбэки
@@ -90,7 +90,7 @@ class Parser
 
     protected function _reset()
     {
-        $this->_counts = array(
+        $this->_counts = [
             'ron' => 0,
             'doubleRon' => 0,
             'tripleRon' => 0,
@@ -98,8 +98,8 @@ class Parser
             'draw' => 0,
             'chombo' => 0,
             'yakuman' => 0
-        );
-        $this->_resultScores = array();
+        ];
+        $this->_resultScores = [];
     }
 
     /**
@@ -129,10 +129,10 @@ class Parser
 
         $this->_tokenizer->callTokenEof();
 
-        return array(
+        return [
             'scores' => $this->_resultScores,
             'counts' => $this->_counts
-        );
+        ];
     }
 
     /**

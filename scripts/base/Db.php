@@ -10,7 +10,7 @@ class Db {
      * @var PDO
      */
     protected static $_connection = null;
-    protected static $_modQueries = array();
+    protected static $_modQueries = [];
 
     /**
      * Get the connection
