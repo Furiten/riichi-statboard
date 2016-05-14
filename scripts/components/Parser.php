@@ -17,7 +17,7 @@ chombo [player]
 
  */
 
-require_once 'Token.php';
+require_once 'Tokenizer.php';
 
 class Parser
 {
@@ -41,6 +41,11 @@ class Parser
     protected $_chombo;
 
     /**
+     * @var Tokenizer
+     */
+    protected $_tokenizer;
+
+    /**
      * Список ВСЕХ зарегистрированных юзеров вида alias => name
      *
      * @var array
@@ -54,6 +59,7 @@ class Parser
         $this->_draw = $drawCallback;
         $this->_chombo = $chomboCallback;
         $this->_registeredUsers = $registeredUsers;
+        $this->_tokenizer = new Tokenizer([$this, 'parseStatement']);
     }
 
     protected function _reset()
@@ -91,10 +97,10 @@ class Parser
         $tokens = preg_split('#\s+#is', $this->_prepareTokens($text));
 
         while (!empty($tokens)) {
-            $this->_nextToken(array_shift($tokens));
+            $this->_tokenizer->nextToken(array_shift($tokens));
         }
 
-        $this->_callTokenEof();
+        $this->_tokenizer->callTokenEof();
 
         return array(
             'scores' => $this->_resultScores,
@@ -102,256 +108,39 @@ class Parser
         );
     }
 
-    //<editor-fold desc="Tokenizer stuff">
-
-    protected $_currentStack = [];
-
-    protected function _nextToken($token)
-    {
-        $tokenType = Token::identifyToken($token);
-
-        if (!$this->_isTokenAllowed($tokenType)) {
-            throw new Exception("Ошибка при вводе данных: неожиданный токен " . $token, 201);
-        }
-
-        $methodName = '_callToken' . ucfirst($tokenType);
-        if (!is_callable([$this, $methodName])) {
-            throw new Exception("Ошибка при вводе данных: неизвестный токен " . $token, 200);
-        }
-
-        $this->$methodName($token);
-    }
-
-    protected function _isTokenAllowed($tokenType) {
-        return !empty(end($this->_currentStack)['allowedNextTokens'][$tokenType]);
-    }
-
-    /**
-     * Eof decisive token: should parse all remaining items in stack
-     */
-    protected function _callTokenEof() {
-        $this->_parseStatement($this->_currentStack);
-        $this->_currentStack = [];
-    }
-
-    /**
-     * New outcome decisive token: should parse items in stack, then start new statement
-     */
-    protected function _callTokenOutcome($token) {
-        $this->_parseStatement($this->_currentStack);
-        $this->_currentStack = [];
-        $methodName = '_callTokenOutcome' . ucfirst($token);
-        return $this->$methodName();
-    }
-
-    protected function _callTokenYakuEnd($token) {
-        $this->_currentStack []= [
-            'allowedNextTokens' => [
-                Token::RIICHI_DELIMITER => 1,
-                Token::OUTCOME => 1,
-            ],
-            'token' => $token,
-            'type' => Token::YAKU_END
-        ];
-    }
-    protected function _callTokenScore($token) {
-        $this->_currentStack []= [
-            'allowedNextTokens' => [
-                Token::USER_ALIAS => 1,
-                Token::OUTCOME => 1,
-            ],
-            'token' => $token,
-            'type' => Token::SCORE
-        ];
-    }
-    protected function _callTokenYakuStart($token) {
-        $this->_currentStack []= [
-            'allowedNextTokens' => [
-                Token::YAKU => 1,
-            ],
-            'token' => $token,
-            'type' => Token::YAKU_START
-        ];
-    }
-    protected function _callTokenYaku($token) {
-        $this->_currentStack []= [
-            'allowedNextTokens' => [
-                Token::YAKU => 1,
-                Token::YAKU_END => 1,
-            ],
-            'token' => $token,
-            'type' => Token::YAKU
-        ];
-    }
-    protected function _callTokenScoreDelimiter($token) {
-        $this->_currentStack []= [
-            'allowedNextTokens' => [
-                Token::SCORE => 1,
-            ],
-            'token' => $token,
-            'type' => Token::SCORE_DELIMITER
-        ];
-    }
-    protected function _callTokenHanCount($token) {
-        $this->_currentStack []= [
-            'allowedNextTokens' => [
-                Token::FU_COUNT => 1,
-                Token::RIICHI_DELIMITER => 1,
-                Token::YAKU_START => 1,
-            ],
-            'token' => $token,
-            'type' => Token::HAN_COUNT
-        ];
-    }
-    protected function _callTokenFuCount($token) {
-        $this->_currentStack []= [
-            'allowedNextTokens' => [
-                Token::RIICHI_DELIMITER => 1,
-                Token::YAKU_START => 1,
-            ],
-            'token' => $token,
-            'type' => Token::FU_COUNT
-        ];
-    }
-    protected function _callTokenYakuman($token) {
-        $this->_currentStack []= [
-            'allowedNextTokens' => [
-                Token::YAKU_START => 1,
-            ],
-            'token' => $token,
-            'type' => Token::YAKUMAN
-        ];
-    }
-    protected function _callTokenTempai($token) {
-        $this->_currentStack []= [
-            'allowedNextTokens' => [
-                Token::ALL => 1,
-                Token::NOBODY => 1,
-                Token::USER_ALIAS => 1,
-            ],
-            'token' => $token,
-            'type' => Token::TEMPAI
-        ];
-    }
-    protected function _callTokenAll($token) {
-        $this->_currentStack []= [
-            'allowedNextTokens' => [
-                Token::OUTCOME => 1,
-            ],
-            'token' => $token,
-            'type' => Token::ALL
-        ];
-    }
-    protected function _callTokenNobody($token) {
-        $this->_currentStack []= [
-            'allowedNextTokens' => [
-                Token::OUTCOME => 1,
-            ],
-            'token' => $token,
-            'type' => Token::NOBODY
-        ];
-    }
-    protected function _callTokenRiichi($token) {
-        $this->_currentStack []= [
-            'allowedNextTokens' => [
-                Token::USER_ALIAS => 1,
-            ],
-            'token' => $token,
-            'type' => Token::TEMPAI
-        ];
-    }
-    protected function _callTokenOutcomeRon($token) {
-        $this->_currentStack []= [
-            'allowedNextTokens' => [
-                Token::USER_ALIAS => 1,
-            ],
-            'token' => $token,
-            'type' => Token::OUTCOME
-        ];
-    }
-    protected function _callTokenOutcomeTsumo($token) {
-        $this->_currentStack []= [
-            'allowedNextTokens' => [
-                Token::USER_ALIAS => 1,
-            ],
-            'token' => $token,
-            'type' => Token::OUTCOME
-        ];
-    }
-    protected function _callTokenOutcomeDraw($token) {
-        $this->_currentStack []= [
-            'allowedNextTokens' => [
-                Token::TEMPAI => 1,
-            ],
-            'token' => $token,
-            'type' => Token::OUTCOME
-        ];
-    }
-    protected function _callTokenOutcomeChombo($token) {
-        $this->_currentStack []= [
-            'allowedNextTokens' => [
-                Token::USER_ALIAS => 1,
-            ],
-            'token' => $token,
-            'type' => Token::OUTCOME
-        ];
-    }
-    protected function _callTokenFrom($token) {
-        $this->_currentStack []= [
-            'allowedNextTokens' => [
-                Token::USER_ALIAS => 1,
-            ],
-            'token' => $token,
-            'type' => Token::FROM
-        ];
-    }
-    protected function _callTokenUserAlias($token) {
-        $this->_currentStack []= [
-            'allowedNextTokens' => [
-                Token::SCORE_DELIMITER => 1,
-                Token::USER_ALIAS => 1,
-                Token::FROM => 1,
-                Token::HAN_COUNT => 1,
-                Token::YAKUMAN => 1,
-                Token::OUTCOME => 1,
-            ],
-            'token' => $token,
-            'type' => Token::USER_ALIAS
-        ];
-    }
-
-    //</editor-fold>
-
     /**
      * Сюда прилетают 100% лексически (и отчасти синтаксически) валидные выражения.
      * Надо их проверить и распарсить
-     * @param $statement array
+     * @param $statement Token[]
      * @throws Exception
      */
-    protected function _parseStatement($statement) {
-        if ($statement[0]['type'] == Token::USER_ALIAS) {
+    public function parseStatement($statement) {
+        if ($statement[0]->type() == Tokenizer::USER_ALIAS) {
             // Первая строка с очками. Пробуем парсить.
             while (!empty($statement)) {
+                /** @var $player Token */
                 $player = array_shift($statement);
+                /** @var $delimiter Token */
                 $delimiter = array_shift($statement);
+                /** @var $score Token */
                 $score = array_shift($statement);
 
-                if ($player['type'] != Token::USER_ALIAS || $delimiter['type'] != Token::SCORE_DELIMITER || $score['type'] != Token::SCORE) {
+                if ($player->type() != Tokenizer::USER_ALIAS || $delimiter->type() != Tokenizer::SCORE_DELIMITER || $score->type() != Tokenizer::SCORE) {
                     throw new Exception("Ошибка при вводе данных: некорректный формат строки очков:
-                        {$player['token']} {$delimiter['token']} {$score['token']}" , 205);
+                        {$player} {$delimiter} {$score}" , 205);
                 }
 
-                if (empty($this->_registeredUsers[$player['token']])) {
-                    throw new Exception("Ошибка при вводе данных: игрок {$player['token']} не зарегистрирован", 203);
+                if (empty($this->_registeredUsers[$player->token()])) {
+                    throw new Exception("Ошибка при вводе данных: игрок {$player} не зарегистрирован", 203);
                 }
 
-                $this->_resultScores[$player['token']] = $score['token'];
+                $this->_resultScores[$player->token()] = $score;
             }
 
             if (count($this->_resultScores) != 4) { // TODO: Изменить условие, если будет хиросима :)
                 throw new Exception("Ошибка при вводе данных: количество указанных игроков не равно 4", 204);
             }
-        } else if ($statement[0]['type'] == Token::OUTCOME) {
+        } else if ($statement[0]->type() == Tokenizer::OUTCOME) {
             // Строка с записью раунда. Пробуем парсить.
             // TODO!!!!111
         } else {
