@@ -14,29 +14,38 @@ class ParserTest extends PHPUnit_Framework_TestCase
      * @var Parser
      */
     protected $_parser;
+    /**
+     * @var Tokenizer
+     */
+    protected $_tokenizer;
     protected $_callbacks = [];
     protected $_hooks = [];
 
     public function __construct()
     {
         $this->_callbacks['usual'] = function ($input) {
-            if (is_callable($this->_hooks['usual'])) {
+            if (!empty($this->_hooks['usual']) && is_callable($this->_hooks['usual'])) {
                 $this->_hooks['usual']($input);
             }
         };
         $this->_callbacks['yakuman'] = function ($input) {
-            if (is_callable($this->_hooks['yakuman'])) {
+            if (!empty($this->_hooks['yakuman']) && is_callable($this->_hooks['yakuman'])) {
                 $this->_hooks['yakuman']($input);
             }
         };
         $this->_callbacks['draw'] = function ($input) {
-            if (is_callable($this->_hooks['draw'])) {
+            if (!empty($this->_hooks['draw']) && is_callable($this->_hooks['draw'])) {
                 $this->_hooks['draw']($input);
             }
         };
         $this->_callbacks['chombo'] = function ($input) {
-            if (is_callable($this->_hooks['chombo'])) {
+            if (!empty($this->_hooks['chombo']) && is_callable($this->_hooks['chombo'])) {
                 $this->_hooks['chombo']($input);
+            }
+        };
+        $this->_callbacks['tokenizerCb'] = function ($input) {
+            if (!empty($this->_hooks['tokenizerCb']) && is_callable($this->_hooks['tokenizerCb'])) {
+                $this->_hooks['tokenizerCb']($input);
             }
         };
     }
@@ -50,11 +59,14 @@ class ParserTest extends PHPUnit_Framework_TestCase
             $this->_callbacks['chombo'],
             $this->_users
         );
+
+        $this->_tokenizer = new Tokenizer($this->_callbacks['tokenizerCb']);
     }
 
     public function tearDown()
     {
         $this->_parser = null;
+        $this->_tokenizer = null;
         $this->_hooks = [
             'usual' => function () {
                 throw new Exception('Unexpected handler call: usual');
@@ -67,8 +79,55 @@ class ParserTest extends PHPUnit_Framework_TestCase
             },
             'chombo' => function () {
                 throw new Exception('Unexpected handler call: chombo');
+            },
+            'tokenizerCb' => function () {
+                throw new Exception('Unexpected handler call: tokenizerCb');
             }
         ];
+    }
+
+    protected function _tokenize($str)
+    {
+        $this->_tokenizer->_reassignLastAllowedToken([Tokenizer::OUTCOME => 1]);
+
+        $tokens = preg_split('#\s+#', $str);
+        foreach ($tokens as $t) {
+            $this->_tokenizer->nextToken($t);
+        }
+        $tokens = [];
+        $this->_hooks['tokenizerCb'] = function($statement) use (&$tokens) {
+            $tokens []= $statement;
+        };
+        $this->_tokenizer->callTokenEof();
+        return reset($tokens);
+    }
+
+    public function testTempaiParse()
+    {
+        $validTokens = $this->_tokenize('draw tempai manabi jun');
+        $expected = [
+            'manabi',
+            'jun'
+        ];
+
+        $actual = $this->_parser->_iGetTempai($validTokens, ['manabi' => 1, 'jun' => 1]);
+        sort($expected);
+        sort($actual);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testRiichiParse()
+    {
+        $validTokens = $this->_tokenize('ron heilage 1han 30fu riichi manabi jun');
+        $expected = [
+            'manabi',
+            'jun'
+        ];
+
+        $actual = $this->_parser->_iGetRiichi($validTokens, ['manabi' => 1, 'jun' => 1]);
+        sort($expected);
+        sort($actual);
+        $this->assertEquals($expected, $actual);
     }
 
     public function testEmptyLog()
@@ -84,7 +143,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
 
         ksort($expected);
         ksort($actual['scores']);
-        $this->assertEquals($actual['scores'], $expected);
+        $this->assertEquals($expected, $actual['scores']);
     }
 
     /**
@@ -124,7 +183,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
                       ron heilage from frontier 1han 30fu';
         $expected = [
             'dealer' => false,
-            'fu' => 30,
+            'fu' => '30',
             'han' => '1',
             'honba' => 0,
             'outcome' => 'ron',
@@ -138,12 +197,12 @@ class ParserTest extends PHPUnit_Framework_TestCase
         $this->_hooks['usual'] = function ($data) use ($expected) {
             ksort($data);
             ksort($expected);
-            $this->assertEquals($data, $expected);
+            $this->assertEquals($expected, $data);
         };
         $this->_parser->parse($validText);
-        $this->assertEquals($this->_parser->_getCurrentRound(), 2); // starting from 1
-        $this->assertEquals($this->_parser->_getCurrentDealer(), 1); // starting from 0
-        $this->assertEquals($this->_parser->_getHonba(), 0);
+        $this->assertEquals(2, $this->_parser->_getCurrentRound()); // starting from 1
+        $this->assertEquals(1, $this->_parser->_getCurrentDealer()); // starting from 0
+        $this->assertEquals(0, $this->_parser->_getHonba());
     }
 
     public function testDealerRon()
@@ -152,7 +211,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
                       ron heilage from frontier 1han 30fu';
         $expected = [
             'dealer' => true,
-            'fu' => 30,
+            'fu' => '30',
             'han' => '1',
             'honba' => 0,
             'outcome' => 'ron',
@@ -166,12 +225,12 @@ class ParserTest extends PHPUnit_Framework_TestCase
         $this->_hooks['usual'] = function ($data) use ($expected) {
             ksort($data);
             ksort($expected);
-            $this->assertEquals($data, $expected);
+            $this->assertEquals($expected, $data);
         };
         $this->_parser->parse($validText);
-        $this->assertEquals($this->_parser->_getCurrentRound(), 1); // starting from 1
-        $this->assertEquals($this->_parser->_getCurrentDealer(), 0); // starting from 0
-        $this->assertEquals($this->_parser->_getHonba(), 1);
+        $this->assertEquals(1, $this->_parser->_getCurrentRound()); // starting from 1
+        $this->assertEquals(0, $this->_parser->_getCurrentDealer()); // starting from 0
+        $this->assertEquals(1, $this->_parser->_getHonba());
     }
 
     public function testRonWithRiichi()
@@ -180,7 +239,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
                       ron heilage from frontier 1han 30fu riichi manabi jun';
         $expected = [
             'dealer' => false,
-            'fu' => 30,
+            'fu' => '30',
             'han' => '1',
             'honba' => 0,
             'outcome' => 'ron',
@@ -194,12 +253,12 @@ class ParserTest extends PHPUnit_Framework_TestCase
         $this->_hooks['usual'] = function ($data) use ($expected) {
             ksort($data);
             ksort($expected);
-            $this->assertEquals($data, $expected);
+            $this->assertEquals($expected, $data);
         };
         $this->_parser->parse($validText);
-        $this->assertEquals($this->_parser->_getCurrentRound(), 2); // starting from 1
-        $this->assertEquals($this->_parser->_getCurrentDealer(), 1); // starting from 0
-        $this->assertEquals($this->_parser->_getHonba(), 0);
+        $this->assertEquals(2, $this->_parser->_getCurrentRound()); // starting from 1
+        $this->assertEquals(1, $this->_parser->_getCurrentDealer()); // starting from 0
+        $this->assertEquals(0, $this->_parser->_getHonba());
     }
 
     /**
@@ -263,7 +322,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
                       tsumo heilage 1han 30fu';
         $expected = [
             'dealer' => false,
-            'fu' => 30,
+            'fu' => '30',
             'han' => '1',
             'honba' => 0,
             'outcome' => 'tsumo',
@@ -276,12 +335,12 @@ class ParserTest extends PHPUnit_Framework_TestCase
         $this->_hooks['usual'] = function ($data) use ($expected) {
             ksort($data);
             ksort($expected);
-            $this->assertEquals($data, $expected);
+            $this->assertEquals($expected, $data);
         };
         $this->_parser->parse($validText);
-        $this->assertEquals($this->_parser->_getCurrentRound(), 2); // starting from 1
-        $this->assertEquals($this->_parser->_getCurrentDealer(), 1); // starting from 0
-        $this->assertEquals($this->_parser->_getHonba(), 0);
+        $this->assertEquals(2, $this->_parser->_getCurrentRound()); // starting from 1
+        $this->assertEquals(1, $this->_parser->_getCurrentDealer()); // starting from 0
+        $this->assertEquals(0, $this->_parser->_getHonba());
     }
 
     public function testDealerTsumo()
@@ -290,7 +349,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
                       tsumo heilage 1han 30fu';
         $expected = [
             'dealer' => true,
-            'fu' => 30,
+            'fu' => '30',
             'han' => '1',
             'honba' => 0,
             'outcome' => 'tsumo',
@@ -303,12 +362,12 @@ class ParserTest extends PHPUnit_Framework_TestCase
         $this->_hooks['usual'] = function ($data) use ($expected) {
             ksort($data);
             ksort($expected);
-            $this->assertEquals($data, $expected);
+            $this->assertEquals($expected, $data);
         };
         $this->_parser->parse($validText);
-        $this->assertEquals($this->_parser->_getCurrentRound(), 1); // starting from 1
-        $this->assertEquals($this->_parser->_getCurrentDealer(), 0); // starting from 0
-        $this->assertEquals($this->_parser->_getHonba(), 1);
+        $this->assertEquals(1, $this->_parser->_getCurrentRound()); // starting from 1
+        $this->assertEquals(0, $this->_parser->_getCurrentDealer()); // starting from 0
+        $this->assertEquals(1, $this->_parser->_getHonba());
     }
 
     public function testTsumoWithRiichi()
@@ -317,7 +376,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
                       tsumo heilage 1han 30fu riichi manabi jun';
         $expected = [
             'dealer' => false,
-            'fu' => 30,
+            'fu' => '30',
             'han' => '1',
             'honba' => 0,
             'outcome' => 'tsumo',
@@ -330,12 +389,12 @@ class ParserTest extends PHPUnit_Framework_TestCase
         $this->_hooks['usual'] = function ($data) use ($expected) {
             ksort($data);
             ksort($expected);
-            $this->assertEquals($data, $expected);
+            $this->assertEquals($expected, $data);
         };
         $this->_parser->parse($validText);
-        $this->assertEquals($this->_parser->_getCurrentRound(), 2); // starting from 1
-        $this->assertEquals($this->_parser->_getCurrentDealer(), 1); // starting from 0
-        $this->assertEquals($this->_parser->_getHonba(), 0);
+        $this->assertEquals(2, $this->_parser->_getCurrentRound()); // starting from 1
+        $this->assertEquals(1, $this->_parser->_getCurrentDealer()); // starting from 0
+        $this->assertEquals(0, $this->_parser->_getHonba());
     }
 
     /**
@@ -392,12 +451,12 @@ class ParserTest extends PHPUnit_Framework_TestCase
         $this->_hooks['draw'] = function ($data) use ($expected) {
             ksort($data);
             ksort($expected);
-            $this->assertEquals($data, $expected);
+            $this->assertEquals($expected, $data);
         };
         $this->_parser->parse($validText);
-        $this->assertEquals($this->_parser->_getCurrentRound(), 2); // starting from 1
-        $this->assertEquals($this->_parser->_getCurrentDealer(), 1); // starting from 0
-        $this->assertEquals($this->_parser->_getHonba(), 1);
+        $this->assertEquals(2, $this->_parser->_getCurrentRound()); // starting from 1
+        $this->assertEquals(1, $this->_parser->_getCurrentDealer()); // starting from 0
+        $this->assertEquals(1, $this->_parser->_getHonba());
     }
 
     public function testDealerTempaiDraw()
@@ -421,12 +480,12 @@ class ParserTest extends PHPUnit_Framework_TestCase
         $this->_hooks['draw'] = function ($data) use ($expected) {
             ksort($data);
             ksort($expected);
-            $this->assertEquals($data, $expected);
+            $this->assertEquals($expected, $data);
         };
         $this->_parser->parse($validText);
-        $this->assertEquals($this->_parser->_getCurrentRound(), 1); // starting from 1
-        $this->assertEquals($this->_parser->_getCurrentDealer(), 0); // starting from 0
-        $this->assertEquals($this->_parser->_getHonba(), 1);
+        $this->assertEquals(1, $this->_parser->_getCurrentRound()); // starting from 1
+        $this->assertEquals(0, $this->_parser->_getCurrentDealer()); // starting from 0
+        $this->assertEquals(1, $this->_parser->_getHonba());
     }
 
     public function testDrawTempaiAll()
@@ -450,12 +509,12 @@ class ParserTest extends PHPUnit_Framework_TestCase
         $this->_hooks['draw'] = function ($data) use ($expected) {
             ksort($data);
             ksort($expected);
-            $this->assertEquals($data, $expected);
+            $this->assertEquals($expected, $data);
         };
         $this->_parser->parse($validText);
-        $this->assertEquals($this->_parser->_getCurrentRound(), 1); // starting from 1
-        $this->assertEquals($this->_parser->_getCurrentDealer(), 0); // starting from 0
-        $this->assertEquals($this->_parser->_getHonba(), 1);
+        $this->assertEquals(1, $this->_parser->_getCurrentRound()); // starting from 1
+        $this->assertEquals(0, $this->_parser->_getCurrentDealer()); // starting from 0
+        $this->assertEquals(1, $this->_parser->_getHonba());
     }
 
     public function testDrawTempaiNone()
@@ -479,12 +538,12 @@ class ParserTest extends PHPUnit_Framework_TestCase
         $this->_hooks['draw'] = function ($data) use ($expected) {
             ksort($data);
             ksort($expected);
-            $this->assertEquals($data, $expected);
+            $this->assertEquals($expected, $data);
         };
         $this->_parser->parse($validText);
-        $this->assertEquals($this->_parser->_getCurrentRound(), 2); // starting from 1
-        $this->assertEquals($this->_parser->_getCurrentDealer(), 1); // starting from 0
-        $this->assertEquals($this->_parser->_getHonba(), 1);
+        $this->assertEquals(2, $this->_parser->_getCurrentRound()); // starting from 1
+        $this->assertEquals(1, $this->_parser->_getCurrentDealer()); // starting from 0
+        $this->assertEquals(1, $this->_parser->_getHonba());
     }
 
     public function testDrawWithRiichi()
@@ -508,17 +567,17 @@ class ParserTest extends PHPUnit_Framework_TestCase
         $this->_hooks['draw'] = function ($data) use ($expected) {
             ksort($data);
             ksort($expected);
-            $this->assertEquals($data, $expected);
+            $this->assertEquals($expected, $data);
         };
         $this->_parser->parse($validText);
-        $this->assertEquals($this->_parser->_getCurrentRound(), 2); // starting from 1
-        $this->assertEquals($this->_parser->_getCurrentDealer(), 1); // starting from 0
-        $this->assertEquals($this->_parser->_getHonba(), 1);
+        $this->assertEquals(2, $this->_parser->_getCurrentRound()); // starting from 1
+        $this->assertEquals(1, $this->_parser->_getCurrentDealer()); // starting from 0
+        $this->assertEquals(1, $this->_parser->_getHonba());
     }
 
     /**
      * @expectedException Exception
-     * @expectedExceptionCode 109
+     * @expectedExceptionCode 108
      */
     public function testInvalidDrawNoTempaiList()
     {
@@ -529,7 +588,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException Exception
-     * @expectedExceptionCode 104
+     * @expectedExceptionCode 117
      */
     public function testInvalidDrawMistypedTempai()
     {
@@ -581,7 +640,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
 
         $expectedUsual = [
             'dealer' => false,
-            'fu' => 30,
+            'fu' => '30',
             'han' => '1',
             'honba' => 1,
             'outcome' => 'ron',
@@ -596,20 +655,20 @@ class ParserTest extends PHPUnit_Framework_TestCase
         $this->_hooks['draw'] = function ($data) use ($expectedDraw) {
             ksort($data);
             ksort($expectedDraw);
-            $this->assertEquals($data, $expectedDraw);
+            $this->assertEquals($expectedDraw, $data);
         };
 
         $this->_hooks['usual'] = function ($data) use ($expectedUsual) {
             ksort($data);
             ksort($expectedUsual);
-            $this->assertEquals($data, $expectedUsual);
+            $this->assertEquals($expectedUsual, $data);
         };
 
         $this->_parser->parse($validText);
-        $this->assertEquals($this->_parser->_getCurrentRound(), 3); // starting from 1
-        $this->assertEquals($this->_parser->_getCurrentDealer(), 2); // starting from 0
-        $this->assertEquals($this->_parser->_getHonba(), 0);
-        $this->assertEquals($this->_parser->_getRiichi(), 0);
+        $this->assertEquals(3, $this->_parser->_getCurrentRound()); // starting from 1
+        $this->assertEquals(2, $this->_parser->_getCurrentDealer()); // starting from 0
+        $this->assertEquals(0, $this->_parser->_getHonba());
+        $this->assertEquals(0, $this->_parser->_getRiichiCount());
     }
 
     public function testBasicChombo()
@@ -626,12 +685,12 @@ class ParserTest extends PHPUnit_Framework_TestCase
         $this->_hooks['chombo'] = function ($data) use ($expected) {
             ksort($data);
             ksort($expected);
-            $this->assertEquals($data, $expected);
+            $this->assertEquals($expected, $data);
         };
         $this->_parser->parse($validText);
-        $this->assertEquals($this->_parser->_getCurrentRound(), 1); // starting from 1
-        $this->assertEquals($this->_parser->_getCurrentDealer(), 0); // starting from 0
-        $this->assertEquals($this->_parser->_getHonba(), 0);
+        $this->assertEquals(1, $this->_parser->_getCurrentRound()); // starting from 1
+        $this->assertEquals(0, $this->_parser->_getCurrentDealer()); // starting from 0
+        $this->assertEquals(0, $this->_parser->_getHonba());
     }
 
     public function testDealerChombo()
@@ -648,12 +707,12 @@ class ParserTest extends PHPUnit_Framework_TestCase
         $this->_hooks['chombo'] = function ($data) use ($expected) {
             ksort($data);
             ksort($expected);
-            $this->assertEquals($data, $expected);
+            $this->assertEquals($expected, $data);
         };
         $this->_parser->parse($validText);
-        $this->assertEquals($this->_parser->_getCurrentRound(), 1); // starting from 1
-        $this->assertEquals($this->_parser->_getCurrentDealer(), 0); // starting from 0
-        $this->assertEquals($this->_parser->_getHonba(), 0);
+        $this->assertEquals(1, $this->_parser->_getCurrentRound()); // starting from 1
+        $this->assertEquals(0, $this->_parser->_getCurrentDealer()); // starting from 0
+        $this->assertEquals(0, $this->_parser->_getHonba());
     }
 
     /**
