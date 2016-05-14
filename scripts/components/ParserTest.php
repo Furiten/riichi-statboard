@@ -609,7 +609,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($this->_parser->_getCurrentRound(), 3); // starting from 1
         $this->assertEquals($this->_parser->_getCurrentDealer(), 2); // starting from 0
         $this->assertEquals($this->_parser->_getHonba(), 0);
-        $this->assertEquals($this->_parser->_getRiichi(), 0);
+        $this->assertEquals($this->_parser->_getRiichiCount(), 0);
     }
 
     public function testBasicChombo()

@@ -21,6 +21,12 @@ require_once 'Tokenizer.php';
 
 class Parser
 {
+    protected $_players;
+    protected $_currentDealer = 0;
+    protected $_currentRound = 1;
+    protected $_honba = 0;
+    protected $_riichi = 0;
+
     /**
      * Количество разнообразных исходов
      * @var array
@@ -52,6 +58,16 @@ class Parser
      */
     protected $_registeredUsers;
 
+    /**
+     * @var PointsCalc
+     */
+    protected $_calc;
+
+    public function setCalc(PointsCalc $calc)
+    {
+        $this->_calc = $calc;
+    }
+
     public function __construct($usualWinCallback, $yakumanCallback, $drawCallback, $chomboCallback, $registeredUsers)
     {
         $this->_usualWin = $usualWinCallback;
@@ -81,7 +97,8 @@ class Parser
      * @param $text
      * @return string
      */
-    protected function _prepareTokens($text) {
+    protected function _prepareTokens($text)
+    {
         return str_replace([
             ':', // scoring
             '(', ')' // yaku delimiters
@@ -114,7 +131,8 @@ class Parser
      * @param $statement Token[]
      * @throws Exception
      */
-    public function parseStatement($statement) {
+    public function parseStatement($statement)
+    {
         if ($statement[0]->type() == Tokenizer::USER_ALIAS) {
             // Первая строка с очками. Пробуем парсить.
             while (!empty($statement)) {
@@ -127,7 +145,7 @@ class Parser
 
                 if ($player->type() != Tokenizer::USER_ALIAS || $delimiter->type() != Tokenizer::SCORE_DELIMITER || $score->type() != Tokenizer::SCORE) {
                     throw new Exception("Ошибка при вводе данных: некорректный формат строки очков:
-                        {$player} {$delimiter} {$score}" , 205);
+                        {$player} {$delimiter} {$score}", 205);
                 }
 
                 if (empty($this->_registeredUsers[$player->token()])) {
@@ -137,137 +155,143 @@ class Parser
                 $this->_resultScores[$player->token()] = $score;
             }
 
+            $this->_players = array_keys($this->_resultScores);
+            if ($this->_calc) {
+                $this->_calc->setPlayersList($this->_players);
+            }
+
             if (count($this->_resultScores) != 4) { // TODO: Изменить условие, если будет хиросима :)
                 throw new Exception("Ошибка при вводе данных: количество указанных игроков не равно 4", 204);
             }
         } else if ($statement[0]->type() == Tokenizer::OUTCOME) {
             // Строка с записью раунда. Пробуем парсить.
-            // TODO!!!!111
-        } else {
-            $string = array_reduce($statement, function($acc, $el) {
-                return $acc . ' ' . $el;
-            }, '');
-            throw new Exception("Ошибка при вводе данных: не удалось разобрать начало строки: " . $string, 202);
+            $methodName = '_parseOutcome' . ucfirst($statement[0]->token());
+            if (!is_callable([$this, $methodName])) {
+                throw new Exception("Не удалось разобрать исход ({$statement[0]->token()}: {$methodName})", 205);
+            }
+
+            $this->$methodName($statement, $this->_resultScores);
         }
+
+        $string = array_reduce($statement, function ($acc, $el) {
+            return $acc . ' ' . $el;
+        }, '');
+        throw new Exception("Ошибка при вводе данных: не удалось разобрать начало строки: " . $string, 202);
     }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
     /**
-     * @var PointsCalc
+     * @param $tokens Token[]
+     * @param $type
+     * @return Token
      */
-    protected $_calc;
-
-
-
-
-
-    protected $_players;
-    protected $_currentDealer = 0;
-    protected $_currentRound = 1;
-    protected $_honba = 0;
-    protected $_riichi = 0;
-
-
-
-    public function setCalc(PointsCalc $calc)
-    {
-        $this->_calc = $calc;
-    }
-
-    public function ___parse($text)
-    {
-        $rows = array_filter(array_map('trim', explode("\n", $text)));
-
-        $header = array_shift($rows);
-        $resultScores = $this->_parseHeader($header);
-
-        $this->_players = array_keys($resultScores);
-        if ($this->_calc) {
-            $this->_calc->setPlayersList($this->_players);
-        }
-
-        foreach ($rows as $row) {
-            $this->_parseRow($row, $resultScores);
-        }
-
-        return array(
-            'scores' => $resultScores,
-            'counts' => $this->_counts
-        );
-    }
-
-    protected function _parseHeader($header)
-    {
-        $scoresRegex = '#^\s*([-_a-zа-яё0-9]*)\:(-?\d+)\s+([-_a-zа-яё0-9]*)\:(-?\d+)\s+([-_a-zа-яё0-9]*)\:(-?\d+)\s+([-_a-zа-яё0-9]*)\:(-?\d+)\s*$#iu';
-        if (!preg_match($scoresRegex, $header, $matches)) {
-            throw new Exception("Ошибка при вводе данных: не удалось разобрать строку со списком игроков и очками", 100);
-        }
-
-        list (, $player1, $player1Score, $player2, $player2Score, $player3, $player3Score, $player4, $player4Score) = $matches;
-        $unregs = array();
-        for ($i = 1; $i <= 4; $i++) {
-            $var = 'player' . $i;
-            if (empty($this->_registeredUsers[$$var])) {
-                $unregs [] = $$var;
+    protected function _findByType($tokens, $type) {
+        foreach ($tokens as $v) {
+            if ($v->type() == $type) {
+                return $v;
             }
         }
-        if (!empty($unregs)) {
-            throw new Exception("Следующие игроки не зарегистрированы: " . implode(', ', $unregs), 101);
-        }
 
-        return array(
-            $player1 => $player1Score,
-            $player2 => $player2Score,
-            $player3 => $player3Score,
-            $player4 => $player4Score
-        );
+        return new Token(null, Tokenizer::UNKNOWN_TOKEN, [], null);
     }
 
-    protected function _parseRow($row, $participants)
-    {
-        $tokens = array_filter(array_map('trim', explode(' ', $row)));
-        return $this->_parseOutcome($tokens, $participants);
-    }
+    /**
+     * @param $tokens Token[]
+     * @param $participants string[]
+     * @return Token[]
+     * @throws Exception
+     */
+    protected function _getRiichi($tokens, $participants) {
+        $riichi = [];
+        $started = false;
+        foreach ($tokens as $v) {
+            if ($v->type() == Tokenizer::RIICHI_DELIMITER) {
+                $started = true;
+            }
 
-    protected function _parseOutcome($tokens, $participants)
-    {
-        $outcome = array_shift($tokens);
-        $methodName = '_parseOutcome' . ucfirst($outcome);
-        if (!is_callable([$this, $methodName])) {
-            throw new Exception("Не удалось разобрать исход ({$outcome}: {$methodName})", 106);
+            if ($started) {
+                if ($v->type() == Tokenizer::USER_ALIAS) {
+                    if (empty($participants[$v->token()])) {
+                        throw new Exception("Не удалось распарсить риичи. Игрок {$v->token()} не указан в заголовке лога. Опечатка?", 107);
+                    }
+                    $riichi []= $v->token();
+                } else {
+                    return $riichi;
+                }
+            }
         }
 
-        return $this->$methodName($tokens, $participants);
+        if ($started) {
+            throw new Exception('Не удалось распознать риичи.', 108);
+        }
+        return $riichi;
+    }
+
+    /**
+     * @param $tokens Token[]
+     * @param $participants string[]
+     * @return Token[]
+     * @throws Exception
+     */
+    protected function _getTempai($tokens, $participants) {
+        $tempai = [];
+        $started = false;
+        foreach ($tokens as $v) {
+            if ($v->type() == Tokenizer::TEMPAI) {
+                $started = true;
+            }
+
+            if ($started) {
+                if ($v->type() == Tokenizer::USER_ALIAS) {
+                    if (empty($participants[$v->token()])) {
+                        throw new Exception("Не удалось распарсить темпай. Игрок {$v->token()} не указан в заголовке лога. Опечатка?", 117);
+                    }
+                    $tempai []= $v->token();
+                } else if ($v->type() == Tokenizer::ALL) {
+                    if (!empty($tempai)) {
+                        throw new Exception("Не удалось распарсить темпай. Неожиданное ключевое слово 'all'. Опечатка?", 119);
+                    }
+                    return array_keys($participants);
+                } else if ($v->type() == Tokenizer::NOBODY) {
+                    if (!empty($tempai)) {
+                        throw new Exception("Не удалось распарсить темпай. Неожиданное ключевое слово 'nobody'. Опечатка?", 120);
+                    }
+                    return [];
+                } else {
+                    return $tempai;
+                }
+            }
+        }
+
+        if ($started || (!$started && empty($tempai))) {
+            throw new Exception('Не удалось распознать темпай.', 118);
+        }
+        return $tempai;
     }
 
     protected function _parseOutcomeRon($tokens, $participants)
     {
-        $resultData = ['outcome' => 'ron', 'round' => $this->_currentRound];
-        $winner = array_shift($tokens);
-        if (empty($participants[$winner])) {
+        /** @var $winner Token
+          * @var $loser Token */
+        list(/*ron*/, $winner, /*from*/, $loser) = $tokens;
+        if (empty($participants[$winner->token()])) {
             throw new Exception("Игрок {$winner} не указан в заголовке лога. Опечатка?", 104);
         }
-
-        $from = array_shift($tokens);
-        if ($from != 'from') {
-            throw new Exception("Не найден проигравший; ошибка синтаксиса - пропущено ключевое слово from", 103);
-        }
-
-        $loser = array_shift($tokens);
-        if (empty($participants[$loser])) {
+        if (empty($participants[$loser->token()])) {
             throw new Exception("Игрок {$loser} не указан в заголовке лога. Опечатка?", 105);
         }
 
-        $resultData['winner'] = $winner;
-        $resultData['loser'] = $loser;
-        $resultData['honba'] = $this->_honba;
-
-        $resultData = array_merge($resultData, $this->_parseHan($tokens, $participants, $resultData));
-        $this->_counts['ron']++;
-        $resultData['riichi_totalCount'] = $this->_riichi;
-        $this->_riichi = 0;
+        $resultData = [
+            'outcome' => 'ron',
+            'round' => $this->_currentRound,
+            'winner' => $winner,
+            'loser' => $loser,
+            'honba' => $this->_honba,
+            'han' => $this->_findByType($tokens, Tokenizer::HAN_COUNT)->clean(),
+            'fu' => $this->_findByType($tokens, Tokenizer::FU_COUNT)->clean(),
+            'yakuman' => !!$this->_findByType($tokens, Tokenizer::YAKUMAN)->token(),
+            'riichi' => $this->_getRiichi($tokens, $participants),
+            'dealer' => $this->_checkDealer($winner)
+        ];
 
         if ($this->_calc) {
             $this->_calc->registerRon(
@@ -277,13 +301,13 @@ class Parser
                 $loser,
                 $this->_honba,
                 $resultData['riichi'],
-                $resultData['riichi_totalCount'],
+                count($resultData['riichi']),
                 $this->_players[$this->_currentDealer % 4],
                 !empty($resultData['yakuman'])
             );
         }
 
-        if ($resultData['dealer'] = $this->_checkDealer($winner)) {
+        if ($resultData['dealer']) {
             $this->_honba++;
         } else {
             $this->_currentRound++;
@@ -291,7 +315,9 @@ class Parser
             $this->_currentDealer++;
         }
 
+        $this->_counts['ron']++;
         if (!empty($resultData['yakuman'])) {
+            $resultData['han'] = 13; // TODO: remove
             $this->_counts['yakuman']++;
             call_user_func_array($this->_yakuman, array($resultData));
         } else {
@@ -301,20 +327,23 @@ class Parser
 
     protected function _parseOutcomeTsumo($tokens, $participants)
     {
-        $resultData = ['outcome' => 'tsumo', 'round' => $this->_currentRound];
-        $winner = array_shift($tokens);
-        if (empty($participants[$winner])) {
+        /** @var $winner Token */
+        list(/*tsumo*/, $winner) = $tokens;
+        if (empty($participants[$winner->token()])) {
             throw new Exception("Игрок {$winner} не указан в заголовке лога. Опечатка?", 104);
         }
 
-        $resultData['winner'] = $winner;
-        $resultData['honba'] = $this->_honba;
-
-        $resultData['dealer'] = $this->_checkDealer($winner);
-        $resultData = array_merge($resultData, $this->_parseHan($tokens, $participants, $resultData));
-        $this->_counts['tsumo']++;
-        $resultData['riichi_totalCount'] = $this->_riichi;
-        $this->_riichi = 0;
+        $resultData = [
+            'outcome' => 'tsumo',
+            'round' => $this->_currentRound,
+            'winner' => $winner,
+            'honba' => $this->_honba,
+            'han' => $this->_findByType($tokens, Tokenizer::HAN_COUNT)->clean(),
+            'fu' => $this->_findByType($tokens, Tokenizer::FU_COUNT)->clean(),
+            'yakuman' => !!$this->_findByType($tokens, Tokenizer::YAKUMAN)->token(),
+            'dealer' => $this->_checkDealer($winner),
+            'riichi' => $this->_getRiichi($tokens, $participants)
+        ];
 
         if ($this->_calc) {
             $this->_calc->registerTsumo(
@@ -323,13 +352,13 @@ class Parser
                 $winner,
                 $this->_honba,
                 $resultData['riichi'],
-                $resultData['riichi_totalCount'],
+                count($resultData['riichi']),
                 $this->_players[$this->_currentDealer % 4],
                 !empty($resultData['yakuman'])
             );
         }
 
-        if ($this->_checkDealer($winner)) {
+        if ($resultData['dealer']) {
             $this->_honba++;
         } else {
             $this->_currentRound++;
@@ -337,7 +366,9 @@ class Parser
             $this->_currentDealer++;
         }
 
+        $this->_counts['tsumo']++;
         if (!empty($resultData['yakuman'])) {
+            $resultData['han'] = 13; // TODO: remove
             $this->_counts['yakuman']++;
             call_user_func_array($this->_yakuman, array($resultData));
         } else {
@@ -347,35 +378,26 @@ class Parser
 
     protected function _parseOutcomeDraw($tokens, $participants)
     {
-        $resultData = ['outcome' => 'draw', 'round' => $this->_currentRound];
-        $tempai = array_shift($tokens);
-        if ($tempai != 'tempai') {
-            throw new Exception("Не найден список темпай игроков; ошибка синтаксиса - пропущено ключевое слово tempai", 109);
-        }
+        $tempaiPlayers = $this->_getTempai($tokens, $participants);
+        $playersStatus = array_merge(
+            array_combine(
+                array_keys($participants),
+                ['noten', 'noten', 'noten', 'noten']
+            ),
+            array_combine(
+                $tempaiPlayers,
+                array_fill(0, count($tempaiPlayers), 'tempai')
+            )
+        );
 
-        $playersStatus = array_combine(array_keys($participants), array('noten', 'noten', 'noten', 'noten'));
-        while (!empty($tokens) && $tokens[0] != 'riichi') {
-            $player = array_shift($tokens);
-
-            if ($player == 'nobody') {
-                break;
-            }
-
-            if ($player == 'all') {
-                $playersStatus = array_combine(array_keys($participants), array('tempai', 'tempai', 'tempai', 'tempai'));
-                break;
-            }
-
-            if (empty($participants[$player])) {
-                throw new Exception("Игрок {$player} не указан в заголовке лога. Опечатка?", 104);
-            }
-            $playersStatus[$player] = 'tempai';
-        }
-        $resultData['honba'] = $this->_honba;
-
-        $resultData['riichi'] = $this->_parseRiichi($tokens, $participants);
-        $resultData['riichi_totalCount'] = $this->_riichi;
-        $this->_counts['draw']++;
+        $resultData = [
+            'outcome' => 'draw',
+            'round' => $this->_currentRound,
+            'honba' => $this->_honba,
+            'riichi' => $this->_getRiichi($tokens, $participants),
+            'players_tempai' => $playersStatus
+        ];
+        $resultData['riichi_totalCount'] = count($resultData['riichi']);
 
         if ($this->_calc) {
             $this->_calc->registerDraw(
@@ -390,20 +412,24 @@ class Parser
             $this->_currentRound++;
         }
 
-        $resultData['players_tempai'] = $playersStatus;
+        $this->_counts['draw']++;
         call_user_func_array($this->_draw, array($resultData));
     }
 
     protected function _parseOutcomeChombo($tokens, $participants)
     {
-        $resultData = ['outcome' => 'chombo', 'round' => $this->_currentRound];
-        $loser = array_shift($tokens);
-        if (empty($participants[$loser])) {
+        /** @var $loser Token */
+        list(/*chombo*/, $loser) = $tokens;
+        if (empty($participants[$loser->token()])) {
             throw new Exception("Игрок {$loser} не указан в заголовке лога. Опечатка?", 104);
         }
 
-        $resultData['loser'] = $loser;
-        $resultData['dealer'] = $this->_checkDealer($loser);
+        $resultData = [
+            'outcome' => 'chombo',
+            'round' => $this->_currentRound,
+            'loser' => $loser,
+            'dealer' => $this->_checkDealer($loser)
+        ];
 
         if ($this->_calc) {
             $this->_calc->registerChombo(
@@ -414,70 +440,6 @@ class Parser
 
         $this->_counts['chombo']++;
         call_user_func_array($this->_chombo, array($resultData));
-    }
-
-    protected function _parseHan($tokens, $participants)
-    {
-        $hans = array_shift($tokens);
-
-        $hanCount = 0;
-        $fuCount = 0;
-        if ($hans != 'yakuman') {
-            $matches = array();
-            if (!preg_match('#(\d{1,2})han#is', $hans, $matches)) {
-                throw new Exception("Не распознано количество хан ({$hans})");
-            }
-
-            $hanCount = $matches[1];
-            $fuCount = $hanCount >= 5 ? 0 : $this->_parseFu($tokens, $participants);
-        }
-
-        return [
-            'han' => ($hans == 'yakuman') ? 13 : $hanCount,
-            'yakuman' => ($hans == 'yakuman'),
-            'fu' => $fuCount,
-            'riichi' => $this->_parseRiichi($tokens, $participants)
-        ];
-    }
-
-    protected function _parseFu(&$tokens)
-    {
-        $fu = array_shift($tokens);
-        $matches = array();
-        if (!preg_match('#(\d+)fu#is', $fu, $matches)) {
-            throw new Exception("Не распознано количество фу ({$fu})");
-        }
-
-        $fuCount = (int)$matches[1];
-        if (!in_array($fuCount, array(
-            20, 25, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140
-        ))
-        ) {
-            throw new Exception("Указано неверное количество фу ({$fu})");
-        }
-
-        return $fuCount;
-    }
-
-    protected function _parseRiichi($tokens, $participants)
-    {
-        if (empty($tokens)) {
-            return [];
-        }
-
-        if (array_shift($tokens) != 'riichi') {
-            throw new Exception('Не удалось распознать риичи.', 108);
-        }
-
-        foreach ($tokens as $playerName) {
-            if (empty($participants[$playerName])) {
-                throw new Exception("Не удалось распрасить риичи. Игрок {$playerName} не указан в заголовке лога. Опечатка?", 107);
-            }
-
-            $this->_riichi++;
-        }
-
-        return $tokens;
     }
 
     protected function _checkDealer($userWon)
@@ -501,7 +463,7 @@ class Parser
         return $this->_honba;
     }
 
-    public function _getRiichi()
+    public function _getRiichiCount()
     {
         return $this->_riichi;
     }
