@@ -129,7 +129,8 @@ class Tokenizer {
             return !empty($this->_lastAllowedToken[$tokenType]);
         }
 
-        return !!end($this->_currentStack)->allowedNextToken()[$tokenType];
+        $allowed = end($this->_currentStack)->allowedNextToken();
+        return !empty($allowed[$tokenType]);
     }
 
     /**

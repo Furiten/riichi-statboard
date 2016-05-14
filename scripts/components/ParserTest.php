@@ -24,27 +24,27 @@ class ParserTest extends PHPUnit_Framework_TestCase
     public function __construct()
     {
         $this->_callbacks['usual'] = function ($input) {
-            if (is_callable($this->_hooks['usual'])) {
+            if (!empty($this->_hooks['usual']) && is_callable($this->_hooks['usual'])) {
                 $this->_hooks['usual']($input);
             }
         };
         $this->_callbacks['yakuman'] = function ($input) {
-            if (is_callable($this->_hooks['yakuman'])) {
+            if (!empty($this->_hooks['yakuman']) && is_callable($this->_hooks['yakuman'])) {
                 $this->_hooks['yakuman']($input);
             }
         };
         $this->_callbacks['draw'] = function ($input) {
-            if (is_callable($this->_hooks['draw'])) {
+            if (!empty($this->_hooks['draw']) && is_callable($this->_hooks['draw'])) {
                 $this->_hooks['draw']($input);
             }
         };
         $this->_callbacks['chombo'] = function ($input) {
-            if (is_callable($this->_hooks['chombo'])) {
+            if (!empty($this->_hooks['chombo']) && is_callable($this->_hooks['chombo'])) {
                 $this->_hooks['chombo']($input);
             }
         };
         $this->_callbacks['tokenizerCb'] = function ($input) {
-            if (is_callable($this->_hooks['tokenizerCb'])) {
+            if (!empty($this->_hooks['tokenizerCb']) && is_callable($this->_hooks['tokenizerCb'])) {
                 $this->_hooks['tokenizerCb']($input);
             }
         };

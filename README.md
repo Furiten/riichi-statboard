@@ -1,5 +1,6 @@
 Riichi Statboard
 ================
+[![Build Status](https://travis-ci.org/Furiten/riichi-statboard.svg?branch=logs-tokenizer)](https://travis-ci.org/Furiten/riichi-statboard)
 
 Маленький набор скриптов на php и js для быстрого ввода данных по играм и их быстрого и информативного отображения
 где угодно. Также прилагаются примеры бланков для записи результатов сыгранных игр (см. папку blanks).
