@@ -40,7 +40,6 @@ class Tokenizer {
         'SCORE_DELIMITER' => '#^:$#',
         'YAKU_START' => '#^\($#',
         'YAKU_END' => '#^\)$#',
-        'YAKU' => '#^(double_riichi|daisangen|daisuushi|junchan|iipeiko|ippatsu|ittsu|kokushimusou|menzentsumo|pinfu|renhou|riichi|rinshan|ryuisou|ryanpeikou|sananko|sankantsu|sanshoku|sanshoku_doko|suuanko|suukantsu|tanyao|tenhou|toitoi|haitei|honitsu|honroto|houtei|tsuisou|chankan|chanta|chiitoitsu|chinitsu|chinroto|chihou|chuurenpoto|shousangen|shousuuchi|yakuhai1|yakuhai2|yakuhai3|yakuhai4|yakuhai5)$#',
         'SCORE' => '#^\-?\d+$#',
         'HAN_COUNT' => '#^(\d{1,2})han$#',
         'FU_COUNT' => '#^(20|25|30|40|50|60|70|80|90|100|110|120)fu$#',
@@ -50,8 +49,11 @@ class Tokenizer {
         'NOBODY' => '#^nobody#',
         'RIICHI_DELIMITER' => '#^riichi$#',
         'OUTCOME' => '#^(ron|tsumo|draw|chombo)$#',
+        'YAKU' => '#^(double_riichi|daisangen|daisuushi|junchan|iipeiko|ippatsu|ittsu|kokushimusou|menzentsumo|pinfu|renhou|riichi|rinshan|ryuisou|ryanpeikou|sananko|sankantsu|sanshoku|sanshoku_doko|suuanko|suukantsu|tanyao|tenhou|toitoi|haitei|honitsu|honroto|houtei|tsuisou|chankan|chanta|chiitoitsu|chinitsu|chinroto|chihou|chuurenpoto|shousangen|shousuuchi|yakuhai1|yakuhai2|yakuhai3|yakuhai4|yakuhai5)$#',
+        'FROM' => '#^from$#',
+
+        // this should always be the last!
         'USER_ALIAS' => '#^[a-z_\.]+$#',
-        'FROM' => '#^from$#'
     ];
 
     const UNKNOWN_TOKEN     = null;
@@ -93,12 +95,16 @@ class Tokenizer {
      * @var Token[]
      */
     protected $_currentStack = [];
+    protected $_lastAllowedToken = [];
     /**
      * @var callable
      */
     protected $_parseStatementCb = null;
     public function __construct(callable $parseStatementCb) {
         $this->_parseStatementCb = $parseStatementCb;
+        $this->_lastAllowedToken = [ // изначально первой должна быть строка с очками
+            Tokenizer::USER_ALIAS => 1
+        ];
     }
 
     public function nextToken($token)
@@ -106,12 +112,12 @@ class Tokenizer {
         list($tokenType, $reMatches) = $this->_identifyToken($token);
 
         if (!$this->_isTokenAllowed($tokenType)) {
-            throw new Exception("Ошибка при вводе данных: неожиданный токен " . $token, 201);
+            throw new Exception("Ошибка при вводе данных: неожиданный токен {$token} ({$tokenType})", 108);
         }
 
         $methodName = '_callToken' . ucfirst($tokenType);
-        if (is_callable([$this, $methodName])) {
-            throw new Exception("Ошибка при вводе данных: неизвестный токен " . $token, 200);
+        if (is_callable([$this, ucfirst($tokenType)])) {
+            throw new Exception("Ошибка при вводе данных: неизвестный токен {$token} ({$tokenType})", 200);
         }
 
         $this->$methodName($token, $reMatches);
@@ -119,7 +125,11 @@ class Tokenizer {
 
     protected function _isTokenAllowed($tokenType)
     {
-        return !empty(end($this->_currentStack)['allowedNextTokens'][$tokenType]);
+        if (empty($this->_currentStack)) {
+            return !empty($this->_lastAllowedToken[$tokenType]);
+        }
+
+        return !!end($this->_currentStack)->allowedNextToken()[$tokenType];
     }
 
     /**
@@ -127,10 +137,11 @@ class Tokenizer {
      */
     public function callTokenEof()
     {
-        if (!is_callable([$this, '_parseStatementCb'])) {
+        if (!is_callable($this->_parseStatementCb)) {
             throw new Exception("Ошибка конфигурации токенизатора: не определен колбэк парсера выражений!", 300);
         }
-        call_user_func([$this, 'parseStatementCb'], $this->_currentStack);
+        $pCb = $this->_parseStatementCb;
+        $pCb($this->_currentStack);
 
         $this->_currentStack = [];
     }
@@ -140,14 +151,19 @@ class Tokenizer {
      */
     protected function _callTokenOutcome($token)
     {
-        if (!is_callable([$this, '_parseStatementCb'])) {
+        if (!is_callable($this->_parseStatementCb)) {
             throw new Exception("Ошибка конфигурации токенизатора: не определен колбэк парсера выражений!", 300);
         }
-        call_user_func([$this, 'parseStatementCb'], $this->_currentStack);
+        $pCb = $this->_parseStatementCb;
+        $pCb($this->_currentStack);
 
-        $this->_currentStack = [];
+        if (!empty($this->_currentStack)) {
+            $this->_lastAllowedToken = end($this->_currentStack)->allowedNextToken();
+            $this->_currentStack = [];
+        }
+
         $methodName = '_callTokenOutcome' . ucfirst($token);
-        return $this->$methodName();
+        return $this->$methodName($token);
     }
 
     protected function _callTokenYakuEnd($token)
@@ -266,6 +282,7 @@ class Tokenizer {
             Tokenizer::ALL,
             [
                 Tokenizer::OUTCOME => 1,
+                Tokenizer::RIICHI_DELIMITER => 1,
             ]
         );
     }
@@ -277,6 +294,7 @@ class Tokenizer {
             Tokenizer::NOBODY,
             [
                 Tokenizer::OUTCOME => 1,
+                Tokenizer::RIICHI_DELIMITER => 1,
             ]
         );
     }
@@ -285,7 +303,7 @@ class Tokenizer {
     {
         $this->_currentStack [] = new Token(
             $token,
-            Tokenizer::TEMPAI,
+            Tokenizer::RIICHI_DELIMITER,
             [
                 Tokenizer::USER_ALIAS => 1,
             ]
@@ -364,4 +382,13 @@ class Tokenizer {
     }
 
     //</editor-fold>
+
+    /**
+     * For tests only!!!
+     * @param $tokenList
+     */
+    public function _reassignLastAllowedToken($tokenList)
+    {
+        $this->_lastAllowedToken = $tokenList;
+    }
 }
