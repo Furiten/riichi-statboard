@@ -28,7 +28,7 @@ class ArrayHelpers
      */
     public static function elm2Key(array $array, $elmKey, $append = false)
     {
-        $result = array();
+        $result = [];
 
         if (!$array) {
             return $result;

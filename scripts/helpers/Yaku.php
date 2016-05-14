@@ -11,7 +11,7 @@ class YakuHelper {
         $yakuList = self::_toArray($yakuList);
         $yakumanList = self::_toArray($yakumanList);
 
-        $tenhouYakuMap = array(
+        $tenhouYakuMap = [
             0  => 36,
             1  => 33,
             2  => 35,
@@ -67,14 +67,14 @@ class YakuHelper {
     //        52 => -1, // dora
     //        53 => -1, // uradora
     //        54 => -1 // akadora
-        );
+        ];
 
-        $yakuhaiCountMap = array(1 => '13', '14', '15', '16', '17');
+        $yakuhaiCountMap = [1 => '13', '14', '15', '16', '17'];
 
-        $result = array(
-            'yaku' => array(),
+        $result = [
+            'yaku' => [],
             'dora' => 0
-        );
+        ];
         $yakuhaiCount = 0;
 
         $yakuList = array_merge($yakuList, $yakumanList);

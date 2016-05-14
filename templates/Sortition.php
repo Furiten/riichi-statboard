@@ -84,7 +84,7 @@
                         $cnt = (empty($bestIntersection[$itemKey1]) ? 0 : $bestIntersection[$itemKey1]) +
                             (empty($bestIntersection[$itemKey2]) ? 0 : $bestIntersection[$itemKey2]);
 
-                        $classesList = array('badge');
+                        $classesList = ['badge'];
                         if ($cnt == 2) {
                             $classesList []= 'badge-warning';
                         } elseif ($cnt >= 3) {

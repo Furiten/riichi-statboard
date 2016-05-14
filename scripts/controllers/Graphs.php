@@ -3,15 +3,15 @@
 class Graphs extends Controller {
     protected function _run()
     {
-        $integralData = array();
-        $gamesData = array();
-        $placesData = array();
+        $integralData = [];
+        $gamesData = [];
+        $placesData = [];
         $integralRating = 0;
         $error = '';
         $gamesCount = 0;
 
 		$users = Db::get("SELECT username, alias FROM players");
-		$aliases = array();
+		$aliases = [];
 		foreach ($users as $v) {
 			$aliases[$v['username']] = IS_ONLINE ? base64_decode($v['alias']) : $v['alias'];
 		}
@@ -47,10 +47,10 @@ class Graphs extends Controller {
 
                 $handsData = $this->_getHandsData($user);
 
-                $graphData = array(0 => array(0, 1500));
+                $graphData = [0 => [0, 1500]];
                 $i = 1;
                 foreach ($ratingResults as $row) {
-                    $graphData []= array($i++, floor($row['rating']));
+                    $graphData []= [$i++, floor($row['rating'])];
                     $integralData []= $row['rating'];
                 }
             }
@@ -69,10 +69,10 @@ class Graphs extends Controller {
 
     protected function _getGamesData($gamesResults)
     {
-        $games = array();
+        $games = [];
         foreach ($gamesResults as $row) {
             if (empty($games[$row['game_id']])) {
-                $games[$row['game_id']] = array();
+                $games[$row['game_id']] = [];
             }
             $games[$row['game_id']] []= $row;
         }
@@ -83,7 +83,7 @@ class Graphs extends Controller {
 
     protected function _getPlacesData($gamesResults, $username)
     {
-        $places = array(1 => 0, 2 => 0, 3 => 0, 4 => 0);
+        $places = [1 => 0, 2 => 0, 3 => 0, 4 => 0];
         $gamesCount = 0;
 
         foreach ($gamesResults as $row) {
@@ -97,10 +97,10 @@ class Graphs extends Controller {
             $places[$k] = 100. * floatval($v) / $gamesCount;
         }
 
-        return array(
+        return [
             'places' => $places,
             'games_count' => $gamesCount
-        );
+        ];
     }
 
     protected function _integral($integralData)
@@ -121,7 +121,7 @@ class Graphs extends Controller {
         $roundsData = Db::get("SELECT * FROM round WHERE username = '{$user}'");
         $roundsWon = count($roundsData);
         $yakumanCount = 0;
-        $hands = array(
+        $hands = [
             1 => 0,
             2 => 0,
             3 => 0,
@@ -135,7 +135,7 @@ class Graphs extends Controller {
             11 => 0,
             12 => 0,
             '13+' => 0
-        );
+        ];
         $ronCount = 0;
         $tsumoCount = 0;
         $chomboCount = 0;
@@ -162,12 +162,12 @@ class Graphs extends Controller {
 
         $hands['13+'] = $yakumanCount;
 
-        return array(
+        return [
             'rounds_won' => $roundsWon,
             'ron' => $ronCount,
             'tsumo' => $tsumoCount,
             'chombo' => $chomboCount,
             'hands' => $hands
-        );
+        ];
     }
 }

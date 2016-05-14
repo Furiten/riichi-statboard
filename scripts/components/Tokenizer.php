@@ -1,6 +1,7 @@
 <?php
 
-class Token {
+class Token
+{
     protected $_token;
     protected $_allowedNextToken;
     protected $_type;
@@ -12,30 +13,42 @@ class Token {
      * @param array $allowedNextToken
      * @param string $cleanValue
      */
-    public function __construct($token, $type, $allowedNextToken, $cleanValue = null) {
+    public function __construct($token, $type, $allowedNextToken, $cleanValue = null)
+    {
         $this->_token = $token;
         $this->_type = $type;
         $this->_allowedNextToken = $allowedNextToken;
         $this->_cleanValue = $cleanValue;
     }
-    public function token() {
+
+    public function token()
+    {
         return $this->_token;
     }
-    public function allowedNextToken() {
+
+    public function allowedNextToken()
+    {
         return $this->_allowedNextToken;
     }
-    public function type() {
+
+    public function type()
+    {
         return $this->_type;
     }
-    public function clean() {
+
+    public function clean()
+    {
         return $this->_cleanValue;
     }
-    public function __toString() {
+
+    public function __toString()
+    {
         return $this->_token;
     }
 }
 
-class Tokenizer {
+class Tokenizer
+{
     protected static $_regexps = [
         'SCORE_DELIMITER' => '#^:$#',
         'YAKU_START' => '#^\($#',
@@ -47,40 +60,100 @@ class Tokenizer {
         'TEMPAI' => '#^tempai#',
         'ALL' => '#^all#',
         'NOBODY' => '#^nobody#',
-        'RIICHI_DELIMITER' => '#^riichi$#',
+        'RIICHI_DELIMITER' => '#^ri?ichi$#',
         'OUTCOME' => '#^(ron|tsumo|draw|chombo)$#',
         'ALSO' => '#^also$#', // double/triple ron
-        'YAKU' => '#^(double_riichi|daisangen|daisuushi|junchan|iipeiko|ippatsu|ittsu|kokushimusou|menzentsumo|pinfu|renhou|riichi|rinshan|ryuisou|ryanpeikou|sananko|sankantsu|sanshoku|sanshoku_doko|suuanko|suukantsu|tanyao|tenhou|toitoi|haitei|honitsu|honroto|houtei|tsuisou|chankan|chanta|chiitoitsu|chinitsu|chinroto|chihou|chuurenpoto|shousangen|shousuuchi|yakuhai1|yakuhai2|yakuhai3|yakuhai4|yakuhai5)$#',
+
+        // Comments here are yaku ids - they are important to bind yaku to database!
+        'YAKU' => '%^(
+             (double|daburu)_(ri?ichi|reach)  # 34
+            |daisangen                        # 19
+            |daisuu?shii?                     # 21
+            |junchan                          # 25
+            |i?ipeikou?                       # 9
+            |ippatsu                          # 35
+            |itt?suu?                         # 12
+            |kokushimusou?                    # 32
+            |(mend?zen)?tsumo                 # 36
+            |pin-?fu                          # 8
+            |renhou?                          # 43
+            |(ri?ichi|reach)                  # 33
+            |rinshan(_kaihou)?                # 38
+            |ryuii?sou?                       # 30
+            |ryanpeikou?                      # 10
+            |sanankou?                        # 3
+            |sankantsu                        # 5
+            |sanshoku                         # 11
+            |sanshoku_dou?kou?                # 4
+            |suu?ankou?                       # 7
+            |suu?kantsu                       # 6
+            |tan-?yao                         # 23
+            |tenhou?                          # 39
+            |toitoi                           # 1
+            |haitei                           # 37
+            |honitsu                          # 27
+            |honrou?tou?                      # 2
+            |hou?tei                          # 41
+            |tsuu?ii?sou?                     # 22
+            |chankan                          # 42
+            |chanta                           # 24
+            |chii?toitsu                      # 31
+            |chinitsu                         # 28
+            |chinrou?tou?                     # 26
+            |chihou?                          # 40
+            |chuu?renpou?tou?                 # 29
+            |shou?sangen                      # 18
+            |shou?suu?shi                     # 20
+            |yakuhai1                         # 13
+            |yakuhai2                         # 14
+            |yakuhai3                         # 15
+            |yakuhai4                         # 16
+            |yakuhai5                         # 17
+        )$%xi',
         'FROM' => '#^from$#',
 
         // this should always be the last!
         'USER_ALIAS' => '#^[a-z_\.]+$#',
     ];
 
-    const UNKNOWN_TOKEN     = null;
+    const UNKNOWN_TOKEN = null;
 
-    const SCORE_DELIMITER   = 'scoreDelimiter';
-    const YAKU_START        = 'yakuStart';
-    const YAKU_END          = 'yakuEnd';
-    const YAKU              = 'yaku';
-    const SCORE             = 'score';
-    const HAN_COUNT         = 'hanCount';
-    const FU_COUNT          = 'fuCount';
-    const YAKUMAN           = 'yakuman';
-    const TEMPAI            = 'tempai';
-    const ALL               = 'all';
-    const NOBODY            = 'nobody';
-    const RIICHI_DELIMITER  = 'riichi';
-    const OUTCOME           = 'outcome';
-    const USER_ALIAS        = 'userAlias';
-    const FROM              = 'from';
-    const ALSO              = 'also';
+    const SCORE_DELIMITER = 'scoreDelimiter';
+    const YAKU_START = 'yakuStart';
+    const YAKU_END = 'yakuEnd';
+    const YAKU = 'yaku';
+    const SCORE = 'score';
+    const HAN_COUNT = 'hanCount';
+    const FU_COUNT = 'fuCount';
+    const YAKUMAN = 'yakuman';
+    const TEMPAI = 'tempai';
+    const ALL = 'all';
+    const NOBODY = 'nobody';
+    const RIICHI_DELIMITER = 'riichi';
+    const OUTCOME = 'outcome';
+    const USER_ALIAS = 'userAlias';
+    const FROM = 'from';
+    const ALSO = 'also';
 
-    static public function getYakuCodes() {
-        return explode('|', str_replace(['#', '(', ')'], '', self::$_regexps['YAKU']));
+    protected $_yakuCodes = [];
+    static protected function _getYakuCodes()
+    {
+        // This hardly relies on that big regexp formatting. Touch carefully.
+        $rows = explode('   |',
+            str_replace(['%^(', ')$%xi'], '', self::$_regexps['YAKU'])
+        );
+
+        $codes = [];
+        array_map(function($el) use (&$codes) {
+            $pieces = explode('#', $el);
+            $codes['#^' . trim($pieces[0]) . '$#'] = trim($pieces[1]);
+        }, $rows);
+
+        return $codes;
     }
 
-    protected function _identifyToken($token) {
+    protected function _identifyToken($token)
+    {
         $matches = [];
         foreach (self::$_regexps as $name => $re) {
             if (preg_match($re, $token, $matches)) {
@@ -100,11 +173,37 @@ class Tokenizer {
      * @var callable
      */
     protected $_parseStatementCb = null;
-    public function __construct(callable $parseStatementCb) {
+
+    public function __construct(callable $parseStatementCb)
+    {
+        $this->_yakuCodes = self::_getYakuCodes();
         $this->_parseStatementCb = $parseStatementCb;
         $this->_lastAllowedToken = [ // изначально первой должна быть строка с очками
             Tokenizer::USER_ALIAS => 1
         ];
+    }
+
+    public function getYakuId(Token $yaku) {
+        if ($yaku->type() != Tokenizer::YAKU) {
+            throw new Exception('Запрошен идентификатор яку для токена, но токен - не яку!', 211);
+        }
+
+        $id = $this->_identifyYakuName($yaku->token());
+        if (!$id) {
+            throw new Exception('Для указанного яку не найден идентификатор, такого не должно было произойти!', 212);
+        }
+
+        return $id;
+    }
+
+    protected function _identifyYakuName($yaku) {
+        foreach ($this->_yakuCodes as $regex => $code) {
+            if (preg_match($regex, $yaku)) {
+                return $code;
+            }
+        }
+
+        return null;
     }
 
     public function nextToken($token)
@@ -152,6 +251,16 @@ class Tokenizer {
      */
     protected function _callTokenOutcome($token)
     {
+        if (!empty($this->_currentStack) && $this->_identifyYakuName($token) == 36 /* menzen tsumo*/) {
+            /** @var $lastToken Token */
+            $lastToken = end($this->_currentStack);
+            if ($lastToken->type() == Tokenizer::YAKU_START || $lastToken->type() == Tokenizer::YAKU) {
+                // workaround against same word 'tsumo' in different context
+                $this->_callTokenYaku($token);
+                return;
+            }
+        }
+
         if (!is_callable($this->_parseStatementCb)) {
             throw new Exception("Ошибка конфигурации токенизатора: не определен колбэк парсера выражений!", 300);
         }
@@ -164,7 +273,7 @@ class Tokenizer {
         }
 
         $methodName = '_callTokenOutcome' . ucfirst($token);
-        return $this->$methodName($token);
+        $this->$methodName($token);
     }
 
     protected function _callTokenYakuEnd($token)
@@ -199,6 +308,8 @@ class Tokenizer {
             Tokenizer::YAKU_START,
             [
                 Tokenizer::YAKU => 1,
+                Tokenizer::RIICHI_DELIMITER => 1, // for 'riichi' as yaku
+                Tokenizer::OUTCOME => 1, // for 'tsumo' as yaku
             ]
         );
     }
@@ -211,6 +322,8 @@ class Tokenizer {
             [
                 Tokenizer::YAKU => 1,
                 Tokenizer::YAKU_END => 1,
+                Tokenizer::RIICHI_DELIMITER => 1, // for 'riichi' as yaku
+                Tokenizer::OUTCOME => 1, // for 'tsumo' as yaku
             ]
         );
     }
@@ -306,6 +419,16 @@ class Tokenizer {
 
     protected function _callTokenRiichi($token)
     {
+        if (!empty($this->_currentStack)) {
+            /** @var $lastToken Token */
+            $lastToken = end($this->_currentStack);
+            if ($lastToken->type() == Tokenizer::YAKU_START || $lastToken->type() == Tokenizer::YAKU) {
+                // workaround against same word 'riichi' in different context
+                $this->_callTokenYaku($token);
+                return;
+            }
+        }
+
         $this->_currentStack [] = new Token(
             $token,
             Tokenizer::RIICHI_DELIMITER,

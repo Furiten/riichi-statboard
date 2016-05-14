@@ -12,7 +12,7 @@ class AddOnlineGame extends Controller {
      *
      * @var array
      */
-    protected $_loggedRounds = array();
+    protected $_loggedRounds = [];
 
     /**
      * Показать форму добавления, если есть ошибка - вывести сообщение
@@ -25,7 +25,7 @@ class AddOnlineGame extends Controller {
 
     protected function _checkLobby($paifu) {
         $regex = "#<GO.*?lobby=\"(\d+)\"/>#is";
-        $matches = array();
+        $matches = [];
         if (preg_match($regex, $paifu, $matches)) {
             if ($matches[1] == ALLOWED_LOBBY) {
                 return;
@@ -36,7 +36,7 @@ class AddOnlineGame extends Controller {
 
     protected function _checkGameExpired($replayHash) {
         $regex = '#(?<year>\d{4})(?<month>\d{2})(?<day>\d{2})(?<hour>\d{2})gm#is';
-        $matches = array();
+        $matches = [];
         if (preg_match($regex, $replayHash, $matches)) {
             $date = mktime($matches['hour'], 0, 0, $matches['month'], $matches['day'], $matches['year']);
             if (time() - $date < 27*60*60) { // 27 часов, чтобы покрыть разницу с JST
@@ -67,20 +67,20 @@ class AddOnlineGame extends Controller {
         $resultScores = $this->_countResultScore($players, $playerPlaces);
         $this->_registerUsers($usernames);
 
-        $gameId = $this->_addToDb(array(
+        $gameId = $this->_addToDb([
             'originalLink' => $link,
             'replayHash' => $replayHash,
             'players' => $players,
             'scores' => $resultScores,
             'rounds' => $this->_loggedRounds,
             'counts' => $counts
-        ));
+        ]);
 
         $this->_updatePlayerRatings($playerPlaces, $resultScores, $gameId);
     }
 
     public function externalAddGame($link) { // паблик морозов
-        $this->_loggedRounds = array();
+        $this->_loggedRounds = [];
         $this->_addGame($link, true);
     }
 
@@ -112,12 +112,12 @@ class AddOnlineGame extends Controller {
      */
     protected function _countResultScore($players, $places) {
         // назначаем ранговые бонуса согласно месту
-        $uma = array(1 => UMA_1PLACE, UMA_2PLACE, UMA_3PLACE, UMA_4PLACE);
+        $uma = [1 => UMA_1PLACE, UMA_2PLACE, UMA_3PLACE, UMA_4PLACE];
         foreach ($places as $k => $v) {
             $places[$k] = $uma[$v];
         }
 
-        $resultScores = array();
+        $resultScores = [];
         foreach ($players as $k => $v) {
             $resultScores[$k] = (($v - START_POINTS) / DIVIDER) + $places[$k];
         }
@@ -150,7 +150,7 @@ class AddOnlineGame extends Controller {
             }
         }
 
-        return array_combine($players, array(1, 2, 3, 4));
+        return array_combine($players, [1, 2, 3, 4]);
     }
 
     /**
@@ -242,7 +242,7 @@ class AddOnlineGame extends Controller {
         Db::exec($gameInsert);
         $gameId = Db::connection()->lastInsertId();
 
-        $scores = array();
+        $scores = [];
         // sort by score
         arsort($data['players']);
         $index = 1;
@@ -286,12 +286,12 @@ class AddOnlineGame extends Controller {
         }
 
         if (ord($parts[3][0]) == 120) {
-            $hexparts = array(
+            $hexparts = [
                 hexdec(substr($parts[3], 1, 4)),
                 hexdec(substr($parts[3], 5, 4)),
                 hexdec(substr($parts[3], 9, 4)),
                 0
-            );
+            ];
 
             if ($parts[0] >= base64_decode('MjAxMDA0MTExMWdt')) {
                 $hexparts[3] = intval("3" . substr($parts[0], 4, 6)) % (17 * 2 - intval(substr($parts[0], 9, 1)) - 1);
@@ -333,7 +333,7 @@ class AddOnlineGame extends Controller {
             }
         }
 
-        return array($logHash, $content);
+        return [$logHash, $content];
     }
 
     /**
@@ -344,15 +344,15 @@ class AddOnlineGame extends Controller {
      */
     protected function _parseOutcome($content) {
         $regex = "#owari=\"([^\"]*)\"#";
-        $matches = array();
+        $matches = [];
         if (preg_match($regex, $content, $matches)) {
             $parts = explode(',', $matches[1]);
-            return array(
+            return [
                 $parts[0] . '00',
                 $parts[2] . '00',
                 $parts[4] . '00',
                 $parts[6] . '00'
-            );
+            ];
         }
 
         return false;
@@ -417,12 +417,12 @@ class AddOnlineGame extends Controller {
     protected function _parseRounds($content) {
         $currentDealer = '0';
         $currentRound = 1;
-        $usernames = array();
-        $counts = array(
+        $usernames = [];
+        $counts = [
             'ron' => 0,
             'tsumo' => 0,
             'draw' => 0
-        );
+        ];
 
         $reader = new XMLReader();
         $reader->xml($content);
@@ -431,12 +431,12 @@ class AddOnlineGame extends Controller {
             switch($reader->localName) {
                 case 'UN':
                     if (count($usernames) == 0) {
-                        $usernames = array(
+                        $usernames = [
                             base64_encode(rawurldecode($reader->getAttribute('n0'))),
                             base64_encode(rawurldecode($reader->getAttribute('n1'))),
                             base64_encode(rawurldecode($reader->getAttribute('n2'))),
                             base64_encode(rawurldecode($reader->getAttribute('n3')))
-                        );
+                        ];
 
                         if (in_array('NoName', $usernames)) {
                             throw new Exception('В рейтинг не допускаются игры с безымянными игроками.');
@@ -466,16 +466,16 @@ class AddOnlineGame extends Controller {
                     $yakuAndDora = YakuHelper::getLocalYaku($yakuList, $yakumanList);
 
                     if ($hanSum > 12 || !empty($yakumanList)) {
-                        $this->cb_yakuman(array(
+                        $this->cb_yakuman([
                             'round' => $currentRound,
                             'outcome' => $outcomeType,
                             'winner' => $usernames[$winner],
                             'loser' => $usernames[$loser],
                             'dealer' => $dealerWins,
                             'yaku' => $yakuAndDora['yaku']
-                        ));
+                        ]);
                     } else {
-                        $this->cb_usualWin(array(
+                        $this->cb_usualWin([
                             'round' => $currentRound,
                             'outcome' => $outcomeType,
                             'winner' => $usernames[$winner],
@@ -485,27 +485,27 @@ class AddOnlineGame extends Controller {
                             'fu' => $fu,
                             'yaku' => $yakuAndDora['yaku'],
                             'dora' => $yakuAndDora['dora']
-                        ));
+                        ]);
                     }
 
                     break;
                 case 'RYUUKYOKU':
                     if ($reader->getAttribute('type')) {
                         // пересдача
-                        $this->cb_roundDrawn(array(
+                        $this->cb_roundDrawn([
                             'round' => $currentRound
-                        ));
+                        ]);
                     } else {
                         $scores = array_filter(explode(',', $reader->getAttribute('sc')));
-                        $users = array();
+                        $users = [];
                         for ($i = 0; $i < count($usernames); $i++) {
                             if (empty($usernames[$i])) continue;
                             $users[$usernames[$i]] = (intval($scores[$i*2+1]) >= 0 ? 'tempai' : 'noten');
                         }
-                        $this->cb_roundDrawn(array(
+                        $this->cb_roundDrawn([
                             'round' => $currentRound,
                             'players_tempai' => $users
-                        ));
+                        ]);
                     }
                     $counts['draw']++;
                     break;
@@ -513,6 +513,6 @@ class AddOnlineGame extends Controller {
             }
         }
 
-        return array($counts, $usernames);
+        return [$counts, $usernames];
     }
 }

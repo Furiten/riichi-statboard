@@ -11,7 +11,7 @@ class Timer extends Controller {
         $usersData = Db::get("SELECT * FROM players ORDER BY rating DESC, place_avg ASC");
 
 		$users = Db::get("SELECT username, alias FROM players");
-		$aliases = array();
+		$aliases = [];
 		foreach ($users as $v) {
 			$aliases[$v['username']] = $v['alias'];
 		}

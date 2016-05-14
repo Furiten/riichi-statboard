@@ -39,12 +39,12 @@ class Parser
      * Количество разнообразных исходов
      * @var array
      */
-    protected $_counts = array();
+    protected $_counts = [];
     /**
      * Результирующие очки
      * @var array
      */
-    protected $_resultScores = array();
+    protected $_resultScores = [];
 
     /**
      * Коллбэки
@@ -90,7 +90,7 @@ class Parser
 
     protected function _reset()
     {
-        $this->_counts = array(
+        $this->_counts = [
             'ron' => 0,
             'doubleRon' => 0,
             'tripleRon' => 0,
@@ -98,8 +98,8 @@ class Parser
             'draw' => 0,
             'chombo' => 0,
             'yakuman' => 0
-        );
-        $this->_resultScores = array();
+        ];
+        $this->_resultScores = [];
     }
 
     /**
@@ -121,7 +121,7 @@ class Parser
     public function parse($text)
     {
         $this->_reset();
-        $tokens = preg_split('#\s+#is', $this->_prepareTokens($text));
+        $tokens = preg_split('#\s+#is', trim($this->_prepareTokens($text)));
 
         while (!empty($tokens)) {
             $this->_tokenizer->nextToken(array_shift($tokens));
@@ -129,10 +129,10 @@ class Parser
 
         $this->_tokenizer->callTokenEof();
 
-        return array(
+        return [
             'scores' => $this->_resultScores,
             'counts' => $this->_counts
-        );
+        ];
     }
 
     /**
@@ -320,6 +320,7 @@ class Parser
             'han' => $this->_findByType($tokens, Tokenizer::HAN_COUNT)->clean(),
             'fu' => $this->_findByType($tokens, Tokenizer::FU_COUNT)->clean(),
             'yakuman' => !!$this->_findByType($tokens, Tokenizer::YAKUMAN)->token(),
+            'yakuList' => $this->_parseYaku($tokens),
             'riichi' => $this->_getRiichi($tokens, $participants),
             'dealer' => $this->_checkDealer($winner)
         ];
@@ -489,6 +490,7 @@ class Parser
                 'han' => $this->_findByType($ron, Tokenizer::HAN_COUNT)->clean(),
                 'fu' => $this->_findByType($ron, Tokenizer::FU_COUNT)->clean(),
                 'yakuman' => !!$this->_findByType($ron, Tokenizer::YAKUMAN)->token(),
+                'yakuList' => $this->_parseYaku($ron),
                 'dealer' => $this->_checkDealer($winner)
             ];
             $resultData = array_merge($resultData, $riichiGoesTo[$winner->token()]);
@@ -548,6 +550,7 @@ class Parser
             'han' => $this->_findByType($tokens, Tokenizer::HAN_COUNT)->clean(),
             'fu' => $this->_findByType($tokens, Tokenizer::FU_COUNT)->clean(),
             'yakuman' => !!$this->_findByType($tokens, Tokenizer::YAKUMAN)->token(),
+            'yakuList' => $this->_parseYaku($tokens),
             'dealer' => $this->_checkDealer($winner),
             'riichi' => $this->_getRiichi($tokens, $participants)
         ];
@@ -653,6 +656,44 @@ class Parser
 
         $this->_counts['chombo']++;
         call_user_func_array($this->_chombo, array($resultData));
+    }
+
+    /**
+     * @param $tokens Token[]
+     * @return array
+     * @throws Exception
+     */
+    protected function _parseYaku($tokens)
+    {
+        if (!$this->_findByType($tokens, Tokenizer::YAKU_START)->token()) {
+            return []; // no yaku info
+        }
+
+        $yakuStarted = false;
+        $yaku = [];
+        foreach ($tokens as $t) {
+            if ($t->type() == Tokenizer::YAKU_START) {
+                $yakuStarted = true;
+                continue;
+            }
+
+            if ($t->type() == Tokenizer::YAKU_END) {
+                $yakuStarted = false;
+                break;
+            }
+
+            if ($yakuStarted && $t->type() == Tokenizer::YAKU) {
+                $yaku []= $t;
+            }
+        }
+
+        if ($yakuStarted) {
+            throw new Exception('Не найдено окончание списка яку', 210);
+        }
+
+        return array_map(function(Token $el) {
+            return $this->_tokenizer->getYakuId($el);
+        }, $yaku);
     }
 
     protected function _checkDealer($userWon)

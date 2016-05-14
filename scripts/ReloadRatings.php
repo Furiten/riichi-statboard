@@ -7,7 +7,7 @@ require_once 'scripts/base/Db.php';
 require_once 'scripts/base/Controller.php';
 require_once 'scripts/controllers/AddOnlineGame.php';
 
-$controllerInstance = new AddOnlineGame('', array());
+$controllerInstance = new AddOnlineGame('', []);
 $links = Db::get("SELECT orig_link FROM game GROUP BY replay_hash");
 
 Db::exec("TRUNCATE TABLE game");

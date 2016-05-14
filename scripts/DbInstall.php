@@ -9,7 +9,7 @@ switch (DB_TYPE) {
 }
 
 function installMysql() {
-    $tables = array(
+    $tables = [
         'game' => "
         CREATE TABLE IF NOT EXISTS `game` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -106,7 +106,7 @@ function installMysql() {
             PRIMARY KEY (`id`),
             KEY `username` (`username`)
         ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;"
-    );
+    ];
 
     $yakuData = "
         INSERT INTO `yaku` (`id`, `title`) VALUES
