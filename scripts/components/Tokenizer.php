@@ -49,6 +49,7 @@ class Tokenizer {
         'NOBODY' => '#^nobody#',
         'RIICHI_DELIMITER' => '#^riichi$#',
         'OUTCOME' => '#^(ron|tsumo|draw|chombo)$#',
+        'ALSO' => '#^also$#', // double/triple ron
         'YAKU' => '#^(double_riichi|daisangen|daisuushi|junchan|iipeiko|ippatsu|ittsu|kokushimusou|menzentsumo|pinfu|renhou|riichi|rinshan|ryuisou|ryanpeikou|sananko|sankantsu|sanshoku|sanshoku_doko|suuanko|suukantsu|tanyao|tenhou|toitoi|haitei|honitsu|honroto|houtei|tsuisou|chankan|chanta|chiitoitsu|chinitsu|chinroto|chihou|chuurenpoto|shousangen|shousuuchi|yakuhai1|yakuhai2|yakuhai3|yakuhai4|yakuhai5)$#',
         'FROM' => '#^from$#',
 
@@ -73,6 +74,7 @@ class Tokenizer {
     const OUTCOME           = 'outcome';
     const USER_ALIAS        = 'userAlias';
     const FROM              = 'from';
+    const ALSO              = 'also';
 
     static public function getYakuCodes() {
         return explode('|', str_replace(['#', '(', ')'], '', self::$_regexps['YAKU']));
@@ -88,8 +90,6 @@ class Tokenizer {
 
         return [self::UNKNOWN_TOKEN, null];
     }
-
-    //<editor-fold desc="Tokenizer stuff">
 
     /**
      * @var Token[]
@@ -175,6 +175,7 @@ class Tokenizer {
             [
                 Tokenizer::RIICHI_DELIMITER => 1,
                 Tokenizer::OUTCOME => 1,
+                Tokenizer::ALSO => 1,
             ]
         );
     }
@@ -234,6 +235,7 @@ class Tokenizer {
                 Tokenizer::FU_COUNT => 1,
                 Tokenizer::RIICHI_DELIMITER => 1,
                 Tokenizer::YAKU_START => 1,
+                Tokenizer::ALSO => 1,
             ],
             $matches[1]
         );
@@ -247,6 +249,7 @@ class Tokenizer {
             [
                 Tokenizer::RIICHI_DELIMITER => 1,
                 Tokenizer::YAKU_START => 1,
+                Tokenizer::ALSO => 1,
             ],
             $matches[1]
         );
@@ -259,6 +262,7 @@ class Tokenizer {
             Tokenizer::YAKUMAN,
             [
                 Tokenizer::YAKU_START => 1,
+                Tokenizer::ALSO => 1,
             ]
         );
     }
@@ -305,6 +309,17 @@ class Tokenizer {
         $this->_currentStack [] = new Token(
             $token,
             Tokenizer::RIICHI_DELIMITER,
+            [
+                Tokenizer::USER_ALIAS => 1,
+            ]
+        );
+    }
+
+    protected function _callTokenAlso($token)
+    {
+        $this->_currentStack [] = new Token(
+            $token,
+            Tokenizer::ALSO,
             [
                 Tokenizer::USER_ALIAS => 1,
             ]
@@ -378,11 +393,10 @@ class Tokenizer {
                 Tokenizer::HAN_COUNT => 1,
                 Tokenizer::YAKUMAN => 1,
                 Tokenizer::OUTCOME => 1,
+                Tokenizer::ALSO => 1,
             ]
         );
     }
-
-    //</editor-fold>
 
     /**
      * For tests only!!!
