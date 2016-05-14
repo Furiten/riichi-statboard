@@ -1,6 +1,7 @@
 <?php
 
-class Token {
+class Token
+{
     protected $_token;
     protected $_allowedNextToken;
     protected $_type;
@@ -12,30 +13,42 @@ class Token {
      * @param array $allowedNextToken
      * @param string $cleanValue
      */
-    public function __construct($token, $type, $allowedNextToken, $cleanValue = null) {
+    public function __construct($token, $type, $allowedNextToken, $cleanValue = null)
+    {
         $this->_token = $token;
         $this->_type = $type;
         $this->_allowedNextToken = $allowedNextToken;
         $this->_cleanValue = $cleanValue;
     }
-    public function token() {
+
+    public function token()
+    {
         return $this->_token;
     }
-    public function allowedNextToken() {
+
+    public function allowedNextToken()
+    {
         return $this->_allowedNextToken;
     }
-    public function type() {
+
+    public function type()
+    {
         return $this->_type;
     }
-    public function clean() {
+
+    public function clean()
+    {
         return $this->_cleanValue;
     }
-    public function __toString() {
+
+    public function __toString()
+    {
         return $this->_token;
     }
 }
 
-class Tokenizer {
+class Tokenizer
+{
     protected static $_regexps = [
         'SCORE_DELIMITER' => '#^:$#',
         'YAKU_START' => '#^\($#',
@@ -57,30 +70,32 @@ class Tokenizer {
         'USER_ALIAS' => '#^[a-z_\.]+$#',
     ];
 
-    const UNKNOWN_TOKEN     = null;
+    const UNKNOWN_TOKEN = null;
 
-    const SCORE_DELIMITER   = 'scoreDelimiter';
-    const YAKU_START        = 'yakuStart';
-    const YAKU_END          = 'yakuEnd';
-    const YAKU              = 'yaku';
-    const SCORE             = 'score';
-    const HAN_COUNT         = 'hanCount';
-    const FU_COUNT          = 'fuCount';
-    const YAKUMAN           = 'yakuman';
-    const TEMPAI            = 'tempai';
-    const ALL               = 'all';
-    const NOBODY            = 'nobody';
-    const RIICHI_DELIMITER  = 'riichi';
-    const OUTCOME           = 'outcome';
-    const USER_ALIAS        = 'userAlias';
-    const FROM              = 'from';
-    const ALSO              = 'also';
+    const SCORE_DELIMITER = 'scoreDelimiter';
+    const YAKU_START = 'yakuStart';
+    const YAKU_END = 'yakuEnd';
+    const YAKU = 'yaku';
+    const SCORE = 'score';
+    const HAN_COUNT = 'hanCount';
+    const FU_COUNT = 'fuCount';
+    const YAKUMAN = 'yakuman';
+    const TEMPAI = 'tempai';
+    const ALL = 'all';
+    const NOBODY = 'nobody';
+    const RIICHI_DELIMITER = 'riichi';
+    const OUTCOME = 'outcome';
+    const USER_ALIAS = 'userAlias';
+    const FROM = 'from';
+    const ALSO = 'also';
 
-    static public function getYakuCodes() {
+    static public function getYakuCodes()
+    {
         return explode('|', str_replace(['#', '(', ')'], '', self::$_regexps['YAKU']));
     }
 
-    protected function _identifyToken($token) {
+    protected function _identifyToken($token)
+    {
         $matches = [];
         foreach (self::$_regexps as $name => $re) {
             if (preg_match($re, $token, $matches)) {
@@ -100,7 +115,9 @@ class Tokenizer {
      * @var callable
      */
     protected $_parseStatementCb = null;
-    public function __construct(callable $parseStatementCb) {
+
+    public function __construct(callable $parseStatementCb)
+    {
         $this->_parseStatementCb = $parseStatementCb;
         $this->_lastAllowedToken = [ // изначально первой должна быть строка с очками
             Tokenizer::USER_ALIAS => 1
@@ -306,6 +323,16 @@ class Tokenizer {
 
     protected function _callTokenRiichi($token)
     {
+        if (!empty($this->_currentStack)) {
+            /** @var $lastToken Token */
+            $lastToken = end($this->_currentStack);
+            if ($lastToken->type() == Tokenizer::YAKU_START || $lastToken->type() == Tokenizer::YAKU) {
+                // workaround against same word 'riichi' in different context
+                $this->_callTokenYaku($token);
+                return;
+            }
+        }
+
         $this->_currentStack [] = new Token(
             $token,
             Tokenizer::RIICHI_DELIMITER,
