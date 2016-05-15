@@ -311,6 +311,7 @@ class Parser
         if (empty($participants[$loser->token()])) {
             throw new Exception("Игрок {$loser} не указан в заголовке лога. Опечатка?", 105);
         }
+        $yakuParsed = $this->_parseYaku($tokens);
         $resultData = [
             'outcome' => 'ron',
             'round' => $this->_currentRound,
@@ -320,7 +321,8 @@ class Parser
             'han' => $this->_findByType($tokens, Tokenizer::HAN_COUNT)->clean(),
             'fu' => $this->_findByType($tokens, Tokenizer::FU_COUNT)->clean(),
             'yakuman' => !!$this->_findByType($tokens, Tokenizer::YAKUMAN)->token(),
-            'yakuList' => $this->_parseYaku($tokens),
+            'yakuList' => $yakuParsed['yaku'],
+            'doraCount' => $yakuParsed['dora'],
             'riichi' => $this->_getRiichi($tokens, $participants),
             'dealer' => $this->_checkDealer($winner)
         ];
@@ -480,6 +482,7 @@ class Parser
                 throw new Exception("Игрок {$winner} не указан в заголовке лога. Опечатка?", 104);
             }
 
+            $yakuParsed = $this->_parseYaku($ron);
             $resultData = [
                 'outcome' => 'ron',
                 'multiRon' => count($rons),
@@ -490,7 +493,8 @@ class Parser
                 'han' => $this->_findByType($ron, Tokenizer::HAN_COUNT)->clean(),
                 'fu' => $this->_findByType($ron, Tokenizer::FU_COUNT)->clean(),
                 'yakuman' => !!$this->_findByType($ron, Tokenizer::YAKUMAN)->token(),
-                'yakuList' => $this->_parseYaku($ron),
+                'yakuList' => $yakuParsed['yaku'],
+                'doraCount' => $yakuParsed['dora'],
                 'dealer' => $this->_checkDealer($winner)
             ];
             $resultData = array_merge($resultData, $riichiGoesTo[$winner->token()]);
@@ -542,6 +546,7 @@ class Parser
             throw new Exception("Игрок {$winner} не указан в заголовке лога. Опечатка?", 104);
         }
 
+        $yakuParsed = $this->_parseYaku($tokens);
         $resultData = [
             'outcome' => 'tsumo',
             'round' => $this->_currentRound,
@@ -550,7 +555,8 @@ class Parser
             'han' => $this->_findByType($tokens, Tokenizer::HAN_COUNT)->clean(),
             'fu' => $this->_findByType($tokens, Tokenizer::FU_COUNT)->clean(),
             'yakuman' => !!$this->_findByType($tokens, Tokenizer::YAKUMAN)->token(),
-            'yakuList' => $this->_parseYaku($tokens),
+            'yakuList' => $yakuParsed['yaku'],
+            'doraCount' => $yakuParsed['dora'],
             'dealer' => $this->_checkDealer($winner),
             'riichi' => $this->_getRiichi($tokens, $participants)
         ];
@@ -671,6 +677,7 @@ class Parser
 
         $yakuStarted = false;
         $yaku = [];
+        $doraCount = 0;
         foreach ($tokens as $t) {
             if ($t->type() == Tokenizer::YAKU_START) {
                 $yakuStarted = true;
@@ -685,15 +692,26 @@ class Parser
             if ($yakuStarted && $t->type() == Tokenizer::YAKU) {
                 $yaku []= $t;
             }
+
+            if ($yakuStarted && $t->type() == Tokenizer::DORA_DELIMITER) {
+                $doraCount = 1; // means dora 1 if there is only delimiter
+            }
+
+            if ($doraCount == 1 && $yakuStarted && $t->type() == Tokenizer::DORA_COUNT) {
+                $doraCount = $t->token();
+            }
         }
 
         if ($yakuStarted) {
             throw new Exception('Не найдено окончание списка яку', 210);
         }
 
-        return array_map(function(Token $el) {
-            return $this->_tokenizer->getYakuId($el);
-        }, $yaku);
+        return [
+            'yaku' => array_map(function(Token $el) {
+                return $this->_tokenizer->getYakuId($el);
+            }, $yaku), 
+            'dora' => $doraCount
+        ];
     }
 
     protected function _checkDealer($userWon)

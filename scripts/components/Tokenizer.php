@@ -53,6 +53,8 @@ class Tokenizer
         'SCORE_DELIMITER' => '#^:$#',
         'YAKU_START' => '#^\($#',
         'YAKU_END' => '#^\)$#',
+        'DORA_DELIMITER' => '#^dora$#',
+        'DORA_COUNT' => '#^\d{1,2}$#',
         'SCORE' => '#^\-?\d+$#',
         'HAN_COUNT' => '#^(\d{1,2})han$#',
         'FU_COUNT' => '#^(20|25|30|40|50|60|70|80|90|100|110|120)fu$#',
@@ -119,6 +121,8 @@ class Tokenizer
     const UNKNOWN_TOKEN = null;
 
     const SCORE_DELIMITER = 'scoreDelimiter';
+    const DORA_DELIMITER = 'doraDelimiter';
+    const DORA_COUNT = 'doraCount';
     const YAKU_START = 'yakuStart';
     const YAKU_END = 'yakuEnd';
     const YAKU = 'yaku';
@@ -251,10 +255,15 @@ class Tokenizer
      */
     protected function _callTokenOutcome($token)
     {
-        if (!empty($this->_currentStack) && $this->_identifyYakuName($token) == 36 /* menzen tsumo*/) {
+        if (!empty($this->_currentStack) && $this->_identifyYakuName($token) == 36 /* 36 = menzen tsumo*/) {
             /** @var $lastToken Token */
             $lastToken = end($this->_currentStack);
-            if ($lastToken->type() == Tokenizer::YAKU_START || $lastToken->type() == Tokenizer::YAKU) {
+            if (
+                $lastToken->type() == Tokenizer::YAKU_START || 
+                $lastToken->type() == Tokenizer::YAKU ||
+                $lastToken->type() == Tokenizer::DORA_COUNT ||
+                $lastToken->type() == Tokenizer::DORA_DELIMITER
+            ) {
                 // workaround against same word 'tsumo' in different context
                 $this->_callTokenYaku($token);
                 return;
@@ -308,6 +317,7 @@ class Tokenizer
             Tokenizer::YAKU_START,
             [
                 Tokenizer::YAKU => 1,
+                Tokenizer::DORA_DELIMITER => 1,
                 Tokenizer::RIICHI_DELIMITER => 1, // for 'riichi' as yaku
                 Tokenizer::OUTCOME => 1, // for 'tsumo' as yaku
             ]
@@ -321,9 +331,36 @@ class Tokenizer
             Tokenizer::YAKU,
             [
                 Tokenizer::YAKU => 1,
+                Tokenizer::DORA_DELIMITER => 1,
                 Tokenizer::YAKU_END => 1,
                 Tokenizer::RIICHI_DELIMITER => 1, // for 'riichi' as yaku
                 Tokenizer::OUTCOME => 1, // for 'tsumo' as yaku
+            ]
+        );
+    }
+
+    protected function _callTokenDoraCount($token)
+    {
+        $this->_currentStack [] = new Token(
+            $token,
+            Tokenizer::DORA_COUNT,
+            [
+                Tokenizer::YAKU => 1,
+                Tokenizer::YAKU_END => 1,
+                Tokenizer::RIICHI_DELIMITER => 1, // for 'riichi' as yaku
+                Tokenizer::OUTCOME => 1, // for 'tsumo' as yaku
+            ]
+        );
+    }
+
+    protected function _callTokenDoraDelimiter($token)
+    {
+        $this->_currentStack [] = new Token(
+            $token,
+            Tokenizer::DORA_DELIMITER,
+            [
+                Tokenizer::DORA_COUNT => 1,
+                Tokenizer::YAKU_END => 1,
             ]
         );
     }
@@ -422,7 +459,12 @@ class Tokenizer
         if (!empty($this->_currentStack)) {
             /** @var $lastToken Token */
             $lastToken = end($this->_currentStack);
-            if ($lastToken->type() == Tokenizer::YAKU_START || $lastToken->type() == Tokenizer::YAKU) {
+            if (
+                $lastToken->type() == Tokenizer::YAKU_START || 
+                $lastToken->type() == Tokenizer::YAKU ||
+                $lastToken->type() == Tokenizer::DORA_COUNT ||
+                $lastToken->type() == Tokenizer::DORA_DELIMITER
+            ) {
                 // workaround against same word 'riichi' in different context
                 $this->_callTokenYaku($token);
                 return;
