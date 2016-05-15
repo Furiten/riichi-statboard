@@ -1,6 +1,9 @@
 # see http://about.travis-ci.org/docs/user/languages/php/ for more hints
 language: php
 
+notifications:
+  slack: furiten:6fzHMN5l1JM8rgfv5PXg4dmU
+
 # list any PHP version you want to test against
 php:
   # using major version aliases
