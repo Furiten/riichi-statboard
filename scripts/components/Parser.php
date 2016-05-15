@@ -672,7 +672,10 @@ class Parser
     protected function _parseYaku($tokens)
     {
         if (!$this->_findByType($tokens, Tokenizer::YAKU_START)->token()) {
-            return []; // no yaku info
+            return [
+                'yaku' => [],
+                'dora' => '0'
+            ]; // no yaku info
         }
 
         $yakuStarted = false;
@@ -694,10 +697,10 @@ class Parser
             }
 
             if ($yakuStarted && $t->type() == Tokenizer::DORA_DELIMITER) {
-                $doraCount = 1; // means dora 1 if there is only delimiter
+                $doraCount = '1'; // means dora 1 if there is only delimiter
             }
 
-            if ($doraCount == 1 && $yakuStarted && $t->type() == Tokenizer::DORA_COUNT) {
+            if ($doraCount == '1' && $yakuStarted && $t->type() == Tokenizer::DORA_COUNT) {
                 $doraCount = $t->token();
             }
         }
@@ -710,7 +713,7 @@ class Parser
             'yaku' => array_map(function(Token $el) {
                 return $this->_tokenizer->getYakuId($el);
             }, $yaku), 
-            'dora' => $doraCount
+            'dora' => $doraCount ? $doraCount : '0'
         ];
     }
 
