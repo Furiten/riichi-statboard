@@ -281,27 +281,41 @@ class AddGame extends Controller
         $this->_saveRatingsToDb($currentRatings, $gameId);
     }
 
-    // турнир: все линейно, ничего не делаем
+    /**
+     * Расчет изменения рейтинга конкретного игрока
+     *
+     * @param $playerName
+     * @param $playerPlaces
+     * @param $resultScores
+     * @param $currentRatings
+     * @return float
+     */
     protected function _calculateRatingChange($playerName, $playerPlaces, $resultScores, $currentRatings)
     {
-        // простая формула:
-        return $resultScores[$playerName] / RESULT_DIVIDER;
+        switch (RATING_FORMULA) {
+            case 'AVERAGE_SKILL':
+                // сложная формула с учетом истории и прочего:
+                $ratingsSum = 0;
+                foreach ($currentRatings as $row) {
+                    $ratingsSum += $row['rating'];
+                }
+                $ratingAvg = $ratingsSum / 4.;
 
-        // сложная формула с учетом истории и прочего:
-//        $ratingsSum = 0;
-//        foreach ($currentRatings as $row) {
-//            $ratingsSum += $row['rating'];
-//        }
-//        $ratingAvg = $ratingsSum / 4.;
-//
-//        if ($currentRatings[$playerName]['games_played'] < 40) {
-//            $adj = 1 - $currentRatings[$playerName]['games_played'] * 0.02;
-//        } else {
-//            $adj = 0.2;
-//        }
-//
-//        return $adj * ($resultScores[$playerName] / 20.
-//            + ($ratingAvg - $currentRatings[$playerName]['rating']) / 2.2);
+                if ($currentRatings[$playerName]['games_played'] < 40) {
+                    $adj = 1 - $currentRatings[$playerName]['games_played'] * 0.02;
+                } else {
+                    $adj = 0.2;
+                }
+
+                return $adj * ($resultScores[$playerName] / 20.
+                    + ($ratingAvg - $currentRatings[$playerName]['rating']) / 2.2);
+            case 'AVERAGE_WITH_AGING':
+                // TODO: "устаревающие" результаты для стимулирования дальнейших игр
+                // впрочем, возможно это должно быть не здесь.
+            case 'SIMPLE':
+            default:
+                return $resultScores[$playerName] / RESULT_DIVIDER;
+        }
     }
 
     /**

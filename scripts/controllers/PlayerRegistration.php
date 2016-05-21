@@ -30,7 +30,10 @@ class PlayerRegistration extends Controller {
                 return;
             }
 
-            Db::exec("INSERT INTO players (username, alias, rating, games_played, places_sum) VALUES ('{$_POST['username']}', '{$_POST['alias']}', 1500, 0, 0)");
+            Db::exec("
+                INSERT INTO players (username, alias, rating, games_played, places_sum)
+                VALUES ('{$_POST['username']}', '{$_POST['alias']}', " . START_RATING . ", 0, 0)
+            ");
             echo "Успешно зарегистрировали пользователя.";
 			$this->_showForm();
         }
