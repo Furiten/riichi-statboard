@@ -136,6 +136,10 @@ class PointsCalc
     public function registerChombo($loser, $currentDealer)
     {
         if (!$this->_points) throw new Exception('setPlayersList must be called before any register method');
+        if (!CHOMBO_PAYMENTS) {
+            return;
+        }
+
         $basicPoints = Points::getTsumoPoints(5, 20);
         if ($loser == $currentDealer) {
             $wonPointsForSingleUser = $basicPoints['dealer'];
