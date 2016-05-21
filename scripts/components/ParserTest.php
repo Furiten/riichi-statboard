@@ -91,8 +91,9 @@ class ParserTest extends PHPUnit_Framework_TestCase
         $this->_tokenizer->_reassignLastAllowedToken([Tokenizer::OUTCOME => 1]);
 
         $tokens = preg_split('#\s+#', $str);
-        foreach ($tokens as $t) {
-            $this->_tokenizer->nextToken($t);
+        foreach ($tokens as $k => $t) {
+            $ctx = array_slice($tokens, $k > 1 ? $k - 2 : $k, 5);
+            $this->_tokenizer->nextToken($t, implode(' ', $ctx));
         }
         $tokens = [];
         $this->_hooks['tokenizerCb'] = function($statement) use (&$tokens) {

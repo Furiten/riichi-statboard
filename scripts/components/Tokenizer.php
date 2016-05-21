@@ -210,17 +210,17 @@ class Tokenizer
         return null;
     }
 
-    public function nextToken($token)
+    public function nextToken($token, $ctx)
     {
         list($tokenType, $reMatches) = $this->_identifyToken($token);
 
         if (!$this->_isTokenAllowed($tokenType)) {
-            throw new Exception("Ошибка при вводе данных: неожиданный токен {$token} ({$tokenType})", 108);
+            throw new Exception("Ошибка при вводе данных: неожиданный токен {$token} ({$tokenType}, контекст: {$ctx})", 108);
         }
 
         $methodName = '_callToken' . ucfirst($tokenType);
         if (is_callable([$this, ucfirst($tokenType)])) {
-            throw new Exception("Ошибка при вводе данных: неизвестный токен {$token} ({$tokenType})", 200);
+            throw new Exception("Ошибка при вводе данных: неизвестный токен {$token} ({$tokenType}, контекст: {$ctx})", 200);
         }
 
         $this->$methodName($token, $reMatches);
