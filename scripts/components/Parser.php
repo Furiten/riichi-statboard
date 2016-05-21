@@ -123,8 +123,9 @@ class Parser
         $this->_reset();
         $tokens = preg_split('#\s+#is', trim($this->_prepareTokens($text)));
 
-        while (!empty($tokens)) {
-            $this->_tokenizer->nextToken(array_shift($tokens));
+        foreach ($tokens as $k => $token) {
+            $ctx = array_slice($tokens, $k > 1 ? $k - 2 : $k, 5);
+            $this->_tokenizer->nextToken($token, implode(' ', $ctx));
         }
 
         $this->_tokenizer->callTokenEof();
