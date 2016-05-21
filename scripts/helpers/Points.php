@@ -24,6 +24,14 @@ class Points {
                 $timesFourRounded = $doubleRounded * 2;
                 $timesSixRounded = $doubleRounded * 3;
             }
+
+            // kiriage mangan workaround
+            if (!KIRIAGE_MANGAN && $basePoints == 1920) {
+                $rounded = 2000;
+                $doubleRounded = 3900;
+                $timesFourRounded = 7700;
+                $timesSixRounded = 11600;
+            }
         } else { // limits
             // yakuman
             if ($han >= 13) {

@@ -73,7 +73,7 @@ class AddGame extends Controller
                 if (count(array_intersect_assoc($players, $calculatedPoints)) != 4) {
                     throw new Exception("Несовпадение рассчитанных и вводимых очков! <br>"
                             . print_r($calculatedPoints, 1)
-//                            . '<br><pre>' . print_r($calc->getLog(), 1) . '</pre>'
+                            . (PARSER_LOG ? '<br><div style="height: 300px; overflow:scroll"><pre>' . print_r($calc->getLog(), 1) . '</pre></div>' : '')
                     );
                 }
             } catch (Exception $e) {
