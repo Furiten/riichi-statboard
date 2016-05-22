@@ -21,6 +21,7 @@ switch(RULES) {
     case 'EMA2016':
         define('IS_ONLINE', false);
         define('START_RATING', '0');
+        define('RIICHI_GO_TO_WINNER', true);
 
         // SIMPLE - простое сложение,
         // AVERAGE_SKILL - с учетом скилла игроков за столом
@@ -43,6 +44,7 @@ switch(RULES) {
     case 'JPML-A':
         define('IS_ONLINE', false);
         define('START_RATING', '1500');
+        define('RIICHI_GO_TO_WINNER', false);
 
         // SIMPLE - простое сложение,
         // AVERAGE_SKILL - с учетом скилла игроков за столом
@@ -66,6 +68,7 @@ switch(RULES) {
         define('IS_ONLINE', true);
         define('ALLOWED_LOBBY', '7994');
         define('START_RATING', '1500');
+        define('RIICHI_GO_TO_WINNER', false);
 
         // SIMPLE - простое сложение,
         // AVERAGE_SKILL - с учетом скилла игроков за столом

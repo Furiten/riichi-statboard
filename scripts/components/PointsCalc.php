@@ -25,6 +25,24 @@ class PointsCalc
         return $diffItem;
     }
 
+    public function finalizeRiichi($riichiCount, $_force = false /* for unit test */) 
+    {
+        if (!RIICHI_GO_TO_WINNER && !$_force) {
+            return;
+        }
+
+        $maxPlayer = null;
+        $maxScore = 0;
+        foreach ($this->_points as $player => $score) {
+            if ($score > $maxScore) { // equal score -> first from dealer wins
+                $maxScore = $score;
+                $maxPlayer = $player;
+            }
+        }
+
+        $this->_points[$maxPlayer] += 1000 * $riichiCount;
+    }
+
     /**
      * @param $han
      * @param $fu
@@ -116,7 +134,8 @@ class PointsCalc
         }, 0);
 
         if ($tempaiCount == 0 || $tempaiCount == 4) {
-            $this->_pointsDiff [] = ['type' => 'ultimate ' . ($tempaiCount == 0 ? 'noten' : 'tempai')];
+            $diffItem = [['type' => 'ultimate ' . ($tempaiCount == 0 ? 'noten' : 'tempai')]];
+            $this->_pointsDiff [] = array_merge($diffItem, $this->_applyLostRiichi($riichiList));
             return;
         }
 

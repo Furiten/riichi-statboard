@@ -129,6 +129,9 @@ class Parser
         }
 
         $this->_tokenizer->callTokenEof();
+        if ($this->_calc) {
+            $this->_calc->finalizeRiichi($this->_riichi);
+        }
 
         return [
             'scores' => $this->_resultScores,
@@ -315,6 +318,7 @@ class Parser
         $yakuParsed = $this->_parseYaku($tokens);
         $resultData = [
             'outcome' => 'ron',
+            'multiRon' => false,
             'round' => $this->_currentRound,
             'winner' => $winner->token(),
             'loser' => $loser->token(),
@@ -550,6 +554,7 @@ class Parser
         $yakuParsed = $this->_parseYaku($tokens);
         $resultData = [
             'outcome' => 'tsumo',
+            'multiRon' => false,
             'round' => $this->_currentRound,
             'winner' => $winner->token(),
             'honba' => $this->_honba,

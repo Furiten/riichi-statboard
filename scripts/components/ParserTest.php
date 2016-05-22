@@ -232,6 +232,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
             'winner' => 'heilage',
             'loser' => 'frontier',
             'yakuman' => false,
+            'multiRon' => false,
             'yakuList' => [],
             'doraCount' => '0'
 
@@ -269,7 +270,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
                 'loser' => 'frontier',
                 'yakuman' => false,
                 'yakuList' => [],
-                'doraCount' => 0 
+                'doraCount' => '0' 
             ],
             [
                 'dealer' => false,
@@ -285,7 +286,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
                 'loser' => 'frontier',
                 'yakuman' => false,
                 'yakuList' => [],
-                'doraCount' => 0 
+                'doraCount' => '0' 
             ]
         ];
         $this->_hooks['usual'] = function ($data) use ($expected, &$idx) {
@@ -316,8 +317,9 @@ class ParserTest extends PHPUnit_Framework_TestCase
             'winner' => 'heilage',
             'loser' => 'frontier',
             'yakuman' => false,
+            'multiRon' => false,
             'yakuList' => [],
-            'doraCount' => 0 
+            'doraCount' => '0'
         ];
         $this->_hooks['usual'] = function ($data) use ($expected) {
             ksort($data);
@@ -352,7 +354,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
                 'loser' => 'frontier',
                 'yakuman' => false,
                 'yakuList' => [],
-                'doraCount' => 0 
+                'doraCount' => '0' 
             ],
             [
                 'dealer' => true,
@@ -368,7 +370,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
                 'loser' => 'frontier',
                 'yakuman' => false,
                 'yakuList' => [],
-                'doraCount' => 0 
+                'doraCount' => '0' 
 
             ]
         ];
@@ -400,8 +402,9 @@ class ParserTest extends PHPUnit_Framework_TestCase
             'winner' => 'heilage',
             'loser' => 'frontier',
             'yakuman' => false,
+            'multiRon' => false,
             'yakuList' => [],
-            'doraCount' => 0 
+            'doraCount' => '0' 
         ];
         $this->_hooks['usual'] = function ($data) use ($expected) {
             ksort($data);
@@ -436,7 +439,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
                 'loser' => 'frontier',
                 'yakuman' => false,
                 'yakuList' => [],
-                'doraCount' => 0 
+                'doraCount' => '0'
             ],
             [
                 'dealer' => false,
@@ -452,7 +455,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
                 'loser' => 'frontier',
                 'yakuman' => false,
                 'yakuList' => [],
-                'doraCount' => 0 
+                'doraCount' => '0'
             ]
         ];
         $this->_hooks['usual'] = function ($data) use ($expected, &$idx) {
@@ -537,8 +540,9 @@ class ParserTest extends PHPUnit_Framework_TestCase
             'round' => 1,
             'winner' => 'heilage',
             'yakuman' => false,
+            'multiRon' => false,
             'yakuList' => [],
-            'doraCount' => 0 
+            'doraCount' => '0'
         ];
         $this->_hooks['usual'] = function ($data) use ($expected) {
             ksort($data);
@@ -566,8 +570,9 @@ class ParserTest extends PHPUnit_Framework_TestCase
             'round' => 1,
             'winner' => 'heilage',
             'yakuman' => false,
+            'multiRon' => false,
             'yakuList' => [],
-            'doraCount' => 0 
+            'doraCount' => '0' 
         ];
         $this->_hooks['usual'] = function ($data) use ($expected) {
             ksort($data);
@@ -595,8 +600,9 @@ class ParserTest extends PHPUnit_Framework_TestCase
             'round' => 1,
             'winner' => 'heilage',
             'yakuman' => false,
+            'multiRon' => false,
             'yakuList' => [],
-            'doraCount' => 0 
+            'doraCount' => '0' 
         ];
         $this->_hooks['usual'] = function ($data) use ($expected) {
             ksort($data);
@@ -862,8 +868,9 @@ class ParserTest extends PHPUnit_Framework_TestCase
             'winner' => 'manabi',
             'loser' => 'jun',
             'yakuman' => false,
+            'multiRon' => false,
             'yakuList' => [],
-            'doraCount' => 0 
+            'doraCount' => '0' 
         ];
 
         $this->_hooks['draw'] = function ($data) use ($expectedDraw) {
@@ -955,8 +962,9 @@ class ParserTest extends PHPUnit_Framework_TestCase
             'round' => 1,
             'winner' => 'heilage',
             'yakuman' => false,
+            'multiRon' => false,
             'yakuList' => [8, 33, 23, 36],
-            'doraCount' => 0 
+            'doraCount' => '0' 
         ];
         $this->_hooks['usual'] = function ($data) use ($expected) {
             ksort($data);
@@ -996,7 +1004,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
                 'loser' => 'frontier',
                 'yakuman' => false,
                 'yakuList' => [13],
-                'doraCount' => 0 
+                'doraCount' => '0' 
             ],
             [
                 'dealer' => false,
@@ -1012,7 +1020,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
                 'loser' => 'frontier',
                 'yakuman' => false,
                 'yakuList' => [34, 11],
-                'doraCount' => 0 
+                'doraCount' => '0' 
             ]
         ];
         $this->_hooks['usual'] = function ($data) use ($expected, &$idx) {
@@ -1044,6 +1052,7 @@ class ParserTest extends PHPUnit_Framework_TestCase
             'round' => 1,
             'winner' => 'heilage',
             'yakuman' => false,
+            'multiRon' => false,
             'yakuList' => [8, 33, 23, 36],
             'doraCount' => '4'
         ];
