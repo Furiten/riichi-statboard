@@ -386,6 +386,7 @@ class Tokenizer
                 Tokenizer::RIICHI_DELIMITER => 1,
                 Tokenizer::YAKU_START => 1,
                 Tokenizer::ALSO => 1,
+                Tokenizer::OUTCOME => 1,
             ],
             $matches[1]
         );
@@ -400,6 +401,7 @@ class Tokenizer
                 Tokenizer::RIICHI_DELIMITER => 1,
                 Tokenizer::YAKU_START => 1,
                 Tokenizer::ALSO => 1,
+                Tokenizer::OUTCOME => 1,
             ],
             $matches[1]
         );
@@ -555,6 +557,7 @@ class Tokenizer
                 Tokenizer::SCORE_DELIMITER => 1,
                 Tokenizer::USER_ALIAS => 1,
                 Tokenizer::FROM => 1,
+                Tokenizer::RIICHI_DELIMITER => 1,
                 Tokenizer::HAN_COUNT => 1,
                 Tokenizer::YAKUMAN => 1,
                 Tokenizer::OUTCOME => 1,

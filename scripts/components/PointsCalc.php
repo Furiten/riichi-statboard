@@ -10,18 +10,37 @@ class PointsCalc
 
     public function setPlayersList($players)
     {
-        $this->_points = array_combine($players, [START_POINTS, START_POINTS, START_POINTS, START_POINTS]);
+        $this->_points = array_combine(array_map('strval', $players), [START_POINTS, START_POINTS, START_POINTS, START_POINTS]);
+
     }
 
     protected function _applyLostRiichi($riichiList)
     {
         $diffItem = [];
         foreach ($riichiList as $player) {
-            $this->_points[$player] -= 1000;
-            $diffItem [] = ['player' => $player, 'value' => 1000, 'reason' => 'riichiBet'];
+            $this->_points[(string)$player] -= 1000;
+            $diffItem [] = ['player' => (string)$player, 'value' => 1000, 'reason' => 'riichiBet'];
         }
 
         return $diffItem;
+    }
+
+    public function finalizeRiichi($riichiCount, $_force = false /* for unit test */) 
+    {
+        if (!RIICHI_GO_TO_WINNER && !$_force) {
+            return;
+        }
+
+        $maxPlayer = null;
+        $maxScore = 0;
+        foreach ($this->_points as $player => $score) {
+            if ($score > $maxScore) { // equal score -> first from dealer wins
+                $maxScore = $score;
+                $maxPlayer = $player;
+            }
+        }
+
+        $this->_points[$maxPlayer] += 1000 * $riichiCount;
     }
 
     /**
@@ -38,6 +57,9 @@ class PointsCalc
      */
     public function registerRon($han, $fu, $winner, $loser, $honba, $riichiList, $totalRiichiCount, $currentDealer, $yakuman = false)
     {
+        // explicit type casting, no tokens here pls
+        list($winner, $loser, $currentDealer) = [(string)$winner, (string)$loser, (string)$currentDealer];
+
         if (!$this->_points) throw new Exception('setPlayersList must be called before any register method');
         $basicPoints = Points::getRonPoints($yakuman ? 13 : $han, $fu, $currentDealer == $winner);
         $lostPoints = $basicPoints + $honba * 300;
@@ -65,6 +87,9 @@ class PointsCalc
      */
     public function registerTsumo($han, $fu, $winner, $honba, $riichiList, $totalRiichiCount, $currentDealer, $yakuman = false)
     {
+        // explicit type casting, no tokens here pls
+        list($winner, $currentDealer) = [(string)$winner, (string)$currentDealer];
+
         if (!$this->_points) throw new Exception('setPlayersList must be called before any register method');
         $basicPoints = Points::getTsumoPoints($yakuman ? 13 : $han, $fu);
         $diffItem = [];
@@ -109,7 +134,8 @@ class PointsCalc
         }, 0);
 
         if ($tempaiCount == 0 || $tempaiCount == 4) {
-            $this->_pointsDiff [] = ['type' => 'ultimate ' . ($tempaiCount == 0 ? 'noten' : 'tempai')];
+            $diffItem = [['type' => 'ultimate ' . ($tempaiCount == 0 ? 'noten' : 'tempai')]];
+            $this->_pointsDiff [] = array_merge($diffItem, $this->_applyLostRiichi($riichiList));
             return;
         }
 
@@ -135,6 +161,9 @@ class PointsCalc
 
     public function registerChombo($loser, $currentDealer)
     {
+        // explicit type casting, no tokens here pls
+        list($loser, $currentDealer) = [(string)$loser, (string)$currentDealer];
+
         if (!$this->_points) throw new Exception('setPlayersList must be called before any register method');
         if (!CHOMBO_PAYMENTS) {
             return;

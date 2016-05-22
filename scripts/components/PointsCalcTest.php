@@ -271,6 +271,21 @@ class PointsCalcTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($result['manabi'], 31000);
     }
 
+    public function testDrawWithRiichiAndFinalize()
+    {
+        $this->_calc->registerDraw([
+            'jun' => 'tempai',
+            'frontier' => 'tempai',
+            'heilage' => 'noten',
+            'manabi' => 'tempai'
+        ], ['heilage', 'jun']);
+        $this->_calc->finalizeRiichi(2, true);
+        $result = $this->_calc->getResultPoints();
+        $this->assertEquals($result['jun'], 30000);
+        $this->assertEquals($result['frontier'], 33000);
+        $this->assertEquals($result['heilage'], 26000);
+        $this->assertEquals($result['manabi'], 31000);
+    }
     // chombo
 
     public function testChombo()
