@@ -46,6 +46,7 @@ class Graphs extends Controller {
                 $data = $this->_getPlacesData($gameResults, $user);
                 $placesData = $data['places'];
                 $gamesCount = $data['games_count'];
+                $roundsCount = $this->_getRoundsCount($user);
 
                 $handsData = $this->_getHandsData($user);
                 $furikomi = $this->_getFurikomiData($user);
@@ -82,6 +83,16 @@ class Graphs extends Controller {
 
         ksort($games);
         return array_values($games);
+    }
+
+    protected function _getRoundsCount($user) {
+        $rounds = Db::get("
+            SELECT COUNT(*) as cnt FROM round
+            JOIN result_score ON ( result_score.game_id = round.game_id )
+            WHERE result_score.username = '{$user}'
+        ");
+
+        return reset($rounds)['cnt'];
     }
 
     protected function _getPlacesData($gamesResults, $username)

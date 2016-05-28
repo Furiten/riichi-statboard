@@ -166,20 +166,40 @@
     <div class="span4">
         <table class="table table-striped table-condensed">
             <tr><td colspan="2" style="padding-left: 20px"><b>Общая статистика:</b></td></tr>
-            <tr><td>Сыграно игр</td><td><?php echo $gamesCount; ?></td></tr>
-            <tr><td>Выиграно раздач</td><td><?php echo $handsData['rounds_won'] - $handsData['chombo']; ?></td></tr>
-            <tr><td>Интегральный рейтинг</td><td><?php echo $integralRating; ?></td></tr>
+            <tr><td>Сыграно игр</td><td>
+                    <b><?php echo $gamesCount; ?></b></td></tr>
+            <tr><td>Сыграно раздач</td><td>
+                    <b><?php echo $roundsCount; ?></b></td></tr>
+            <tr><td>Выиграно раздач</td><td>
+                    <b><?php echo $handsData['rounds_won'] - $handsData['chombo']; ?></b> &nbsp;
+                    (<?php echo sprintf('%.2f', 100. * ($handsData['rounds_won'] - $handsData['chombo']) / $roundsCount); ?>%)</td></tr>
+            <tr><td>Интегральный рейтинг</td><td>
+                    <?php echo $integralRating; ?></td></tr>
             <tr><td colspan="2" style="padding-left: 20px"><b>По исходам раздач:</b></td></tr>
-            <tr><td>Выигрышей по рон</td><td><b><?php echo $handsData['ron']; ?></b> &nbsp; (<?php echo sprintf('%.2f', 100. * $handsData['ron'] / ($handsData['rounds_won'] ? $handsData['rounds_won'] : 1)); ?>%)</td></tr>
-            <tr><td>Выигрышей по цумо</td><td><b><?php echo $handsData['tsumo']; ?></b> &nbsp; (<?php echo sprintf('%.2f', 100. * $handsData['tsumo'] / ($handsData['rounds_won'] ? $handsData['rounds_won'] : 1)); ?>%)</td></tr>
-            <tr><td>Штрафов чомбо</td><td><b><?php echo $handsData['chombo']; ?></b> &nbsp; (<?php echo sprintf('%.2f', 100. * $handsData['chombo'] / ($handsData['rounds_won'] ? $handsData['rounds_won'] : 1)); ?>%)</td></tr>
-            <tr><td>Набросов в рон</td><td><b><?php echo $furikomi['total']; ?></b></td></tr>
-            <tr><td>В том числе набросов из-за риичи</td><td><b><?php echo $furikomi['riichi']; ?></b></td></tr>
+            <tr><td>Выигрышей по рон</td><td>
+                    <b><?php echo $handsData['ron']; ?></b> &nbsp;
+                    (<?php echo sprintf('%.2f', 100. * $handsData['ron'] / $roundsCount); ?>%)</td></tr>
+            <tr><td>Выигрышей по цумо</td><td>
+                    <b><?php echo $handsData['tsumo']; ?></b> &nbsp;
+                    (<?php echo sprintf('%.2f', 100. * $handsData['tsumo'] / $roundsCount); ?>%)</td></tr>
+            <tr><td>Штрафов чомбо</td><td>
+                    <b><?php echo $handsData['chombo']; ?></b> &nbsp;
+                    (<?php echo sprintf('%.2f', 100. * $handsData['chombo'] / $roundsCount); ?>%)</td></tr>
+            <tr><td>Набросов в рон</td><td>
+                    <b><?php echo $furikomi['total']; ?></b>
+                    (<?php echo sprintf('%.2f', 100. * $furikomi['total'] / $roundsCount); ?>%)</td></tr>
+            <tr><td>В том числе набросов из-за риичи</td><td>
+                    <b><?php echo $furikomi['riichi']; ?></b>
+                    (<?php echo sprintf('%.2f', 100. * $furikomi['riichi'] / $roundsCount); ?>%)</td></tr>
             <tr><td colspan="2" style="padding-left: 20px"><b>По занятым местам:</b></td></tr>
-            <tr><td>1 место</td><td><?php echo sprintf('%.2f', $placesData[1]); ?> %</td></tr>
-            <tr><td>2 место</td><td><?php echo sprintf('%.2f', $placesData[2]); ?> %</td></tr>
-            <tr><td>3 место</td><td><?php echo sprintf('%.2f', $placesData[3]); ?> %</td></tr>
-            <tr><td>4 место</td><td><?php echo sprintf('%.2f', $placesData[4]); ?> %</td></tr>
+            <tr><td>1 место</td><td>
+                    <?php echo sprintf('%.2f', $placesData[1]); ?> %</td></tr>
+            <tr><td>2 место</td><td>
+                    <?php echo sprintf('%.2f', $placesData[2]); ?> %</td></tr>
+            <tr><td>3 место</td><td>
+                    <?php echo sprintf('%.2f', $placesData[3]); ?> %</td></tr>
+            <tr><td>4 место</td><td>
+                    <?php echo sprintf('%.2f', $placesData[4]); ?> %</td></tr>
         </table>
     </div>
     <div class="span8">
