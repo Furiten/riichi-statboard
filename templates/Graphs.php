@@ -37,7 +37,11 @@
             axes:{
                 xaxis:{
                     //label:'Сыграно игр',
-                    ticks: <?php echo json_encode(array_keys($graphData)); ?>
+                    ticks: <?php echo json_encode(array_keys($graphData)); ?>,
+                    tickInterval: 1,
+                    tickOptions: {
+                        formatString: '%d'
+                    }
                 },
                 yaxis:{
                     label:'Рейтинг'
@@ -141,6 +145,12 @@
                 axes: {
                     yaxis: {
                         renderer: $.jqplot.CategoryAxisRenderer
+                    },
+                    xaxis: {
+                        tickInterval: 1,
+                        tickOptions: {
+                            formatString: '%d'
+                        }
                     }
                 }
             });
