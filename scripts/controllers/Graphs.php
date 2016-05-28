@@ -1,5 +1,7 @@
 <?php
 
+include_once 'scripts/helpers/Yaku.php';
+
 class Graphs extends Controller {
     protected function _run()
     {
@@ -46,6 +48,7 @@ class Graphs extends Controller {
                 $gamesCount = $data['games_count'];
 
                 $handsData = $this->_getHandsData($user);
+                $roundsData = $this->_getRoundsData($user);
 
                 $graphData = [0 => [0, 1500]];
                 $i = 1;
@@ -79,6 +82,57 @@ class Graphs extends Controller {
 
         ksort($games);
         return array_values($games);
+    }
+
+    protected function _getRoundsData($user) {
+        $roundsData = Db::get("
+            SELECT round.username, loser, riichi
+            FROM round
+            JOIN result_score ON ( result_score.game_id = round.game_id )
+            WHERE result_score.username = '{$user}'
+        ");
+
+        $furikomiCount = 0;
+        $furikomiAtRiichi = 0;
+        $riichiCount = 0;
+        $riichiWon = 0;
+        $riichiLost = 0;
+
+        foreach ($roundsData as $round) {
+            $riichi = [];
+            if (!empty($round['riichi'])) {
+                $riichi = @unserialize($round['riichi']);
+            }
+
+            if (in_array($user, $riichi)) {
+                $riichiCount ++;
+            }
+
+            if ($round['loser'] == $user) {
+                $furikomiCount ++;
+                if (in_array($user, $riichi)) {
+                    $furikomiAtRiichi ++;
+                    $riichiLost ++;
+                }
+            } else if ($round['username'] == $user) {
+                if (in_array($user, $riichi)) {
+                    $riichiWon ++;
+                }
+            } else {
+                if (in_array($user, $riichi)) {
+                    $riichiLost ++;
+                }
+            }
+        }
+
+        return [
+            'furikomi_total' => $furikomiCount,
+            'furikomi_riichi' => $furikomiAtRiichi,
+            'rounds_played' => count($roundsData),
+            'riichi_bets' => $riichiCount,
+            'riichi_won' => $riichiWon,
+            'riichi_lost' => $riichiLost
+        ];
     }
 
     protected function _getPlacesData($gamesResults, $username)
@@ -134,14 +188,29 @@ class Graphs extends Controller {
             10 => 0,
             11 => 0,
             12 => 0,
-            '13+' => 0
+            '★' => 0
         ];
         $ronCount = 0;
         $tsumoCount = 0;
         $chomboCount = 0;
+
+        $yaku = [];
+
         foreach ($roundsData as $round) {
+            // count yaku
+            $yakuSplit = explode(',', $round['yaku']);
+            array_map(function($el) use (&$yaku) {
+                $key = YakuHelper::getString($el);
+                if (!isset($yaku[$key])) {
+                    $yaku[$key] = 0;
+                }
+                $yaku[$key] ++;
+            }, $yakuSplit);
+
+            // count outcomes
             if ($round['yakuman']) {
                 $yakumanCount ++;
+                continue;
             }
 
             if ($round['result'] == 'ron') {
@@ -154,20 +223,21 @@ class Graphs extends Controller {
 
             if ($round['result'] == 'chombo') {
                 $chomboCount ++;
-		continue;
+		        continue;
             }
 
             $hands[$round['han']] ++;
         }
 
-        $hands['13+'] = $yakumanCount;
+        $hands['★'] = $yakumanCount;
 
         return [
             'rounds_won' => $roundsWon,
             'ron' => $ronCount,
             'tsumo' => $tsumoCount,
             'chombo' => $chomboCount,
-            'hands' => $hands
+            'hands' => $hands,
+            'yaku' => $yaku
         ];
     }
 }

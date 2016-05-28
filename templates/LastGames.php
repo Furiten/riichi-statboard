@@ -134,11 +134,11 @@ foreach ($gamesData as $game) {
                     $dealer = ' (дилерское)';
                 } else $dealer = '';
 
-                $round['yaku_list'] = str_replace(',', ', ', $round['yaku_list']);
+                $yakuList = implode(', ', $round['yaku']);
                 if (!empty($round['yakuman'])) {
-                    $fullLog .= "<b>{$aliases[$round['username']]}</b> - {$round['yaku_list']} (<b>{$aliases[$round['loser']]}</b>), якуман! {$dealer}";
+                    $fullLog .= "<b>{$aliases[$round['username']]}</b> - {$yakuList} (<b>{$aliases[$round['loser']]}</b>), якуман! {$dealer}";
                 } else {
-                    $fullLog .= "<b>{$aliases[$round['username']]}</b> - {$round['yaku_list']}{$dora} (<b>{$aliases[$round['loser']]}</b>), {$round['han']} хан{$fu}{$dealer}";
+                    $fullLog .= "<b>{$aliases[$round['username']]}</b> - {$yakuList}{$dora} (<b>{$aliases[$round['loser']]}</b>), {$round['han']} хан{$fu}{$dealer}";
                 }
                 break;
             case 'tsumo':
@@ -154,11 +154,11 @@ foreach ($gamesData as $game) {
                     $dealer = ' (дилерское)';
                 } else $dealer = '';
 
-                $round['yaku_list'] = str_replace(',', ', ', $round['yaku_list']);
+                $yakuList = implode(', ', $round['yaku']);
                 if (!empty($round['yakuman'])) {
-                    $fullLog .= "<b>{$aliases[$round['username']]}</b> - {$round['yaku_list']} (цумо), якуман! {$dealer}";
+                    $fullLog .= "<b>{$aliases[$round['username']]}</b> - {$yakuList} (цумо), якуман! {$dealer}";
                 } else {
-                    $fullLog .= "<b>{$aliases[$round['username']]}</b> - {$round['yaku_list']}{$dora} (цумо), {$round['han']} хан{$fu}{$dealer}";
+                    $fullLog .= "<b>{$aliases[$round['username']]}</b> - {$yakuList}{$dora} (цумо), {$round['han']} хан{$fu}{$dealer}";
                 }
                 break;
             case 'draw':
@@ -196,7 +196,7 @@ foreach ($gamesData as $game) {
         <td>{$players}</td>
         <td>
             <ul>
-                <li><a href='{$game['orig_link']}' target='_blank'>Посмотреть реплей</a></li>
+                " . (IS_ONLINE ? "<li><a href='{$game['orig_link']}' target='_blank'>Посмотреть реплей</a></li>" : "") . "
                 <li>Лучшая рука собрана игроком <b>" . $player . "</b> - {$cost}</li>
                 <li>В игре было {$ronWins} по рон и {$tsumoWins} по цумо</li>
                 ". ($game['doubleron_count'] ? "<li>Кроме того, {$doubleronWins} по дабл-рон!</li>" : "")."

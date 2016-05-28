@@ -84,13 +84,6 @@ function installMysql() {
             KEY `yaku` (`yaku`),
             KEY `dora` (`dora`)
         ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;",
-        'yaku' => "
-        CREATE TABLE IF NOT EXISTS `yaku` (
-            `id` int(11) NOT NULL AUTO_INCREMENT,
-            `title` varchar(255) NOT NULL,
-            PRIMARY KEY (`id`),
-            KEY `title` (`title`)
-        ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;",
         'sortition_cache' => "
         CREATE TABLE IF NOT EXISTS `sortition_cache` (
             `hash` varchar(24) NOT NULL,
@@ -108,58 +101,10 @@ function installMysql() {
         ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;"
     ];
 
-    $yakuData = "
-        INSERT INTO `yaku` (`id`, `title`) VALUES
-            (34, 'Дабл риичи'),
-            (19, 'Дайсанген'),
-            (21, 'Дайсууши'),
-            (25, 'Джунчан'),
-            (9, 'Иипейко'),
-            (35, 'Иппацу'),
-            (12, 'Иццу'),
-            (32, 'Кокушимусо'),
-            (36, 'Мендзен цумо'),
-            (8, 'Пин-фу'),
-            (43, 'Ренхо'),
-            (33, 'Риичи'),
-            (38, 'Риншан кайхо'),
-            (30, 'Рюисо'),
-            (10, 'Рянпейко'),
-            (3, 'Сананко'),
-            (5, 'Санканцу'),
-            (11, 'Саншоку'),
-            (4, 'Саншоку доко'),
-            (7, 'Сууанко'),
-            (6, 'Сууканцу'),
-            (23, 'Тан-яо'),
-            (39, 'Тенхо'),
-            (1, 'Тойтой'),
-            (37, 'Хайтей'),
-            (27, 'Хоницу'),
-            (2, 'Хонрото'),
-            (41, 'Хотей'),
-            (22, 'Цууисо'),
-            (42, 'Чанкан'),
-            (24, 'Чанта'),
-            (31, 'Чиитойцу'),
-            (28, 'Чиницу'),
-            (26, 'Чинрото'),
-            (40, 'Чихо'),
-            (29, 'Чууренпото'),
-            (18, 'Шосанген'),
-            (20, 'Шосууши'),
-            (13, 'Якухай 1'),
-            (14, 'Якухай 2'),
-            (15, 'Якухай 3'),
-            (16, 'Якухай 4'),
-            (17, 'Якухай 5');
-    ";
-
     try {
         foreach ($tables as $table => $sql) {
             Db::exec($sql);
         }
-        Db::exec($yakuData);
     } catch (Exception $e) {
         echo "Couldn't install database." . PHP_EOL . $e->getMessage();
     }
