@@ -134,7 +134,7 @@ class Graphs extends Controller {
             10 => 0,
             11 => 0,
             12 => 0,
-            '13+' => 0
+            '★' => 0
         ];
         $ronCount = 0;
         $tsumoCount = 0;
@@ -142,6 +142,7 @@ class Graphs extends Controller {
         foreach ($roundsData as $round) {
             if ($round['yakuman']) {
                 $yakumanCount ++;
+                continue;
             }
 
             if ($round['result'] == 'ron') {
@@ -154,13 +155,13 @@ class Graphs extends Controller {
 
             if ($round['result'] == 'chombo') {
                 $chomboCount ++;
-		continue;
+		        continue;
             }
 
             $hands[$round['han']] ++;
         }
 
-        $hands['13+'] = $yakumanCount;
+        $hands['★'] = $yakumanCount;
 
         return [
             'rounds_won' => $roundsWon,
