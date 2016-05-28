@@ -196,7 +196,7 @@ foreach ($gamesData as $game) {
         <td>{$players}</td>
         <td>
             <ul>
-                <li><a href='{$game['orig_link']}' target='_blank'>Посмотреть реплей</a></li>
+                " . (IS_ONLINE ? "<li><a href='{$game['orig_link']}' target='_blank'>Посмотреть реплей</a></li>" : "") . "
                 <li>Лучшая рука собрана игроком <b>" . $player . "</b> - {$cost}</li>
                 <li>В игре было {$ronWins} по рон и {$tsumoWins} по цумо</li>
                 ". ($game['doubleron_count'] ? "<li>Кроме того, {$doubleronWins} по дабл-рон!</li>" : "")."
