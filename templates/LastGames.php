@@ -134,11 +134,11 @@ foreach ($gamesData as $game) {
                     $dealer = ' (дилерское)';
                 } else $dealer = '';
 
-                $round['yaku_list'] = str_replace(',', ', ', $round['yaku_list']);
+                $yakuList = implode(', ', $round['yaku_list']);
                 if (!empty($round['yakuman'])) {
-                    $fullLog .= "<b>{$aliases[$round['username']]}</b> - {$round['yaku_list']} (<b>{$aliases[$round['loser']]}</b>), якуман! {$dealer}";
+                    $fullLog .= "<b>{$aliases[$round['username']]}</b> - {$yakuList} (<b>{$aliases[$round['loser']]}</b>), якуман! {$dealer}";
                 } else {
-                    $fullLog .= "<b>{$aliases[$round['username']]}</b> - {$round['yaku_list']}{$dora} (<b>{$aliases[$round['loser']]}</b>), {$round['han']} хан{$fu}{$dealer}";
+                    $fullLog .= "<b>{$aliases[$round['username']]}</b> - {$yakuList}{$dora} (<b>{$aliases[$round['loser']]}</b>), {$round['han']} хан{$fu}{$dealer}";
                 }
                 break;
             case 'tsumo':
@@ -154,11 +154,11 @@ foreach ($gamesData as $game) {
                     $dealer = ' (дилерское)';
                 } else $dealer = '';
 
-                $round['yaku_list'] = str_replace(',', ', ', $round['yaku_list']);
+                $yakuList = implode(', ', $round['yaku_list']);
                 if (!empty($round['yakuman'])) {
-                    $fullLog .= "<b>{$aliases[$round['username']]}</b> - {$round['yaku_list']} (цумо), якуман! {$dealer}";
+                    $fullLog .= "<b>{$aliases[$round['username']]}</b> - {$yakuList} (цумо), якуман! {$dealer}";
                 } else {
-                    $fullLog .= "<b>{$aliases[$round['username']]}</b> - {$round['yaku_list']}{$dora} (цумо), {$round['han']} хан{$fu}{$dealer}";
+                    $fullLog .= "<b>{$aliases[$round['username']]}</b> - {$yakuList}{$dora} (цумо), {$round['han']} хан{$fu}{$dealer}";
                 }
                 break;
             case 'draw':

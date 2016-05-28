@@ -1,6 +1,7 @@
 <?php
 
 include_once "scripts/helpers/Array.php";
+include_once "scripts/helpers/Yaku.php";
 
 class LastGames extends Controller
 {
@@ -37,13 +38,12 @@ class LastGames extends Controller
         $scoresData = Db::get($resultScores);
         $scoresData = ArrayHelpers::elm2Key($scoresData, 'id');
 
-        $rounds = "SELECT round.*, group_concat(yaku.title) as yaku_list
-            FROM round
-            LEFT JOIN yaku ON FIND_IN_SET(yaku.id, round.yaku)
-			WHERE round.game_id IN({$gameIds})
-			GROUP BY round.id
-        ";
+        $rounds = "SELECT * FROM round WHERE game_id IN({$gameIds})";
         $roundsData = Db::get($rounds);
+        foreach ($roundsData as $id => $data) {
+            $roundsData[$id]['yaku'] = YakuHelper::toStringList($data['yaku']);
+        }
+
         $roundsData = ArrayHelpers::elm2Key($roundsData, 'id');
 
         include 'templates/LastGames.php';
