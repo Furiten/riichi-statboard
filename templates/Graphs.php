@@ -96,6 +96,17 @@
                 ?>
             ];
 
+            var yaku_data = [
+                <?php
+                    $output = [];
+                    asort($handsData['yaku']);
+                    foreach ($handsData['yaku'] as $yaku => $count) {
+                        $output []= "[{$count}, '{$yaku}']";
+                    }
+                    echo implode(", \n", $output);
+                ?>
+            ];
+
             var plot_hands = $.jqplot('chart_hands', [han_data], {
                 title: 'Ценность собранных рук',
                 series:[{renderer:$.jqplot.BarRenderer}],
@@ -107,6 +118,28 @@
                 axes: {
                     xaxis: {
                         label: 'Хан',
+                        renderer: $.jqplot.CategoryAxisRenderer
+                    }
+                }
+            });
+
+            var plot_yaku = $.jqplot('chart_yaku', [yaku_data], {
+                title: 'Собранные яку (за все время)',
+                series:[{
+                    renderer: $.jqplot.BarRenderer,
+                    rendererOptions: {
+                        barWidth: 7,
+                        shadowOffset: 1,
+                        barDirection: 'horizontal'
+                    }
+                }],
+                axesDefaults: {
+                    tickOptions: {
+                        fontSize: '10pt'
+                    }
+                },
+                axes: {
+                    yaxis: {
                         renderer: $.jqplot.CategoryAxisRenderer
                     }
                 }
@@ -137,6 +170,8 @@
     </div>
     <div class="span8">
         <div id='chart_hands'></div>
+        <hr />
+        <div id='chart_yaku'></div>
     </div>
 </div>
 

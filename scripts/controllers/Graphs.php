@@ -1,5 +1,7 @@
 <?php
 
+include_once 'scripts/helpers/Yaku.php';
+
 class Graphs extends Controller {
     protected function _run()
     {
@@ -139,7 +141,21 @@ class Graphs extends Controller {
         $ronCount = 0;
         $tsumoCount = 0;
         $chomboCount = 0;
+
+        $yaku = [];
+
         foreach ($roundsData as $round) {
+            // count yaku
+            $yakuSplit = explode(',', $round['yaku']);
+            array_map(function($el) use (&$yaku) {
+                $key = YakuHelper::getString($el);
+                if (!isset($yaku[$key])) {
+                    $yaku[$key] = 0;
+                }
+                $yaku[$key] ++;
+            }, $yakuSplit);
+
+            // count outcomes
             if ($round['yakuman']) {
                 $yakumanCount ++;
                 continue;
@@ -168,7 +184,8 @@ class Graphs extends Controller {
             'ron' => $ronCount,
             'tsumo' => $tsumoCount,
             'chombo' => $chomboCount,
-            'hands' => $hands
+            'hands' => $hands,
+            'yaku' => $yaku
         ];
     }
 }
