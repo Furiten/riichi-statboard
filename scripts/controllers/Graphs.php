@@ -46,10 +46,9 @@ class Graphs extends Controller {
                 $data = $this->_getPlacesData($gameResults, $user);
                 $placesData = $data['places'];
                 $gamesCount = $data['games_count'];
-                $roundsCount = $this->_getRoundsCount($user);
 
                 $handsData = $this->_getHandsData($user);
-                $furikomi = $this->_getFurikomiData($user);
+                $roundsData = $this->_getRoundsData($user);
 
                 $graphData = [0 => [0, 1500]];
                 $i = 1;
@@ -85,14 +84,55 @@ class Graphs extends Controller {
         return array_values($games);
     }
 
-    protected function _getRoundsCount($user) {
-        $rounds = Db::get("
-            SELECT COUNT(*) as cnt FROM round
+    protected function _getRoundsData($user) {
+        $roundsData = Db::get("
+            SELECT round.username, loser, riichi
+            FROM round
             JOIN result_score ON ( result_score.game_id = round.game_id )
             WHERE result_score.username = '{$user}'
         ");
 
-        return reset($rounds)['cnt'];
+        $furikomiCount = 0;
+        $furikomiAtRiichi = 0;
+        $riichiCount = 0;
+        $riichiWon = 0;
+        $riichiLost = 0;
+
+        foreach ($roundsData as $round) {
+            $riichi = [];
+            if (!empty($round['riichi'])) {
+                $riichi = @unserialize($round['riichi']);
+            }
+
+            if (in_array($user, $riichi)) {
+                $riichiCount ++;
+            }
+
+            if ($round['loser'] == $user) {
+                $furikomiCount ++;
+                if (in_array($user, $riichi)) {
+                    $furikomiAtRiichi ++;
+                    $riichiLost ++;
+                }
+            } else if ($round['username'] == $user) {
+                if (in_array($user, $riichi)) {
+                    $riichiWon ++;
+                }
+            } else {
+                if (in_array($user, $riichi)) {
+                    $riichiLost ++;
+                }
+            }
+        }
+
+        return [
+            'furikomi_total' => $furikomiCount,
+            'furikomi_riichi' => $furikomiAtRiichi,
+            'rounds_played' => count($roundsData),
+            'riichi_bets' => $riichiCount,
+            'riichi_won' => $riichiWon,
+            'riichi_lost' => $riichiLost
+        ];
     }
 
     protected function _getPlacesData($gamesResults, $username)
@@ -198,25 +238,6 @@ class Graphs extends Controller {
             'chombo' => $chomboCount,
             'hands' => $hands,
             'yaku' => $yaku
-        ];
-    }
-
-    protected function _getFurikomiData($user) {
-        $roundsData = Db::get("SELECT * FROM round WHERE loser = '{$user}'");
-        $furikomiCount = count($roundsData);
-        $furikomiAtRiichi = 0;
-        foreach ($roundsData as $round) {
-            if (!empty($round['riichi'])) {
-                $riichi = @unserialize($round['riichi']);
-                if (in_array($user, $riichi)) {
-                    $furikomiAtRiichi ++;
-                }
-            }
-        }
-
-        return [
-            'total' => $furikomiCount,
-            'riichi' => $furikomiAtRiichi
         ];
     }
 }

@@ -169,28 +169,37 @@
             <tr><td>Сыграно игр</td><td>
                     <b><?php echo $gamesCount; ?></b></td></tr>
             <tr><td>Сыграно раздач</td><td>
-                    <b><?php echo $roundsCount; ?></b></td></tr>
+                    <b><?php echo $roundsData['rounds_played']; ?></b></td></tr>
             <tr><td>Выиграно раздач</td><td>
                     <b><?php echo $handsData['rounds_won'] - $handsData['chombo']; ?></b> &nbsp;
-                    (<?php echo sprintf('%.2f', 100. * ($handsData['rounds_won'] - $handsData['chombo']) / $roundsCount); ?>%)</td></tr>
+                    (<?php echo sprintf('%.2f', 100. * ($handsData['rounds_won'] - $handsData['chombo']) / $roundsData['rounds_played']); ?>%)</td></tr>
             <tr><td>Интегральный рейтинг</td><td>
                     <?php echo $integralRating; ?></td></tr>
             <tr><td colspan="2" style="padding-left: 20px"><b>По исходам раздач:</b></td></tr>
             <tr><td>Выигрышей по рон</td><td>
                     <b><?php echo $handsData['ron']; ?></b> &nbsp;
-                    (<?php echo sprintf('%.2f', 100. * $handsData['ron'] / $roundsCount); ?>%)</td></tr>
+                    (<?php echo sprintf('%.2f', 100. * $handsData['ron'] / $roundsData['rounds_played']); ?>%)</td></tr>
             <tr><td>Выигрышей по цумо</td><td>
                     <b><?php echo $handsData['tsumo']; ?></b> &nbsp;
-                    (<?php echo sprintf('%.2f', 100. * $handsData['tsumo'] / $roundsCount); ?>%)</td></tr>
+                    (<?php echo sprintf('%.2f', 100. * $handsData['tsumo'] / $roundsData['rounds_played']); ?>%)</td></tr>
             <tr><td>Штрафов чомбо</td><td>
                     <b><?php echo $handsData['chombo']; ?></b> &nbsp;
-                    (<?php echo sprintf('%.2f', 100. * $handsData['chombo'] / $roundsCount); ?>%)</td></tr>
+                    (<?php echo sprintf('%.2f', 100. * $handsData['chombo'] / $roundsData['rounds_played']); ?>%)</td></tr>
+            <tr><td>Ставок риичи</td><td>
+                    <b><?php echo $roundsData['riichi_bets']; ?></b> &nbsp;
+                    (<?php echo sprintf('%.2f', 100. * $roundsData['riichi_bets'] / $roundsData['rounds_played']); ?>%)</td></tr>
+            <tr><td>- из них выигравших</td><td>
+                    <b><?php echo $roundsData['riichi_won']; ?></b> &nbsp;
+                    (<?php echo sprintf('%.2f', 100. * $roundsData['riichi_won'] / $roundsData['rounds_played']); ?>%)</td></tr>
+            <tr><td>- из них потерянных</td><td>
+                    <b><?php echo $roundsData['riichi_lost']; ?></b> &nbsp;
+                    (<?php echo sprintf('%.2f', 100. * $roundsData['riichi_lost'] / $roundsData['rounds_played']); ?>%)</td></tr>
             <tr><td>Набросов в рон</td><td>
-                    <b><?php echo $furikomi['total']; ?></b>
-                    (<?php echo sprintf('%.2f', 100. * $furikomi['total'] / $roundsCount); ?>%)</td></tr>
-            <tr><td>В том числе набросов из-за риичи</td><td>
-                    <b><?php echo $furikomi['riichi']; ?></b>
-                    (<?php echo sprintf('%.2f', 100. * $furikomi['riichi'] / $roundsCount); ?>%)</td></tr>
+                    <b><?php echo $roundsData['furikomi_total']; ?></b>
+                    (<?php echo sprintf('%.2f', 100. * $roundsData['furikomi_total'] / $roundsData['rounds_played']); ?>%)</td></tr>
+            <tr><td>- в том числе из-за риичи</td><td>
+                    <b><?php echo $roundsData['furikomi_riichi']; ?></b>
+                    (<?php echo sprintf('%.2f', 100. * $roundsData['furikomi_riichi'] / $roundsData['rounds_played']); ?>%)</td></tr>
             <tr><td colspan="2" style="padding-left: 20px"><b>По занятым местам:</b></td></tr>
             <tr><td>1 место</td><td>
                     <?php echo sprintf('%.2f', $placesData[1]); ?> %</td></tr>
