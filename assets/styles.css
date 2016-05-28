@@ -24,6 +24,7 @@
 
 [class^="icon-"], [class*=" icon-"] {
     vertical-align: top;
+    margin-top: 3px;
 }
 
 li, .table th, .table td {

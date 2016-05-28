@@ -116,7 +116,7 @@
                 series:[{renderer:$.jqplot.BarRenderer}],
                 axesDefaults: {
                     tickOptions: {
-                        fontSize: '10pt'
+                        fontSize: '12pt'
                     }
                 },
                 axes: {
@@ -140,7 +140,7 @@
                 }],
                 axesDefaults: {
                     tickOptions: {
-                        fontSize: '10pt'
+                        fontSize: '12pt'
                     }
                 },
                 axes: {
