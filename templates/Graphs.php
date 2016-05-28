@@ -128,6 +128,7 @@
             });
 
             var plot_yaku = $.jqplot('chart_yaku', [yaku_data], {
+                height: 400,
                 title: 'Собранные яку (за все время)',
                 series:[{
                     renderer: $.jqplot.BarRenderer,
@@ -147,6 +148,7 @@
                         renderer: $.jqplot.CategoryAxisRenderer
                     },
                     xaxis: {
+                        min: 0,
                         tickInterval: 1,
                         tickOptions: {
                             formatString: '%d'
@@ -171,6 +173,8 @@
             <tr><td>Выигрышей по рон</td><td><b><?php echo $handsData['ron']; ?></b> &nbsp; (<?php echo sprintf('%.2f', 100. * $handsData['ron'] / ($handsData['rounds_won'] ? $handsData['rounds_won'] : 1)); ?>%)</td></tr>
             <tr><td>Выигрышей по цумо</td><td><b><?php echo $handsData['tsumo']; ?></b> &nbsp; (<?php echo sprintf('%.2f', 100. * $handsData['tsumo'] / ($handsData['rounds_won'] ? $handsData['rounds_won'] : 1)); ?>%)</td></tr>
             <tr><td>Штрафов чомбо</td><td><b><?php echo $handsData['chombo']; ?></b> &nbsp; (<?php echo sprintf('%.2f', 100. * $handsData['chombo'] / ($handsData['rounds_won'] ? $handsData['rounds_won'] : 1)); ?>%)</td></tr>
+            <tr><td>Набросов в рон</td><td><b><?php echo $furikomi['total']; ?></b></td></tr>
+            <tr><td>В том числе набросов из-за риичи</td><td><b><?php echo $furikomi['riichi']; ?></b></td></tr>
             <tr><td colspan="2" style="padding-left: 20px"><b>По занятым местам:</b></td></tr>
             <tr><td>1 место</td><td><?php echo sprintf('%.2f', $placesData[1]); ?> %</td></tr>
             <tr><td>2 место</td><td><?php echo sprintf('%.2f', $placesData[2]); ?> %</td></tr>

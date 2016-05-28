@@ -48,6 +48,7 @@ class Graphs extends Controller {
                 $gamesCount = $data['games_count'];
 
                 $handsData = $this->_getHandsData($user);
+                $furikomi = $this->_getFurikomiData($user);
 
                 $graphData = [0 => [0, 1500]];
                 $i = 1;
@@ -186,6 +187,25 @@ class Graphs extends Controller {
             'chombo' => $chomboCount,
             'hands' => $hands,
             'yaku' => $yaku
+        ];
+    }
+
+    protected function _getFurikomiData($user) {
+        $roundsData = Db::get("SELECT * FROM round WHERE loser = '{$user}'");
+        $furikomiCount = count($roundsData);
+        $furikomiAtRiichi = 0;
+        foreach ($roundsData as $round) {
+            if (!empty($round['riichi'])) {
+                $riichi = @unserialize($round['riichi']);
+                if (in_array($user, $riichi)) {
+                    $furikomiAtRiichi ++;
+                }
+            }
+        }
+
+        return [
+            'total' => $furikomiCount,
+            'riichi' => $furikomiAtRiichi
         ];
     }
 }
