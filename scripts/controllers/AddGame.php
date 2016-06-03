@@ -137,7 +137,7 @@ class AddGame extends Controller
         $multiRon = $roundData['multiRon'] ? (string)$roundData['multiRon'] : '0';
         $loser = empty($roundData['loser']) ? '' : $roundData['loser'];
         $yakuList = implode(',', $roundData['yakuList']);
-        $doraCount = $roundData['doraCount'] || '0';
+        $doraCount = $roundData['doraCount'] ? $roundData['doraCount'] : '0';
 
         if (!empty($roundData['dealer'])) {
             $dealer = '1';
@@ -186,7 +186,7 @@ class AddGame extends Controller
         $multiRon = $roundData['multiRon'] ? (string)$roundData['multiRon'] : '0';
         $loser = empty($roundData['loser']) ? '' : $roundData['loser'];
         $yakuList = implode(',', $roundData['yakuList']);
-        $doraCount = $roundData['doraCount'] || '0';
+        $doraCount = $roundData['doraCount'] ? $roundData['doraCount'] : '0';
 
         $hanCount = $roundData['han'];
         $fuCount = empty($roundData['fu']) ? '0' : $roundData['fu'];
