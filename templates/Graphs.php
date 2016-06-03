@@ -105,6 +105,9 @@
                     $output = [];
                     asort($handsData['yaku']);
                     foreach ($handsData['yaku'] as $yaku => $count) {
+                        if (empty($yaku)) {
+                            continue; // Если забыли записать яку - не нужно показывать кривой пустой элемент
+                        }
                         $output []= "[{$count}, '{$yaku}']";
                     }
                     echo implode(", \n", $output);
