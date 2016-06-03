@@ -417,6 +417,36 @@ class ParserTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0, $this->_parser->_getHonba());
     }
 
+    public function testRonWithDoras()
+    {
+        $validText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
+                      ron jun from heilage 2han 30fu (riichi dora 5)';
+        $expected = [
+            'dealer' => false,
+            'fu' => '30',
+            'han' => '2',
+            'honba' => 0,
+            'outcome' => 'ron',
+            'riichi' => [],
+            'riichi_totalCount' => 0,
+            'round' => 1,
+            'winner' => 'jun',
+            'loser' => 'heilage',
+            'yakuman' => false,
+            'multiRon' => false,
+            'yakuList' => ['33'],
+            'doraCount' => '5' 
+        ];
+        $this->_hooks['usual'] = function ($data) use ($expected) {
+            ksort($data);
+            ksort($expected);
+            $this->assertEquals($expected, $data);
+        };
+        $this->_parser->parse($validText);
+        $this->assertEquals(2, $this->_parser->_getCurrentRound()); // starting from 1
+        $this->assertEquals(1, $this->_parser->_getCurrentDealer()); // starting from 0
+        $this->assertEquals(0, $this->_parser->_getHonba());
+    }
     public function testDoubleRonWithRiichi()
     {
         $validText = 'frontier:23200 heilage:23300 jun:43000 manabi:12000
