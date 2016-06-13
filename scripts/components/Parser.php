@@ -120,6 +120,11 @@ class Parser
 
     public function parse($text)
     {
+        $text = trim($text);
+        if (empty($text)) {
+            return null;
+        }
+
         $this->_reset();
         $tokens = preg_split('#\s+#is', trim($this->_prepareTokens($text)));
 

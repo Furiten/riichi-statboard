@@ -39,6 +39,58 @@ class AddGame extends Controller
         include 'templates/AddGame.php';
     }
 
+
+    protected function _addGame($textData)
+    {
+        $parser = new Parser(
+            [$this, 'cb_usualWin'],
+            [$this, 'cb_yakuman'],
+            [$this, 'cb_roundDrawn'],
+            [$this, 'cb_chombo'],
+            $this->_getRegisteredUsersList()
+        );
+        $calc = new PointsCalc($this->_getRegisteredUsersList());
+        $parser->setCalc($calc);
+
+        $this->_loggedRounds = [];
+        $results = $parser->parse($textData);
+        if (!$results) {
+            return;
+        }
+
+        $players = $results['scores'];
+        $counts = $results['counts'];
+
+        $calculatedPoints = $calc->getResultPoints();
+        if (count(array_intersect_assoc($players, $calculatedPoints)) != 4) {
+            throw new Exception("Несовпадение рассчитанных и вводимых очков! <br>"
+                . print_r($calculatedPoints, 1)
+                . (PARSER_LOG ? '<br><div style="height: 300px; overflow:scroll"><pre>' . print_r($calc->getLog(), 1) . '</pre></div>' : '')
+            );
+        }
+
+        //////////////////////////////////////////////////////////////////////////////////
+
+        $playerPlaces = $this->_calcPlaces($players);
+        $resultScores = $this->_countResultScore($players, $playerPlaces);
+
+        $gameId = $this->_addToDb([
+            'players' => $players,
+            'scores' => $resultScores,
+            'rounds' => $this->_loggedRounds,
+            'counts' => $counts
+        ]);
+
+        $this->_updatePlayerRatings($playerPlaces, $resultScores, $gameId);
+    }
+
+    public function externalAddGame($text)
+    {
+        $this->_loggedRounds = [];
+        $this->_chomboPenalties = [];
+        $this->_addGame($text);    
+    }
+
     /**
      * Основной метод контроллера
      */
@@ -54,46 +106,11 @@ class AddGame extends Controller
             }
 
             try {
-                $parser = new Parser(
-                    [$this, 'cb_usualWin'],
-                    [$this, 'cb_yakuman'],
-                    [$this, 'cb_roundDrawn'],
-                    [$this, 'cb_chombo'],
-                    $this->_getRegisteredUsersList()
-                );
-                $calc = new PointsCalc($this->_getRegisteredUsersList());
-                $parser->setCalc($calc);
-
-                $this->_loggedRounds = [];
-                $results = $parser->parse($_POST['content']);
-                $players = $results['scores'];
-                $counts = $results['counts'];
-
-                $calculatedPoints = $calc->getResultPoints();
-                if (count(array_intersect_assoc($players, $calculatedPoints)) != 4) {
-                    throw new Exception("Несовпадение рассчитанных и вводимых очков! <br>"
-                            . print_r($calculatedPoints, 1)
-                            . (PARSER_LOG ? '<br><div style="height: 300px; overflow:scroll"><pre>' . print_r($calc->getLog(), 1) . '</pre></div>' : '')
-                    );
-                }
+                $this->_addGame($_POST['content']);
             } catch (Exception $e) {
                 $this->_showForm($e->getMessage());
                 return;
             }
-
-            //////////////////////////////////////////////////////////////////////////////////
-
-            $playerPlaces = $this->_calcPlaces($players);
-            $resultScores = $this->_countResultScore($players, $playerPlaces);
-
-            $gameId = $this->_addToDb([
-                'players' => $players,
-                'scores' => $resultScores,
-                'rounds' => $this->_loggedRounds,
-                'counts' => $counts
-            ]);
-
-            $this->_updatePlayerRatings($playerPlaces, $resultScores, $gameId);
 
             echo "<h4>Игра успешно добавлена!</h4><br>";
             echo "Идем обратно через 3 секунды... <script type='text/javascript'>window.setTimeout(function() {window.location = '/add/';}, 3000);</script>";
