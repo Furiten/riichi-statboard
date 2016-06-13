@@ -103,6 +103,23 @@ class ParserTest extends PHPUnit_Framework_TestCase
         return reset($tokens);
     }
 
+    public function testSplitMultiRonWithRiichiInEveryRon()
+    {
+        $validTokens = $this->_tokenize('ron heilage from frontier 1han 30fu riichi heilage manabi
+                                         also jun 2han 30fu riichi jun');
+
+        list($actual, $loser) = $this->_parser->_iSplitMultiRon($validTokens);
+        $strActual = array_map(function($el) {
+            return array_reduce($el, function($acc, $el2) {
+                return $acc . ' ' . (string)$el2;
+            }, '');
+        }, $actual);
+
+        $this->assertEquals('frontier', $loser);
+        $this->assertEquals('heilage 1han 30fu riichi heilage manabi', trim($strActual[0]));
+        $this->assertEquals('jun 2han 30fu riichi jun', trim($strActual[1]));
+    }
+
     public function testSplitMultiRon()
     {
         $validTokens = $this->_tokenize('ron heilage from frontier 1han 30fu riichi heilage manabi
@@ -140,6 +157,25 @@ class ParserTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $actual);
     }
 
+    public function testWinnerAlwaysGetsHisRiichiBack()
+    {
+        $validTokens = $this->_tokenize('ron heilage from frontier 1han 30fu riichi heilage manabi
+                                         also jun 2han 30fu riichi jun');
+
+        $actual = $this->_parser->_iAssignRiichiBets($validTokens, ['frontier' => 1, 'heilage' => 1, 'jun' => 1, 'manabi' => 1]);
+        $expected = [
+            'heilage' => [
+                'riichi' => ['heilage', 'manabi'],
+                'riichi_totalCount' => 2
+            ],
+            'jun' => [
+                'riichi' => ['jun'],
+                'riichi_totalCount' => 1
+            ]
+        ];
+
+        $this->assertEquals($expected, $actual);
+    }
 
     public function testTempaiParse()
     {

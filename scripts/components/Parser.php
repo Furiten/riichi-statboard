@@ -427,6 +427,12 @@ class Parser
         foreach ($rons as $ron) {
             $winners[$ron[0]->token()] = [];
             $bets = array_merge($bets, $this->_getRiichi($ron, $participants));
+            foreach ($bets as $k => $player) {
+                if (isset($winners[$player])) {
+                    $winners[$player] []= $ron[0]->token(); // winner always gets back his bet
+                    unset($bets[$k]);
+                }
+            }
         }
 
         // Find player who gets non-winning riichi bets
@@ -445,13 +451,6 @@ class Parser
 
         if (!$closestWinner) {
             throw new Exception('Не найден ближайший победитель для риичи-ставок: такого не должно было произойти!', 119);
-        }
-
-        foreach ($bets as $k => $player) {
-            if (!empty($winners[$player])) {
-                $winners[$player] []= $ron[0]->token(); // winner always gets back his bet
-                unset($bets[$k]);
-            }
         }
 
         $winners[$closestWinner] = array_merge($winners[$closestWinner], $bets);
