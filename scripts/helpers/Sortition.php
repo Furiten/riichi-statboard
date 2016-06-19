@@ -37,7 +37,7 @@ class SortitionHelper {
             return array_merge($acc, $el);
         }, []));
         $bestIntersection = self::_calcIntersection($ratingsData, $sortition);
-        
+
         // считаем сколько пересечений по игрокам образовалось
         $bestIntersectionSets = array_reduce($bestIntersection, function($acc, $el) {
             if (empty($acc[$el])) {

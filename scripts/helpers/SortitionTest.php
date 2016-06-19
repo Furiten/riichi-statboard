@@ -102,7 +102,7 @@ class SortitionTest extends PHPUnit_Framework_TestCase {
             1
         );
 
-        $this->assertTrue($bestIntersectionSets[2] <= 4); // Количество повторных пересечений двоих игроков ровно 4
+        $this->assertTrue(empty($bestIntersectionSets[2]) || $bestIntersectionSets[2] <= 4); // Количество повторных пересечений двоих игроков ровно 4
     }
 
     /**
@@ -124,7 +124,7 @@ class SortitionTest extends PHPUnit_Framework_TestCase {
             2
         );
 
-        $this->assertEquals(0, $bestIntersectionSets[2]);
+        $this->assertTrue(empty($bestIntersectionSets[2]));
     }
 
     /**
@@ -147,7 +147,7 @@ class SortitionTest extends PHPUnit_Framework_TestCase {
         );
 
         $this->assertEquals(32, count($playData));
-        $this->assertEquals(0, $bestIntersectionSets[2]);
+        $this->assertTrue(empty($bestIntersectionSets[2]));
 
         // 3rd game
         $playData = $this->_mergePlayData($playData, $tables);
@@ -162,7 +162,7 @@ class SortitionTest extends PHPUnit_Framework_TestCase {
         );
 
         $this->assertEquals(64, count($playData));
-        $this->assertTrue($bestIntersectionSets[2] <= 2); // on 3rd game this could already be non-zero
+        $this->assertTrue(empty($bestIntersectionSets[2]) || $bestIntersectionSets[2] <= 2); // on 3rd game this could already be non-zero
     }
 
     /**
