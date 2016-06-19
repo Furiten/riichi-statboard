@@ -60,7 +60,8 @@ class Sortition extends Controller {
             $previousPlacements = db::get("SELECT * FROM tables");
             $previousPlacements = ArrayHelpers::elm2Key($previousPlacements, 'username', true);
 
-            list($tables, $sortition, $bestIntersection, $bestIntersectionSets) = SortitionHelper::generate($randFactor, $usersData, $playData, $previousPlacements);
+            list($tables, $sortition, $bestIntersection, $bestIntersectionSets) =
+                SortitionHelper::generate($randFactor, $usersData, $playData, $previousPlacements, SORTITION_GROUPS_COUNT);
 
             // store to cache
             $cacheData = base64_encode(serialize([$tables, $sortition, $bestIntersection, $bestIntersectionSets, $usersData]));

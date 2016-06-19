@@ -1,4 +1,5 @@
 <?php
+require_once 'scripts/helpers/Array.php';
 
 class SortitionHelper {
     protected static $_possibleIntersections = [
@@ -10,11 +11,11 @@ class SortitionHelper {
         [2, 3]
     ];
 
-    public static function generate($randFactor, $userList, $ratingsData, $previousPlacements) {
-        $maxIterations = 3000;
+    public static function generate($randFactor, $userList, $ratingsData, $previousPlacements, $groupsCount) {
+        $maxIterations = 1000;
         $bestGroupsMap = [];
         $factor = 100500;
-        $groups = array_chunk($userList, ceil(count($userList) / SORTITION_GROUPS_COUNT), true);
+        $groups = array_chunk($userList, ceil(count($userList) / $groupsCount), true);
 
         for ($i = 0; $i < $maxIterations; $i++) {
             srand($randFactor + $i*5);
@@ -53,6 +54,8 @@ class SortitionHelper {
     }
 
     /**
+     * Определяем оптимальное место (ветер) игрока за столом, исходя из сохраненных данных о рассадке
+     *
      * @param $tablePlayers [{username -> #name}, {username -> #name}, {username -> #name}, {username -> #name}]
      * @param $previousPlacements [{#name -> [[player_num -> 1], [player_num -> 2], [player_num -> 0]]}, ...]
      * @return array|null
@@ -160,6 +163,13 @@ class SortitionHelper {
         return $intersectionData;
     }
 
+    /**
+     * Подсчет обобщенного показателя приемлемости рассадки.
+     *
+     * @param $playersMap Упорядоченный список игроков
+     * @param $ratingsData список данных по прошедшим играм для группировки по ид игры
+     * @return int
+     */
     protected static function _calculateFactor($playersMap, $ratingsData)
     {
         $factor = 0;
