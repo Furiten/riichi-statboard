@@ -30,12 +30,15 @@ class SortitionHelper {
                 $factor = $newFactor;
                 $bestGroupsMap = $groups;
             }
+            usleep(500); // sleep some time to reduce cpu load
         }
 
         $sortition = array_values(array_reduce($bestGroupsMap, function($acc, $el) {
             return array_merge($acc, $el);
         }, []));
         $bestIntersection = self::_calcIntersection($ratingsData, $sortition);
+        
+        // считаем сколько пересечений по игрокам образовалось
         $bestIntersectionSets = array_reduce($bestIntersection, function($acc, $el) {
             if (empty($acc[$el])) {
                 $acc[$el] = 0;
@@ -165,6 +168,8 @@ class SortitionHelper {
 
     /**
      * Подсчет обобщенного показателя приемлемости рассадки.
+     * Учитывает также последовательные игры путем добавления 10 к фактору за каждое
+     * последовательное пересечение игроков. Т.о. пытаемся минимизировать такие случаи.
      *
      * @param $playersMap Упорядоченный список игроков
      * @param $ratingsData список данных по прошедшим играм для группировки по ид игры
@@ -173,23 +178,57 @@ class SortitionHelper {
     protected static function _calculateFactor($playersMap, $ratingsData)
     {
         $factor = 0;
-        $players = array_chunk($playersMap, 4);
+
+        $tablesCount = floor(count($playersMap) / 4);
+        $ratingsData = array_map(function($el) use ($tablesCount) {
+            $el['game_index'] = floor($el['game_id'] / $tablesCount);
+            return $el;
+        }, $ratingsData);
+
+        $newGameId = (4 * (1 + end($ratingsData)['game_id']));
+        $newGameIndex = floor($newGameId / (4 * $tablesCount));
+        foreach ($playersMap as $player) {
+            $ratingsData []= [
+                'username' => $player['username'],
+                'game_id' => floor($newGameId ++ / 4),
+                'game_index' => $newGameIndex,
+            ];
+        }
+
+        $crossings = [];
         $data = ArrayHelpers::elm2Key($ratingsData, 'game_id', true);
-        foreach ($players as $table) {
-            foreach ($data as $game) {
-                $gameTmp = ArrayHelpers::elm2Key($game, 'username');
-                foreach (self::$_possibleIntersections as $intersection) {
-                    // increase factor and intersection data if needed
-                    if (
-                        !empty($gameTmp[$table[$intersection[0]]['username']]) &&
-                        !empty($gameTmp[$table[$intersection[1]]['username']])
-                    ) {
-                        $factor ++;
+        foreach ($data as $game) { // this should be (16 * games count) iterations
+            for ($i = 0; $i < count($game); $i++) { // strictly 4 iterations!
+                for ($j = 0; $j < count($game); $j++) { // strictly 4 iterations!
+                    if ($j == $i) continue;
+                    if (!isset($crossings[$game[$i]['username']])) {
+                        $crossings[$game[$i]['username']] = [];
+                    }
+                    if (!isset($crossings[$game[$i]['username']][$game[$j]['username']])) {
+                        $crossings[$game[$i]['username']][$game[$j]['username']] = [];
+                    }
+
+                    $crossings[$game[$i]['username']][$game[$j]['username']] []= $game[0]['game_index'];
+                }
+            }
+        }
+
+        foreach ($crossings as /*$user => */$opponentsList) {
+            foreach ($opponentsList as /*$opponent => */$crossingList) {
+                if (count($crossingList) <= 1) {
+                    continue;
+                }
+
+                $factor ++;
+                sort($crossingList);
+                for ($i = 0; $i < count($crossingList) - 1; $i++) {
+                    if ($crossingList[$i+1] - $crossingList[$i] == 1) { // players will play two sequential games
+                        $factor += 10;
                     }
                 }
             }
         }
 
-        return $factor;
+        return $factor / 2; // div by 2 because of symmetrical matrix counting
     }
 }

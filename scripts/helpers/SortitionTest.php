@@ -89,6 +89,8 @@ class SortitionTest extends PHPUnit_Framework_TestCase {
     public function testBasicGenerate1Group() {
         $randFactor = "12345";
         $usersData = $this->_generateUserData(8);
+
+        // 2nd game
         $playData = $this->_generatePlayData($usersData);
         $previousPlacements = $this->_generatePlacements($playData);
 
@@ -109,6 +111,8 @@ class SortitionTest extends PHPUnit_Framework_TestCase {
     public function testBasicGenerate2Groups() {
         $randFactor = "11111";
         $usersData = $this->_generateUserData(16);
+
+        // 2nd game
         $playData = $this->_generatePlayData($usersData);
         $previousPlacements = $this->_generatePlacements($playData);
 
@@ -129,6 +133,8 @@ class SortitionTest extends PHPUnit_Framework_TestCase {
     public function testBasicGenerate4Groups() {
         $randFactor = "11111";
         $usersData = $this->_generateUserData(32);
+
+        // 2nd game
         $playData = $this->_generatePlayData($usersData);
         $previousPlacements = $this->_generatePlacements($playData);
 
@@ -166,6 +172,8 @@ class SortitionTest extends PHPUnit_Framework_TestCase {
     public function testBasicGenerate4GroupsWithoutRepeats() {
         $randFactor = "11111";
         $usersData = $this->_generateUserData(16);
+
+        // 2nd game
         $playData = $this->_generatePlayData($usersData);
         $previousPlacements = $this->_generatePlacements($playData);
 
@@ -174,7 +182,7 @@ class SortitionTest extends PHPUnit_Framework_TestCase {
             $usersData,
             $playData,
             ArrayHelpers::elm2Key($previousPlacements, 'username', true),
-            2
+            1
         );
 
         // 3rd game
@@ -186,7 +194,7 @@ class SortitionTest extends PHPUnit_Framework_TestCase {
             $usersData,
             $playData,
             ArrayHelpers::elm2Key($previousPlacements, 'username', true),
-            2
+            1
         );
 
         // 4th game
@@ -198,11 +206,24 @@ class SortitionTest extends PHPUnit_Framework_TestCase {
             $usersData,
             $playData,
             ArrayHelpers::elm2Key($previousPlacements, 'username', true),
-            2
+            1
         );
+
+        // 5th game
+        $playData = $this->_mergePlayData($playData, $tables);
+        $previousPlacements = $this->_generatePlacements($playData);
+
+        list($tables, $sortition, $bestIntersection, $bestIntersectionSets) = SortitionHelper::generate(
+            $randFactor,
+            $usersData,
+            $playData,
+            ArrayHelpers::elm2Key($previousPlacements, 'username', true),
+            1
+        );
+
         $playData = $this->_mergePlayData($playData, $tables);
 
-        $this->assertEquals(64, count($playData));
+        $this->assertEquals(80, count($playData));
 
         // some magic to compute checkable results
         $playData = array_map(function($el) {
@@ -236,6 +257,90 @@ class SortitionTest extends PHPUnit_Framework_TestCase {
         }
 
         $this->assertEquals(0, $subsequentGamesCount);
+    }
+
+    public function testCalcFactor() {
+        $reflClass = new ReflectionClass('SortitionHelper');
+        $method = $reflClass->getMethod('_calculateFactor')->getClosure(); // no mistake here
+
+        $usersData = $this->_generateUserData(16);
+        $retval = call_user_func_array($method, [$usersData, []]);
+        $this->assertEquals(0, $retval);
+
+        // 2nd game, play data set to have no crossings
+        $playData = [
+            ['username' => $usersData[0]['username'], 'game_id' => 0],
+            ['username' => $usersData[4]['username'], 'game_id' => 0],
+            ['username' => $usersData[8]['username'], 'game_id' => 0],
+            ['username' => $usersData[12]['username'], 'game_id' => 0],
+
+            ['username' => $usersData[1]['username'], 'game_id' => 1],
+            ['username' => $usersData[5]['username'], 'game_id' => 1],
+            ['username' => $usersData[9]['username'], 'game_id' => 1],
+            ['username' => $usersData[13]['username'], 'game_id' => 1],
+
+            ['username' => $usersData[2]['username'], 'game_id' => 2],
+            ['username' => $usersData[6]['username'], 'game_id' => 2],
+            ['username' => $usersData[10]['username'], 'game_id' => 2],
+            ['username' => $usersData[14]['username'], 'game_id' => 2],
+
+            ['username' => $usersData[3]['username'], 'game_id' => 3],
+            ['username' => $usersData[7]['username'], 'game_id' => 3],
+            ['username' => $usersData[11]['username'], 'game_id' => 3],
+            ['username' => $usersData[15]['username'], 'game_id' => 3],
+        ];
+        $retval = call_user_func_array($method, [$usersData, $playData]);
+        $this->assertEquals(0, $retval);
+
+        // 2nd game, play data set to have 2 crossings
+        $playData = [
+            ['username' => $usersData[0]['username'], 'game_id' => 0], // cross!
+            ['username' => $usersData[1]['username'], 'game_id' => 0], // cross!
+            ['username' => $usersData[8]['username'], 'game_id' => 0],
+            ['username' => $usersData[12]['username'], 'game_id' => 0],
+
+            ['username' => $usersData[4]['username'], 'game_id' => 1], // cross!
+            ['username' => $usersData[5]['username'], 'game_id' => 1], // cross!
+            ['username' => $usersData[9]['username'], 'game_id' => 1],
+            ['username' => $usersData[13]['username'], 'game_id' => 1],
+
+            ['username' => $usersData[2]['username'], 'game_id' => 2],
+            ['username' => $usersData[6]['username'], 'game_id' => 2],
+            ['username' => $usersData[10]['username'], 'game_id' => 2],
+            ['username' => $usersData[14]['username'], 'game_id' => 2],
+
+            ['username' => $usersData[3]['username'], 'game_id' => 3],
+            ['username' => $usersData[7]['username'], 'game_id' => 3],
+            ['username' => $usersData[11]['username'], 'game_id' => 3],
+            ['username' => $usersData[15]['username'], 'game_id' => 3],
+        ];
+        $retval = call_user_func_array($method, [$usersData, $playData]);
+        $this->assertEquals(22, $retval); // 2 for crossings + 20 for sequential crossings
+
+        // 2nd game, play data set to have all 24 crossings!
+        $playData = [
+            ['username' => $usersData[0]['username'], 'game_id' => 0],
+            ['username' => $usersData[1]['username'], 'game_id' => 0],
+            ['username' => $usersData[2]['username'], 'game_id' => 0],
+            ['username' => $usersData[3]['username'], 'game_id' => 0],
+
+            ['username' => $usersData[4]['username'], 'game_id' => 1],
+            ['username' => $usersData[5]['username'], 'game_id' => 1],
+            ['username' => $usersData[6]['username'], 'game_id' => 1],
+            ['username' => $usersData[7]['username'], 'game_id' => 1],
+
+            ['username' => $usersData[8]['username'], 'game_id' => 2],
+            ['username' => $usersData[9]['username'], 'game_id' => 2],
+            ['username' => $usersData[10]['username'], 'game_id' => 2],
+            ['username' => $usersData[11]['username'], 'game_id' => 2],
+
+            ['username' => $usersData[12]['username'], 'game_id' => 3],
+            ['username' => $usersData[13]['username'], 'game_id' => 3],
+            ['username' => $usersData[14]['username'], 'game_id' => 3],
+            ['username' => $usersData[15]['username'], 'game_id' => 3],
+        ];
+        $retval = call_user_func_array($method, [$usersData, $playData]);
+        $this->assertEquals(264, $retval); // 24 for crossings + 240 for sequential crossings
     }
 }
 
