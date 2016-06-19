@@ -1,0 +1,852 @@
+levin:13700 knyazhev:33800 kim:34200 matveeva:38300
+ron knyazhev from kim 1han 30fu (tanyao)
+ron kim from matveeva 6han (yakuhai1 honitsu sananko) riichi levin
+ron knyazhev from matveeva 2han 40fu (riichi ippatsu) riichi knyazhev
+ron matveeva from levin 4han 30fu (yakuhai1 dora 3)
+ron matveeva from kim 2han 30fu (yakuhai1 dora)
+tsumo matveeva 3han 30fu (riichi tanyao tsumo) riichi matveeva
+tsumo matveeva 2han 30fu (yakuhai2)
+tsumo kim 1han 30fu (yakuhai1) riichi knyazhev
+draw tempai levin knyazhev riichi levin knyazhev
+ron knyazhev from kim 2han 40fu (riichi yakuhai1) riichi knyazhev
+
+
+chernih:21300 meshin:29400 sanzharov:17600 sokolov:51700
+ron meshin from sokolov 2han 30fu (yakuhai1 dora)
+ron sokolov from sanzharov 4han 30fu (riichi pinfu dora 2) riichi sokolov
+draw tempai chernih meshin sokolov
+ron meshin from chernih 2han 30fu (yakuhai1 dora)
+ron chernih from sokolov 1han 30fu (yakuhai1)
+ron sanzharov from chernih 5han (honitsu dora 3)
+draw tempai chernih sanzharov riichi chernih sanzharov
+ron chernih from sanzharov 2han 40fu (tanyao dora)
+tsumo sokolov 7han (riichi ippatsu tsumo iipeiko dora 3) riichi sokolov
+ron meshin from sanzharov 1han 40fu (tanyao)
+
+
+titova:42000 falko:35500 goncharenko:15500 mazin:27000
+tsumo titova 4han 30fu (tsumo sanshoku dora)
+tsumo titova 4han 40fu (tanyao dora 3)
+ron falko from mazin 2han 30fu (yakuhai1 dora)
+ron goncharenko from titova 1han 30fu (yakuhai1)
+ron falko from titova 3han 40fu (riichi dora 2) riichi falko
+ron falko from goncharenko 3han 30fu (yakuhai1 dora 2)
+ron mazin from titova 4han 30fu (riichi sanshoku pinfu) riichi mazin
+draw tempai titova
+tsumo falko 2han 30fu (yakuhai1 dora)
+draw tempai falko mazin riichi falko
+
+
+karasyuk:21300 karpov:26000 timofeev:26900 maslatsova:45800
+ron karpov from timofeev 1han 40fu (riichi) riichi karpov
+ron timofeev from karpov 1han 30fu (tanyao)
+ron maslatsova from karasyuk 3han 40fu (tanyao dora 2)
+tsumo karpov 3han 20fu (tanyao pinfu tsumo)
+tsumo timofeev 1han 40fu (yakuhai1) riichi karasyuk 
+ron maslatsova from karpov 2han 30fu (yakuhai1 dora)
+ron maslatsova from timofeev 1han 30fu (tanyao)
+ron maslatsova from timofeev 1han 30fu (tanyao)
+tsumo maslatsova 2han 30fu (tanyao dora) riichi timofeev
+ron maslatsova from karpov 2han 30fu (tanyao dora)
+
+
+gubanova:40800 vgolubev:6800 sanatullov:34000 gracheva:38400
+ron sanatullov from gracheva 1han 50fu (yakuhai1)
+ron sanatullov from vgolubev 7han (riichi dora 6) riichi sanatullov
+draw tempai gubanova sanatullov gracheva riichi gracheva
+tsumo gubanova 4han 20fu (riichi tsumo pinfu dora) riichi gubanova
+ron gubanova from sanatullov 2han 40fu (yakuhai2)
+tsumo gubanova 3han 30fu (riichi tsumo tanyao) riichi gubanova
+ron gracheva from vgolubev 3han 20fu (riichi pinfu dora) riichi gracheva
+draw tempai vgolubev sanatullov riichi sanatullov
+tsumo vgolubev 1han 30fu (sanshoku) riichi gracheva
+tsumo gracheva 6han (riichi pinfu tsumo dora 3) riichi vgolubev gracheva
+
+
+fedorkevich:60600 novik:10100 svirid:15800 stolbova:33500
+draw tempai novik svirid stolbova riichi svirid
+ron svirid from stolbova 3han 30fu (riichi pinfu dora) riichi fedorkevich svirid
+tsumo svirid 1han 30fu (yakuhai1)
+draw tempai fedorkevich stolbova
+ron stolbova from svirid 4han 30fu (tanyao dora 3)
+ron fedorkevich from novik 3han 60fu (honitsu dora) riichi novik
+ron fedorkevich from stolbova 2han 60fu (riichi yakuhai1) riichi fedorkevich
+ron stolbova from novik 1han 30fu (yakuhai1) riichi novik
+tsumo fedorkevich 7han (toitoi chinitsu) riichi novik
+ron fedorkevich from svirid 3han 40fu (toitoi yakuhai1)
+
+
+trubitsina:40100 kozlovskaya:36700 zarezin:12900 kuzkokov:30300
+ron kuzkokov from zarezin 2han 40fu (yakuhai1 sanshoku)
+tsumo kuzkokov 2han 20fu (tsumo pinfu) riichi zarezin
+tsumo kozlovskaya 2han 30fu (yakuhai1 dora)
+tsumo kozlovskaya 3han 40fu (yakuhai2 dora)
+ron trubitsina from zarezin 2han 30fu (yakuhai1 ittsu)
+draw tempai kozlovskaya zarezin riichi zarezin
+ron trubitsina from zarezin 4han 40fu (riichi dora 3) riichi trubitsina
+ron zarezin from kuzkokov 1han 30fu (yakuhai1) riichi kuzkokov
+ron kuzkokov from zarezin 2han 30fu (yakuhai1 dora)
+ron trubitsina from kozlovskaya 1han 40fu (riichi) riichi trubitsina
+
+
+vodilov:19900 poroshin:57800 levina:23000 goman:19300
+tsumo poroshin 6han (riichi tsumo ippatsu pinfu dora 2) riichi vodilov poroshin
+draw tempai all riichi vodilov
+ron levina from poroshin 1han 40fu (riichi) riichi levina
+ron vodilov from goman 1han 40fu (tanyao) riichi goman
+tsumo poroshin 6han (riichi tsumo ippatsu tanyao pinfu dora) riichi poroshin
+ron poroshin from goman 3han 30fu (yakuhai1 dora 2)
+ron poroshin from goman 2han 30fu (pinfu dora)
+tsumo goman 3han 30fu (yakuhai1 dora 2) riichi levina
+tsumo goman 1han 30fu (tanyao) riichi levina
+
+
+matveeva:33100 gubanova:39200 sokolov:42500 trubitsina:5200
+tsumo sokolov 2han 40fu (riichi tsumo) riichi sokolov
+ron matveeva from trubitsina 3han 40fu (riichi ippatsu yakuhai1) riichi matveeva
+tsumo gubanova 1han 30fu (yakuhai1)
+ron matveeva from gubanova 3han 30fu (riichi pinfu dora) riichi matveeva
+ron sokolov from matveeva 1han 40fu (riichi) riichi sokolov 
+also trubitsina 1han 30fu (yakuhai1)
+draw tempai gubanova sokolov trubitsina riichi gubanova trubitsina
+ron matveeva from trubitsina 1han 40fu (riichi) riichi matveeva
+ron sokolov from trubitsina 5han (riichi ippatsu honitsu) riichi sokolov
+ron matveeva from gubanova 1han 30fu (yakuhai1)
+tsumo gubanova 7han (yakuhai2 toitoi dora 3) riichi matveeva sokolov 
+
+poroshin:31700 fedorkevich:24800 maslatsova:16100 titova:47400
+ron titova from maslatsova 3han 30fu (yakuhai1 chanta dora)
+draw tempai titova
+ron maslatsova from fedorkevich 2han 25fu (chiitoitsu)
+ron maslatsova from fedorkevich 2han 30fu (tanyao dora)
+ron poroshin from titova 1han 40fu (riichi) riichi poroshin
+ron fedorkevich from titova 5han (yakuhai1 honitsu toitoi)
+draw tempai poroshin fedorkevich titova riichi fedorkevich
+ron maslatsova from poroshin 3han 40fu (riichi ippatsu tanyao) riichi maslatsova
+tsumo titova 6han (chinitsu dora)
+ron titova from maslatsova 4han 30fu (tanyao dora 3)
+ron poroshin from maslatsova 5han (riichi pinfu dora 3) riichi poroshin
+
+meshin:43100 gracheva:33200 stolbova:21700 kim:22000
+draw tempai meshin gracheva riichi meshin
+ron gracheva from stolbova 1han 30fu (yakuhai1)
+ron meshin from stolbova 1han 30fu (yakuhai1) riichi kim
+tsumo meshin 2han 30fu (riichi tsumo) riichi meshin
+ron kim from meshin 3han 30fu (yakuhai1 honitsu)
+tsumo gracheva 4han 30fu (yakuhai1 dora 3) riichi meshin
+tsumo meshin 3han 30fu (riichi iipeiko tsumo) riichi meshin
+tsumo meshin 5han (riichi pinfu tsumo dora 2) riichi meshin
+draw tempai stolbova kim riichi kim
+tsumo stolbova 2han 30fu (sanshoku dora)
+tsumo meshin 1han 40fu (yakuhai1)
+
+falko:15700 sanatullov:23100 kozlovskaya:38900 timofeev:42300
+tsumo kozlovskaya 3han 30fu (yakuhai1 dora 2)
+ron timofeev from kozlovskaya 1han 30fu (yakuhai1)
+draw tempai falko sanatullov riichi falko
+ron timofeev from sanatullov 2han 40fu (toitoi) riichi falko
+draw tempai timofeev
+draw tempai falko sanatullov timofeev riichi timofeev
+ron timofeev from sanatullov 1han 30fu (tanyao)
+ron kozlovskaya from timofeev 2han 40fu (riichi dora) riichi falko kozlovskaya
+ron timofeev from sanatullov 1han 30fu (tanyao)
+ron sanatullov from falko 1han 30fu (yakuhai1)
+ron kozlovskaya from falko 4han 40fu (tanyao dora 3)
+tsumo timofeev 3han 30fu (riichi tsumo dora) riichi timofeev
+
+kuzkokov:23300 goman:22100 knyazhev:40600 karpov:34000
+chombo goman
+ron knyazhev from karpov 1han 30fu (yakuhai1)
+tsumo knyazhev 1han 30fu (yakuhai1)
+tsumo kuzkokov 2han 30fu (tanyao dora)
+tsumo goman 3han 40fu (yakuhai1 toitoi)
+tsumo karpov 3han 40fu (yakuhai2 dora)
+draw tempai goman karpov
+ron knyazhev from goman 5han (riichi dora 4) riichi knyazhev
+ron karpov from knyazhev 4han 30fu (yakuhai1 dora 3)
+tsumo knyazhev 6han (riichi ippatsu tsumo pinfu dora 2) riichi goman knyazhev
+
+
+svirid:39700 chernih: 13600 mazin: 26800 vodilov: 39900
+tsumo vodilov 2han 40fu  (yakuhai2)
+draw tempai svirid chernih riichi chernih
+tsumo mazin 1han 30fu (tanyao) riichi svirid
+ron chernih from mazin 2han 40fu (riichi tanyao) riichi chernih
+draw tempai svirid mazin vodilov
+tsumo svirid 4han 20fu (riichi ippatsu tsumo pinfu) riichi svirid 
+ron svirid from chernih 3han 50fu (riichi dora 2) riichi svirid
+draw tempai chernih mazin vodilov
+tsumo mazin 5han (toitoi yakuhai1 dora 2) riichi chernih
+ron vodilov from mazin 6han (chinitsu dora)
+
+goncharenko:21100 levina:32300 levin:39000 sanzharov:27600
+draw tempai goncharenko sanzharov riichi goncharenko
+ron levina from sanzharov 1han 50fu (yakuhai1)
+draw tempai levin sanzharov riichi sanzharov
+tsumo sanzharov 3han 20fu (riichi tsumo pinfu) riichi sanzharov
+ron levina from goncharenko 3han 40fu (riichi yakuhai1 dora) riichi levina
+draw tempai goncharenko riichi goncharenko
+ron levin from sanzharov 3han 40fu (riichi ippatsu dora) riichi levina levin
+ron levin from goncharenko 3han 30fu (yakuhai2 dora)
+
+novik:23500 zarezin:43800 vgolubev:21600 karasyuk:31100
+tsumo karasyuk 3han 30fu (riichi tsumo iipeiko) riichi karasyuk
+ron zarezin from novik 5han (riichi pinfu sanshoku dora) riichi zarezin
+ron vgolubev from karasyuk 1han 30fu (tanyao) riichi karasyuk
+ron novik from vgolubev 4han 30fu (yakuhai2 honitsu) riichi zarezin karasyuk
+ron zarezin from karasyuk 3han 40fu (riichi dora 2) riichi zarezin
+tsumo vgolubev 3han 30fu (chanta sanshoku dora)
+draw tempai novik zarezin vgolubev riichi novik zarezin
+ron zarezin from vgolubev 1han 30fu (tanyao)
+tsumo karasyuk 5han (chinitsu) riichi vgolubev
+ron novik from vgolubev 1han 30fu (yakuhai1) riichi vgolubev
+
+
+poroshin:39700 sokolov:15000 titova:21500 timofeev:43800
+tsumo poroshin 5han (riichi tsumo dora 3) riichi poroshin
+tsumo titova 1han 30fu (tsumo)
+draw tempai poroshin titova riichi titova
+tsumo sokolov 3han 50fu (honitsu yakuhai1) riichi poroshin
+ron poroshin from titova 1han 40fu (yakuhai1)
+ron timofeev from titova 4han 30fu (yakuhai1 honitsu dora)
+ron timofeev from sokolov 4han 30fu (yakuhai1 ittsu honitsu)
+tsumo titova 3han 20fu (riichi tsumo pinfu) riichi titova
+ron timofeev from sokolov 5han (yakuhai1 dora 4)
+chombo timofeev
+tsumo titova 2han 30fu (tsumo tanyao)
+
+meshin:44400 fedorkevich:35800 knyazhev:16000 gubanova:23800
+tsumo gubanova 2han 30fu (tsumo yakuhai1)
+ron meshin from gubanova 4han 30fu (yakuhai1 dora 3)
+ron meshin from knyazhev 1han 30fu (yakuhai1)
+ron gubanova from knyazhev 3han 40fu (riichi dora 2) riichi gubanova
+ron meshin from fedorkevich 2han 60fu (riichi dora) riichi meshin
+draw tempai meshin riichi meshin
+ron fedorkevich from knyazhev 1han 30fu (yakuhai1) riichi gubanova
+ron meshin from knyazhev 2han 30fu (yakuhai1 dora)
+ron fedorkevich from gubanova 3han 40fu (riichi yakuhai1 dora) riichi fedorkevich
+tsumo fedorkevich 2han 30fu (chanta sanshoku) riichi meshin
+
+karpov:31600 zarezin:32700 gracheva:27500 svirid:28200
+ron svirid from gracheva 2han 30fu (tanyao dora)
+ron gracheva from zarezin 4han 40fu (riichi ippatsu dora 2) riichi gracheva
+ron zarezin from karpov 3han 30fu (yakuhai1 honitsu)
+ron svirid from gracheva 2han 30fu (yakuhai2)
+tsumo karpov 1han 30fu (yakuhai1)
+ron zarezin from svirid 2han 30fu (riichi pinfu) riichi zarezin
+ron svirid from karpov 3han 30fu (yakuhai2 dora)
+ron karpov from svirid 4han 40fu (riichi dora 3) riichi karpov
+ron zarezin from gracheva 3han 40fu (riichi houtei dora) riichi zarezin
+
+matveeva:24900 vodilov:40900 maslatsova:28300 kozlovskaya:25900
+ron vodilov from matveeva 4han 40fu (riichi tanyao iipeiko dora) riichi vodilov
+draw tempai matveeva vodilov riichi vodilov
+draw tempai vodilov kozlovskaya
+ron matveeva from kozlovskaya 1han 30fu (yakuhai1)
+chombo maslatsova
+ron matveeva from vodilov 2han 40fu (riichi dora) riichi matveeva
+tsumo maslatsova 1han 30fu (ittsu)
+draw tempai nobody
+ron maslatsova from vodilov 3han 30fu (riichi tanyao pinfu) riichi maslatsova
+tsumo vodilov 5han (riichi iipeiko pinfu tsumo dora) riichi vodilov
+
+mazin:17300 sanatullov:26400 trubitsina:29200 kim:47100
+ron sanatullov from mazin 5han (yakuhai1 toitoi sanshoku_doko)
+ron mazin from sanatullov 1han 30fu (tanyao) riichi sanatullov
+tsumo trubitsina 1han 30fu (yakuhai1)
+ron kim from sanatullov 3han 30fu (riichi pinfu dora) riichi kim
+tsumo kim 5han (riichi pinfu tsumo dora 2) riichi trubitsina kim
+tsumo mazin 1han 30fu (tanyao) riichi sanatullov
+ron trubitsina from sanatullov 7han (riichi dora 6) riichi trubitsina
+draw tempai sanatullov trubitsina kim
+ron sanatullov from trubitsina 3han 40fu (riichi dora 2) riichi sanatullov
+ron sanatullov from mazin 2han 30fu (tanyao dora)
+ron mazin from trubitsina 1han 30fu (yakuhai1)
+
+kuzkokov:35500 stolbova:31600 levin:21700 falko:31200
+draw tempai stolbova
+ron falko from kuzkokov 2han 40fu (riichi dora) riichi falko
+draw tempai all
+ron levin from falko 2han 30fu (riichi pinfu) riichi levin
+tsumo falko 5han (riichi tsumo tanyao pinfu iipeiko) riichi falko
+ron falko from levin 1han 30fu (yakuhai1)
+draw tempai stolbova
+ron kuzkokov from levin 3han 30fu (riichi pinfu dora) riichi kuzkokov
+draw tempai kuzkokov stolbova riichi stolbova
+ron kuzkokov from stolbova 1han 30fu (yakuhai1) riichi falko
+draw tempai nobody riichi falko
+ron levin from falko 1han 40fu (yakuhai1)
+
+goman:50800 goncharenko:20800 vgolubev:20300 sanzharov:28100
+ron sanzharov from goncharenko 6han (yakuhai1 toitoi dora 3) riichi goman
+ron goncharenko from sanzharov 2han 30fu (yakuhai2)
+ron goman from vgolubev 4han 30fu (yakuhai1 dora 3)
+tsumo goman 3han 30fu (riichi tsumo iipeiko) riichi goman
+ron goman from goncharenko 3han 40fu (riichi dora 2) riichi goman sanzharov
+ron goncharenko from sanzharov 1han 40fu (tanyao)
+ron goncharenko from sanzharov 2han 40fu (honitsu)
+ron goncharenko from vgolubev 1han 30fu (tanyao)
+tsumo vgolubev 1han 40fu (yakuhai1)
+ron goman from sanzharov 3han 25fu (riichi chiitoitsu) riichi goman sanzharov
+
+novik:14100 chernih:39000 karasyuk:32300 levina:34600
+ron novik from chernih 2han 40fu (riichi tanyao) riichi novik
+ron novik from chernih 1han 40fu (riichi) riichi novik
+tsumo chernih 2han 40fu (toitoi)
+ron chernih from novik 4han 30fu (riichi pinfu dora 2) riichi chernih
+ron karasyuk from novik 1han 30fu (yakuhai1)
+ron karasyuk from chernih 2han 30fu (tanyao dora)
+ron chernih from novik 4han 50fu (yakuhai1 dora 3)
+ron levina from novik 1han 30fu (yakuhai1)
+ron chernih from novik 1han 30fu (tanyao)
+ron levina from chernih 2han 30fu (riichi pinfu) riichi levina
+ron novik from chernih 3han 30fu (tanyao sanshoku dora)
+tsumo levina 2han 30fu (yakuhai1 dora)
+
+
+kozlovskaya:24500 titova:43800 gubanova:20400 karpov:31300
+draw tempai titova
+draw tempai titova karpov riichi titova
+tsumo titova 2han 40fu (honitsu)
+ron kozlovskaya from titova 1han 30fu (yakuhai1)
+draw tempai all riichi karpov
+tsumo titova 4han 20fu (riichi pinfu tsumo dora) riichi titova karpov
+ron kozlovskaya from titova 1han 40fu (tanyao)
+ron karpov from titova 4han 40fu (riichi junchan) riichi karpov
+tsumo gubanova 1han 30fu (tanyao)
+tsumo titova 5han (riichi tsumo tanyao pinfu dora) riichi kozlovskaya titova
+
+zarezin:38500 kim:31000 meshin:28700 poroshin:21800
+ron zarezin from kim 1han 30fu (yakuhai1)
+ron poroshin from meshin 2han 30fu (yakuhai1 dora)
+ron zarezin from poroshin 2han 30fu (riichi pinfu) riichi zarezin kim
+tsumo meshin 3han 30fu (yakuhai1 honitsu) riichi kim
+ron kim from zarezin 2han 30fu (riichi pinfu) riichi kim
+draw tempai poroshin riichi poroshin
+ron zarezin from kim 1han 30fu (tanyao)
+tsumo zarezin 3han 30fu (tsumo tanyao dora)
+draw tempai zarezin kim poroshin
+ron poroshin from kim 3han 30fu (riichi pinfu tanyao) riichi kim poroshin
+ron kim from poroshin 5han (riichi ippatsu pinfu ittsu) riichi kim poroshin
+
+sokolov:25200 gracheva:17700 fedorkevich:38600 vodilov:38500
+tsumo sokolov 2han 30fu (riichi tsumo) riichi sokolov
+ron sokolov from fedorkevich 2han 30fu (riichi pinfu) riichi sokolov
+ron gracheva from sokolov 2han 30fu (pinfu tanyao) riichi fedorkevich
+draw tempai gracheva fedorkevich
+tsumo fedorkevich 3han 40fu (toitoi yakuhai1)
+tsumo vodilov 5han (riichi ippatsu tsumo pinfu iipeiko) riichi vodilov
+ron fedorkevich from gracheva 4han 30fu (riichi tanyao pinfu dora) riichi fedorkevich
+ron fedorkevich from sokolov 1han 30fu (tanyao)
+tsumo gracheva 1han 30fu (chanta)
+ron vodilov from gracheva 3han 40fu (riichi ippatsu dora) riichi vodilov
+ron fedorkevich from vodilov 2han 30fu (tanyao dora)
+ron vodilov from fedorkevich 2han 30fu (yakuhai1 dora)
+ron fedorkevich from sokolov 1han 30fu (yakuhai1) riichi sokolov
+
+stolbova:17500 levina:20200 matveeva:26200 timofeev:56100
+tsumo stolbova 2han 40fu (yakuhai2)
+ron stolbova from matveeva 2han 30fu (riichi pinfu) riichi stolbova timofeev
+tsumo timofeev 3han 30fu (riichi tsumo tanyao) riichi timofeev
+tsumo timofeev 1han 30fu (tsumo) riichi matveeva
+ron timofeev from stolbova 1han 30fu (yakuhai1)
+ron timofeev from stolbova 4han 30fu (tanyao dora 3)
+ron matveeva from levina 1han 30fu (yakuhai1)
+ron timofeev from matveeva 4han 40fu (yakuhai1 dora 3)
+ron matveeva from levina 3han 40fu (tanyao toitoi)
+tsumo timofeev 1han 30fu (yakuhai1)
+ron matveeva from stolbova 3han 40fu (chanta yakuhai1)
+
+maslatsova:20400 kuzkokov:56300 mazin:22000 vgolubev:21300
+tsumo kuzkokov 6han (riichi ippatsu tsumo tanyao pinfu iipeiko) riichi kuzkokov vgolubev
+ron mazin from vgolubev 2han 30fu (riichi pinfu) riichi mazin
+tsumo kuzkokov 4han 40fu (yakuhai1 honitsu dora)
+ron mazin from vgolubev 2han 40fu (chanta dora)
+ron kuzkokov from mazin 2han 30fu (yakuhai1 dora)
+ron vgolubev from mazin 2han 30fu (tanyao dora)
+ron kuzkokov from vgolubev 1han 30fu (tanyao)
+draw tempai vgolubev riichi vgolubev
+tsumo kuzkokov 2han 30fu (honitsu)
+
+sanatullov:62500 levin:13300 goman:19200 karasyuk:25000
+tsumo sanatullov 5han (riichi pinfu tanyao iipeiko tsumo) riichi sanatullov goman
+ron levin from goman 3han 40fu (yakuhai1 toitoi)
+draw tempai sanatullov riichi sanatullov
+tsumo levin 2han 30fu (riichi tsumo) riichi levin
+tsumo sanatullov 2han 30fu (sanshoku tsumo)
+ron sanatullov from levin 7han (chinitsu dora 2) riichi goman
+ron goman from sanatullov 1han 30fu (yakuhai1)
+ron karasyuk from sanatullov 2han 40fu (riichi dora) riichi karasyuk
+ron sanatullov from levin 1han 30fu (chanta)
+draw tempai goman riichi goman
+
+sanzharov:13400 svirid:13000 falko:50200 chernih:43400
+chombo sanzharov
+ron falko from svirid 4han 40fu (riichi ippatsu iipeiko tanyao) riichi falko
+tsumo falko 3han 20fu (riichi tsumo pinfu) riichi falko
+tsumo falko 2han 40fu (yakuhai1 rinshan)
+ron chernih from sanzharov 1han 30fu (yakuhai1)
+ron falko from chernih 1han 40fu (riichi) riichi falko
+ron svirid from chernih 2han 40fu (riichi iipeiko) riichi svirid
+ron falko from sanzharov 5han (riichi iipeiko ippatsu pinfu dora) riichi falko
+ron sanzharov from svirid 2han 30fu (riichi pinfu) riichi sanzharov svirid
+tsumo chernih 6han (riichi ippatsu tsumo dora 3) riichi chernih
+ron falko from sanzharov 2han 30fu (yakuhai2)
+
+goncharenko:20700 trubitsina:22100 novik:16200 knyazhev:61000
+ron trubitsina from goncharenko 3han 40fu (yakuhai1 toitoi)
+ron knyazhev from goncharenko 2han 30fu (yakuhai1 dora) riichi goncharenko
+tsumo trubitsina 1han 30fu (yakuhai1)
+tsumo knyazhev 4han 30fu (riichi tanyao tsumo dora) riichi knyazhev
+tsumo knyazhev 3han 30fu (tanyao dora 2)
+tsumo knyazhev 3han 20fu (riichi pinfu tsumo) riichi knyazhev
+ron trubitsina from novik 1han 30fu (yakuhai1)
+draw tempai trubitsina knyazhev
+tsumo knyazhev 3han 30fu (riichi yakuhai1 tsumo) riichi knyazhev
+ron goncharenko from trubitsina 5han (riichi ippatsu tanyao iipeiko dora) riichi goncharenko
+ron goncharenko from novik 1han 40fu (riichi) riichi goncharenko
+
+
+knyazhev:27500 kim:30500 sokolov:35100 karpov:26900
+ron sokolov from karpov 2han 40fu (riichi tanyao) riichi knyazhev sokolov
+ron sokolov from karpov 1han 30fu (yakuhai1)
+ron sokolov from knyazhev 2han 40fu (riichi tanyao) riichi sokolov
+ron knyazhev from sokolov 5han (riichi pinfu ipeiko dora 2) riichi knyazhev 
+ron karpov from sokolov 1han 30fu (tanyao)
+ron sokolov from kim 1han 30fu (yakuhai1)
+draw tempai kim karpov riichi karpov
+tsumo karpov 4han 20fu (riichi pinfu tanyao tsumo) riichi karpov
+ron kim from knyazhev 2han 30fu  (riichi pinfu) riichi knyazhev kim
+ron sokolov from karpov 5han (chinitsu)
+
+zarezin:14400 timofeev:52600 matveeva:9600 vodilov:43400
+tsumo matveeva 1han 30fu (yakuhai1) riichi vodilov
+tsumo timofeev 1han 30fu (yakuhai1)
+draw tempai timofeev vodilov
+ron timofeev from vodilov 7han (honitsu yakuhai1 dora 4) 
+ron timofeev from vodilov 1han 30fu (tanyao)
+tsumo vodilov 6han (honitsu yakuhai1 dora 3)
+ron zarezin from timofeev 1han 30fu (yakuhai1)
+ron vodilov from matveeva 6han (chinitsu)
+draw tempai matveeva
+ron timofeev from matveeva 1han 30fu (yakuhai1)
+ron timofeev from zarezin 3han 40fu (riichi dora 2) riichi timofeev
+ron vodilov from matveeva 3han 40fu (tanyao ipeiko dora 1) riichi matveeva
+tsumo matveeva 3han 30fu (riichi tanyao tsumo) riichi matveeva
+
+sanatullov:46200 titova:23000 kuzkokov:28000 meshin:22800
+tsumo kuzkokov 4han 30fu (riichi tsumo dora 2) riichi kuzkokov
+ron titova from kuzkokov 3han 30fu (riichi pinfu dora 1) riichi sanatullov titova 
+tsumo titova 3han 30fu (honitsu yakuhai1)
+ron sanatullov from titova 3han 40fu (riichi ippatsu tanyao) riichi sanatullov titova
+ron sanatullov from titova 3han 50fu (chanta yakuhai2)
+ron sanatullov from titova 4han 40fu (riichi dora 3) riichi sanatullov
+ron kuzkokov from meshin 1han 30fu (tanyao)
+ron titova from meshin 1han 40fu (yakuhai1) riichi meshin
+draw tempai sanatullov titova kuzkokov
+draw tempai sanatullov titova meshin
+ron meshin from titova 1han 30fu (yakuhai1) riichi kuzkokov 
+
+falko:43400 gubanova:30200 fedorkevich:21300 poroshin:25100
+tsumo poroshin 5han (riichi tsumo pinfu dora 2) riichi poroshin
+draw tempai falko poroshin riichi falko poroshin
+tsumo gubanova 5han (sanshoku riichi tsumo dora 1) riichi gubanova 
+ron poroshin from falko 2han 30fu (riichi pinfu) riichi falko poroshin
+ron falko from gubanova 1han 30fu (tanyao)
+ron falko from poroshin 4han 40fu (riichi ipeiko dora 2) riichi falko
+draw tempai falko poroshin
+tsumo falko 1han 30fu (tanyao) riichi gubanova
+ron gubanova from falko 2han 30fu (hotei dora 1)
+tsumo fedorkevich 3han 30fu (riichi tsumo dora 1) riichi falko fedorkevich
+tsumo falko 4han 30fu (tsumo dora 3)
+ron falko from poroshin 1han 30fu (pinfu) riichi gubanova
+
+svirid:38500 levin:31000 vgolubev:22700 trubitsina:27800
+draw tempai svirid levin trubitsina riichi svirid trubitsina
+ron levin from trubitsina 1han 40fu (riichi) riichi levin 
+draw tempai svirid vgolubev trubitsina riichi vgolubev
+ron vgolubev from svirid 2han 40fu (honitsu)
+tsumo svirid 4han 40fu (yakuhai1 dora 3)
+ron svirid from levin 2han 30fu (tanyao dora 1) riichi levin
+tsumo levin 1han 30fu (tanyao) 
+ron trubitsina from levin 3han 30fu (riichi dora 2) riichi trubitsina
+tsumo levin 4han 40fu (yakuhai1 tsumo dora 2) riichi vgolubev trubitsina
+ron svirid from levin 2han 40fu (ittsu)
+
+gracheva:49500 sanzharov:6700 goman:5700 novik:58100
+ron gracheva from sanzharov 3han 40fu (riichi ittsu) riichi gracheva sanzharov
+ron gracheva from goman 4han 40fu (tanyao dora 3) riichi sanzharov
+ron novik from gracheva 3han 30fu (honitsu yakuhai1)
+ron novik from goman 4han 30fu (yakuhai1 dora 3)
+ron novik from sanzharov 2han 30fu (yakuhai1 dora 1)
+ron sanzharov from novik 3han 30fu (toitoi tanyao) riichi gracheva
+ron gracheva from sanzharov 1han 40fu (yakuhai1)
+ron novik from goman 2han 30fu (honitsu) riichi goman
+ron novik from goman 1han 30fu (yakuhai1)
+ron gracheva from sanzharov 1han 30fu (tanyao)
+also novik 4han 30fu (yakuhai1 dora 3)
+ron novik from sanzharov 3han 30fu (yakuhai1 dora 2)
+
+kozlovskaya:37400 levina:24200 mazin:27700 karasyuk:30700
+ron mazin from karasyuk 1han 30fu (tanyao)
+ron levina from mazin 1han 30fu (yakuhai1)
+ron karasyuk from kozlovskaya 1han 30fu (yakuhai1)
+ron kozlovskaya from levina 1han 30fu (yakuhai1)
+tsumo karasyuk 2han 30fu (riichi tsumo) riichi karasyuk mazin
+ron mazin from karasyuk 1han 30fu (ittsu)
+ron kozlovskaya from levina 2han 50fu (riichi ippatsu) riichi kozlovskaya
+ron kozlovskaya from levina 2han 30fu (yakuhai2) riichi levina
+ron levina from mazin 1han 30fu (yakuhai1)
+ron mazin from karasyuk 1han 30fu (yakuhai1)
+tsumo levina 1han 30fu (tanyao) riichi karasyuk
+
+
+stolbova:10400 maslatsova:30500 chernih:19600 goncharenko:59500
+ron goncharenko from stolbova 1han 30fu (yakuhai1)
+ron chernih from stolbova 3han 30fu (tanyao dora 2)
+ron maslatsova from chernih 2han 30fu (tanyao dora 1)
+tsumo maslatsova 5han (riichi pinfu tsumo dora 2) riichi maslatsova
+draw tempai stolbova chernih riichi chernih
+ron chernih from stolbova 3han 30fu (yakuhai1 dora 2) riichi stolbova
+ron goncharenko from maslatsova 1han 30fu (yakuhai1) riichi stolbova
+tsumo goncharenko yakuman (suuanko) riichi goncharenko
+ron maslatsova from chernih 1han 30fu (tanyao)
+
+
+kim:53200 gubanova:11100 falko:37200 vodilov:18500
+ron vodilov from gubanova 6han (toitoi honitsu dora 2)
+ron kim from vodilov 1han 30fu (yakuhai1) riichi gubanova
+ron vodilov from gubanova 4han 30fu (yakuhai1 dora 3)
+ron gubanova from falko 2han 30fu (yakuhai1 dora 1)
+ron kim from falko 2han 30fu (yakuhai1 dora 1)
+tsumo kim 2han 30fu (riichi tsumo) riichi kim
+ron falko from vodilov 6han (chinitsu ittsu)
+also kim 4han 30fu  (riichi pinfu dora 2) riichi kim
+ron kim from gubanova 4han 40fu (yakuhai1 dora 3)
+tsumo gubanova 5han (riichi tsumo pinfu ittsu dora 1) riichi gubanova falko
+tsumo falko 4han 50fu (toitoi honitsu)
+ron gubanova from vodilov 2han 30fu (yakuhai1  dora 1)
+ron vodilov from kim 1han 30fu (tanyao) riichi kim
+ron vodilov from falko 1han 30fu (tanyao)
+tsumo gubanova 3han 30fu (riichi tsumo dora 1) riichi gubanova falko
+
+sokolov:27900 titova:56600 fedorkevich:6100 knyazhev: 29400
+ron sokolov from fedorkevich 3han 30fu (riichi pinfu dora 1) riichi sokolov
+ron knyazhev from fedorkevich 1han 30fu (tanyao)
+ron titova from knyazhev 2han 40fu (tanyao dora 1)
+tsumo titova 5han (riichi tsumo pinfu dora 2) riichi titova
+ron titova from sokolov 7han (yakuhai2 toitoi dora 3)
+tsumo sokolov 7han (riichi tsumo pinfu ipeiko dora 3) riichi sokolov
+tsumo titova 1han 30fu (yakuhai1)
+ron sokolov from fedorkevich 3han 30fu (honitsu yakuhai1)
+draw tempai knyazhev
+ron sokolov from knyazhev 1han 30fu (yakuhai1)
+tsumo knyazhev 5han (riichi tsumo dora 3) riichi knyazhev
+
+
+sanatullov:37500 kuzkokov:37900 poroshin:25200 zarezin:19400
+tsumo sanatullov 4han 40fu (riichi tsumo ipeiko rinshan) riichi sanatullov kuzkokov
+ron sanatullov from poroshin 1han 30fu (tanyao)
+ron poroshin from zarezin 3han 30fu (yakuhai1 dora 2) riichi zarezin
+tsumo poroshin 2han 20fu (tsumo pinfu) riichi zarezin
+ron kuzkokov from sanatullov 3han 30fu  (riichi pinfu tanyao) riichi sanatullov kuzkokov
+also poroshin 2han 30fu  (riichi pinfu) riichi poroshin
+ron sanatullov from kuzkokov 1han 40fu (riichi) riichi sanatullov 
+ron sanatullov from poroshin 2han 40fu (riichi dora 1) riichi sanatullov 
+ron zarezin from sanatullov 1han 40fu (riichi) riichi zarezin 
+ron sanatullov from kuzkokov 1han 30fu (tanyao)
+draw tempai kuzkokov poroshin zarezin
+ron kuzkokov from poroshin 4han 40fu (toitoi yakuhai2)
+ron kuzkokov from zarezin 2han 30fu (yakuhai1 dora 1)
+
+
+svirid:44600 timofeev:7100 kozlovskaya:22200 meshin:46100
+ron timofeev from svirid 2han 30fu (yakuhai1 dora 1)
+ron kozlovskaya from timofeev 2han 40fu (riichi dora 1 ) riichi kozlovskaya
+tsumo meshin 6han (honitsu shosangen yakuhai2)
+tsumo timofeev 2han 40fu (tanyao dora 1)
+tsumo svirid 2han 40fu (riichi tsumo) riichi svirid
+ron svirid from timofeev 6han (chinitsu houtei)
+tsumo svirid 1han 30fu (tsumo)
+draw tempai all
+tsumo meshin 4han 20fu (riichi pinfu tsumo) riichi svirid meshin
+
+
+
+maslatsova:24100 gracheva:23200 chernih:45700 levin:27000
+ron gracheva from chernih 2han 40fu (riichi dora 1)riichi gracheva 
+draw tempai maslatsova chernih levin
+ron chernih from maslatsova 5han (riichi tanyao pinfu ipeiko dora 1) riichi chernih
+draw tempai maslatsova chernih levin
+draw tempai nobody
+tsumo maslatsova 4han 20fu (riichi tsumo pinfu dora 1) riichi maslatsova
+ron chernih from gracheva 4han 30fu (yakuhai1 dora 3) riichi gracheva
+tsumo gracheva 3han 30fu (riichi tsumo dora 1)riichi gracheva chernih 
+
+
+
+
+stolbova:15200 sanzharov:33300 karpov:41500 karasyuk:30000
+ron karpov from karasyuk 4han 30fu (riichi pinfu dora 2) riichi stolbova karpov karasyuk
+tsumo karasyuk 1han 30fu (yakuhai1)
+ron karasyuk from stolbova 4han 30fu(riichi pinfu dora 2) riichi stolbova karasyuk 
+draw tempai sanzharov karasyuk
+ron sanzharov from karasyuk 3han 40fu (riichi ippatsu dora 1) riichi sanzharov
+ron karpov from stolbova 2han 40fu (yakuhai1 dora 1)
+ron karasyuk from stolbova 3han 30fu (tanyao sanshoku dora 1)
+ron stolbova from sanzharov 2han 50fu (riichi dora 1) riichi stolbova karasyuk
+ron karpov from stolbova 1han 30fu (yakuhai1)
+
+
+levina:15900 trubitsina:50300 goman:31200 goncharenko:22600
+tsumo trubitsina 6han(riichi ippatsu tanyao sanshoku tsumo) riichi trubitsina 
+tsumo levina 3han 25fu  (riichi chiitoitsu)riichi levina
+tsumo trubitsina 4han 40fu (yakuhai1 dora 3)
+tsumo levina  4han 30fu (riichi tsumo ittsu)riichi levina 
+draw tempai trubitsina riichi trubitsina
+ron goncharenko from levina 5han (tanyao dora 4)
+ron trubitsina from levina 3han 30fu (yakuhai2 dora 1) riichi levina
+tsumo goman 7han (riichi tsumo yakuhai1 honitsu dora 1) riichi goman
+
+
+vgolubev:41000 matveeva:31500 mazin:19100 novik:28400
+ron novik from vgolubev 1han 40fu (riichi)riichi novik 
+ron matveeva from mazin 1han 30fu (tanyao)
+ron novik from mazin 1han 30fu (yakuhai1)
+tsumo novik 1han 30fu (yakuhai1)
+ron vgolubev from novik 1han 30fu (yakuhai1)
+tsumo mazin 3han 30fu  (yakuhai1 dora 2)riichi vgolubev
+tsumo vgolubev 4han 30fu (tanyao dora 3)
+tsumo matveeva 3han 40fu (yakuhai1 honitsu)
+ron vgolubev from mazin 4han 40fu (yakuhai2 toitoi)
+
+
+
+
+sokolov: 18500 trubitsina: 27400 meshin: 64800 falko: 9300
+ron meshin from falko 1han 40fu (tanyao)
+tsumo sokolov 4han 40fu (toitoi sananko)
+ron meshin from falko 5han (chinitsu)
+ron meshin from sokolov 6han (honitsu yakuhai1 dora 3) riichi sokolov 
+ron falko from meshin 2han 50fu (riichi yakuhai1) riichi falko 
+tsumo trubitsina 4han 40fu (toitoi yakuhai2)
+ron trubitsina from sokolov 3han 30fu (yakuhai1 honitsu)
+tsumo meshin 5han (riichi pinfu tanyao ipeiko tsumo) riichi meshin sokolov 
+ron meshin from sokolov 2han 40fu (riichi yakuhai1) riichi meshin 
+ron meshin from trubitsina 1han 40fu (riichi) riichi meshin 
+tsumo sokolov 5han (riichi tanyao pinfu tsumo dora 1) riichi sokolov meshin
+ron sokolov from trubitsina 2han 30fu (riichi pinfu) riichi sokolov falko 
+
+
+karpov:32600 sanatullov:-1200 kozlovskaya:50300  fedorkevich:38300
+ron fedorkevich from kozlovskaya 4han 40fu (riichi dora 3) riichi fedorkevich 
+draw tempai sanatullov fedorkevich riichi sanatullov
+ron kozlovskaya from karpov 4han 30fu (yakuhai1 dora 3)
+ron karpov from fedorkevich 2han 30fu (tanyao dora)
+ron kozlovskaya from fedorkevich 4han 40fu (yakuhai2 toitoi) riichi sanatullov 
+ron karpov from sanatullov 3han 60fu (yakuhai1 honitsu) riichi sanatullov 
+ron fedorkevich from sanatullov 4han 40fu (riichi tanyao dora 2) riichi fedorkevich 
+tsumo kozlovskaya 3han 30fu (riichi tsumo dora) riichi kozlovskaya 
+draw tempai sanatullov fedorkevich riichi sanatullov
+ron kozlovskaya from sanatullov 4han 40fu (riichi dora 3) riichi kozlovskaya 
+
+
+vodilov:14900 kuzkokov:40900 poroshin:27400 knyazhev:36800
+draw tempai vodilov kuzkokov
+ron knyazhev from kuzkokov 2han 50fu (riichi dora 1) riichi knyazhev 
+draw tempai poroshin
+ron kuzkokov from vodilov 1han 40fu (riichi) riichi kuzkokov 
+draw tempai kuzkokov
+tsumo kuzkokov 5han (tsumo yakuhai1 dora 3)
+draw tempai kuzkokov knyazhev
+draw tempai knyazhev
+ron poroshin from vodilov 1han 50fu (yakuhai1)
+ron knyazhev from vodilov 2han 30fu (honitsu)
+tsumo knyazhev 1han 30fu (sanshoku)
+draw tempai all riichi poroshin
+
+
+kim:30000 svirid:37100 timofeev:39800 titova:13100
+ron kim from titova 3han 40fu (riichi dora 2) riichi kim 
+ron timofeev from titova 1han 30fu (chankan)
+ron timofeev from kim 3han 30fu (yakuhai1 honitsu)
+ron kim from svirid 1han 40fu (yakuhai1) riichi svirid 
+tsumo timofeev 2han 30fu (riichi tsumo) riichi timofeev 
+draw tempai kim svirid timofeev
+draw tempai svirid timofeev titova riichi titova
+ron timofeev from kim 2han 30fu (sanshoku tanyao)
+ron kim from timofeev 1han 30fu (tanyao)
+tsumo svirid 4han 30fu (riichi ippatsu tsumo tanyao) riichi svirid
+
+
+levina:28500 gracheva:20900 vgolubev:36100 levin:34500
+tsumo vgolubev 2han 40fu (honitsu) riichi levin 
+ron levin from levina 1han 30fu (yakuhai1)
+ron vgolubev from levina 2han 30fu (honitsu)
+tsumo levin 3han 30fu (tanyao dora 2)
+ron vgolubev from levin 2han 40fu (yakuhai1 chanta dora 2)
+ron levina from gracheva 3han 30fu (sanshoku chanta)
+draw tempai gracheva
+ron levin from gracheva 3han 30fu (yakuhai1 dora 2)
+
+
+sanzharov:43700 mazin:-3500 stolbova:53600 zarezin:26200
+ron mazin from sanzharov 5han (chinitsu)
+tsumo sanzharov 3han 40fu (honitsu yakuhai1)
+ron stolbova from mazin 5han (riichi chitoitsu dora 2) riichi stolbova 
+ron stolbova from mazin 6han (riichi honitsu dora 2) riichi stolbova 
+tsumo sanzharov 5han (yakuhai2 dora 3)
+ron stolbova from zarezin 2han 40fu (riichi dora) riichi stolbova 
+ron sanzharov from stolbova 2han 30fu (yakuhai1 dora)
+ron stolbova from zarezin 2han 30fu (yakuhai1 dora)
+tsumo mazin 2han 30fu (yakuhai1 dora)
+draw tempai zarezin riichi zarezin
+tsumo zarezin 2han 30fu (tanyao dora)
+ron sanzharov from mazin 4han 30fu (yakuhai2 toitoi)
+
+
+
+goncharenko:32500 matveeva:66600 karasyuk:17700 chernih:3200
+draw tempai matveeva riichi matveeva
+tsumo matveeva 4han 30fu (riichi ippatsu tsumo dora) riichi matveeva 
+ron karasyuk from chernih 3han 30fu (riichi tanyao pinfu) riichi karasyuk chernih 
+tsumo matveeva 2han 30fu (riichi tsumo) riichi matveeva chernih 
+tsumo goncharenko 3han 30fu (tanyao dora 2)
+tsumo goncharenko 4han 20fu (tsumo tanyao pinfu dora)
+tsumo matveeva 11han (toitoi yakuhai2 dora 7)
+ron matveeva from chernih 1han 40fu (riichi) riichi matveeva 
+tsumo goncharenko 5han (riichi ippatsu tsumo tanyao pinfu) riichi goncharenko 
+
+
+
+maslatsova:14900 goman:38700 gubanova:33300 novik:33100
+draw tempai goman riichi goman
+draw tempai goman gubanova riichi gubanova
+ron gubanova from goman 1han 30fu (yakuhai1)
+ron goman from novik 4han 40fu (riichi tanyao houtei dora) riichi goman
+ron gubanova from goman 3han 30fu (riichi pinfu dora) riichi gubanova 
+ron maslatsova from goman 1han 40fu (riichi) riichi maslatsova 
+ron gubanova from goman 2han 30fu (tanyao dora)
+tsumo novik 3han 30fu (yakuhai1 dora 2)
+tsumo goman 4han 40fu (yakuhai2 honitsu) riichi gubanova 
+ron novik from maslatsova 4han 30fu (junchan sanshoku dora)
+
+
+
+
+
+titova:23300 kuzkokov:21900 trubitsina:30900 matveeva:43900
+tsumo matveeva 2han 30fu (yakuhai1 dora 1)
+tsumo kuzkokov 7han (riichi iipeiko tsumo honitsu pinfu) riichi kuzkokov 
+ron titova from matveeva 2han 30fu (sanshoku yakuhai1)
+tsumo matveeva 2han 30fu (riichi tsumo) riichi matveeva 
+ron matveeva from titova 4han 40fu (yakuhai3 dora 1) riichi trubitsina 
+tsumo matveeva 4han 20fu (riichi tsumo pinfu dora 1) riichi matveeva 
+ron trubitsina from titova 3han 50fu (riichi yakuhai1 dora 1) riichi trubitsina 
+ron titova from trubitsina 2han 30fu (honitsu) riichi trubitsina
+ron kuzkokov from matveeva 1han 40fu (iipeiko)
+also trubitsina 1han 30fu (yakuhai1)
+ron titova from kuzkokov 5han (toitoi honroto yakuhai1)
+ron trubitsina from kuzkokov 3han 40fu (riichi iipeiko dora 1) riichi trubitsina 
+also titova 5han (riichi ittsu pinfu dora 1) riichi titova 
+
+
+timofeev:19900 knyazhev:20800 vodilov:21800 sanatullov:57500
+ron vodilov from timofeev 4han 30fu (honitsu yakuhai2)
+tsumo knyazhev 3han 20fu (pinfu tsumo dora 1)
+ron knyazhev from vodilov 2han 25fu (chiitoitsu)
+ron sanatullov from vodilov 4han 40fu (yakuhai1 dora 3) riichi knyazhev 
+ron vodilov from timofeev 3han 80fu (yakuhai1 toitoi)
+ron sanatullov from vodilov 4han 40fu (honitsu yakuhai1 dora 1) riichi knyazhev
+ron timofeev from vodilov 1han 30fu (sanshoku)
+also knyazhev 1han 30fu (yakuhai1)
+tsumo sanatullov 3han 30fu (junchan dora 1)
+ron timofeev from knyazhev 6han (honitsu dora 4)
+ron knyazhev from vodilov 2han 30fu (yakuhai2)
+tsumo sanatullov 3han 30fu (ittsu honitsu)
+ron sanatullov from knyazhev 1han 30fu (tanyao)
+ron timofeev from sanatullov 1han 40fu (iipeiko)
+
+
+kozlovskaya:-11200 kim:112900 sokolov:36700 svirid:-18400
+ron sokolov from kozlovskaya 3han 30fu (yakuhai1 honitsu) riichi svirid 
+tsumo kim yakuman (tenhou)
+ron kim from kozlovskaya 5han (riichi pinfu ittsu dora 1) riichi kozlovskaya kim 
+ron kim from svirid 1han 40fu (tanyao)
+ron sokolov from svirid 2han 40fu (riichi dora 1) riichi sokolov svirid 
+ron kim from kozlovskaya 5han (richi yakuhai1 dora 3) riichi kim 
+ron sokolov from svirid 2han 40fu  (riichi dora 1) riichi sokolov 
+ron sokolov from svirid 3han 40fu (riichi yakuhai1 dora 1) riichi sokolov 
+draw tempai kozlovskaya kim sokolov riichi sokolov
+ron kim from sokolov 2han 70fu (riichi dora 1) riichi kim 
+ron sokolov from svirid 5han (riichi pinfu dora 3) riichi sokolov svirid 
+tsumo sokolov 2han 30fu (riichi tsumo) riichi sokolov
+ron kim from svirid 2han 40fu (riichi ippatsu) riichi kim 
+
+
+meshin:35500 karpov:39600 falko:28800 poroshin:16100
+ron karpov from poroshin 1han 40fu (riichi) riichi karpov 
+ron poroshin from meshin 3han 40fu (riichi ippatsu dora 1) riichi falko poroshin 
+tsumo meshin 4han 20fu (riichi pinfu tsumo iipeiko) riichi meshin poroshin 
+ron poroshin from karpov 2han 30fu (riichi pinfu) riichi poroshin 
+ron karpov from poroshin 5han (chinitsu) riichi poroshin 
+ron poroshin from karpov 1han 30fu (yakuhai1)
+draw tempai karpov
+ron meshin from poroshin 5han (chanta sanshoku dora 1)
+tsumo falko 3han 20fu (tsumo tanyao pinfu) riichi poroshin 
+draw tempai karpov poroshin riichi poroshin
+
+
+
+gracheva:35600 karasyuk:12500 maslatsova:42100 sanzharov:29800
+ron maslatsova from sanzharov 1han 30fu (tanyao)
+draw tempai gracheva karasyuk sanzharov
+tsumo sanzharov 2han 30fu (riichi tsumo) riichi sanzharov 
+tsumo gracheva 2han 30fu (riichi tsumo) riichi gracheva 
+ron maslatsova from karasyuk 4han 30fu (riichi ippatsu pinfu dora 1) riichi maslatsova sanzharov 
+tsumo gracheva 5han (riichi pinfu tsumo dora 2) riichi gracheva  
+ron sanzharov from gracheva 3han 30fu (riichi pinfu iipeiko) riichi sanzharov 
+tsumo sanzharov 2han 40fu (yakuhai2)
+tsumo maslatsova 4han 30fu (riichi yakuhai1 tsumo dora 1) riichi maslatsova 
+
+
+vgolubev:34400 goman:12600 stolbova:32500 gubanova:40500
+ron stolbova from vgolubev 2han 30fu (yakuhai1 dora 1)
+ron vgolubev from goman 2han 40fu (honitsu)
+draw tempai vgolubev stolbova
+ron vgolubev from goman 1han 30fu (tanyao) riichi gubanova 
+ron vgolubev from stolbova 1han 30fu (tanyao) 
+tsumo gubanova 3han 30fu riichi goman gubanova
+ron stolbova from vgolubev 1han 30fu (ittsu)
+ron gubanova from goman 4han 40fu (riichi ippatsu yakuhai1 dora 1) riichi gubanova
+chombo goman
+ron vgolubev from goman 2han 30fu (honitsu) 
+
+
+fedorkevich:27000 levina:17700 novik:24600 mazin:50700
+draw tempai fedorkevich novik mazin riichi novik
+ron mazin from fedorkevich 2han 30fu (tanyao dora 1)
+ron levina from novik 3han 40fu (riichi dora 2) riichi levina
+ron fedorkevich from mazin 3han 30fu (toitoi tanyao) riichi novik 
+ron mazin from fedorkevich 1han 40fu (riichi) riichi novik mazin 
+ron mazin from fedorkevich 1han 30fu (yakuhai1)
+ron mazin from levina 4han 30fu (tanyao dora 3)
+tsumo mazin 4han 30fu (riichi tanyao tsumo dora 1) riichi mazin 
+ron novik from mazin 3han 30fu (yakuhai1 dora 2)
+ron novik from mazin 2han 40fu (riichi ippatsu) riichi novik levina
+
+
+
+levin:27700 chernih:7800 goncharenko:43200 zarezin:41300
+draw tempai chernih riichi chernih
+ron goncharenko from levin 3han 30fu (junchan sanshoku)
+tsumo chernih 3han 30fu (riichi ippatsu tsumo) riichi chernih 
+ron levin from chernih 4han 30fu (riichi pinfu dora 2) riichi levin 
+ron goncharenko from chernih 4han 40fu (riichi dora 3) riichi goncharenko 
+draw tempai levin goncharenko zarezin
+ron chernih from zarezin 3han 30fu (honitsu yakuhai1) riichi levin 
+tsumo zarezin 4han 20fu (riichi pinfu tsumo dora 1) riichi zarezin 
+ron zarezin from chernih 4han 25fu (chiitoitsu dora 2) riichi chernih 
+tsumo goncharenko 3han 30fu (riichi ippatsu tsumo) riichi goncharenko 
+
+
