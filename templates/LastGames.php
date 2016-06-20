@@ -67,7 +67,7 @@ foreach ($gamesData as $game) {
         $player = $aliases[$round['username']];
 
         if ($round['yakuman']) {
-            $bestHan = $bestFu = 100;
+            $bestHan = $bestFu = 200;
             $yakuman = 1;
             if ($firstYakuman) {
                 $bestHandPlayers = [];
