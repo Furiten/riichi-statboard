@@ -52,6 +52,8 @@ foreach ($gamesData as $game) {
     $player = '';
     $yakuman = 0;
     $chomboCount = 0;
+    $bestHandPlayers = [];
+    $firstYakuman = true;
 
     foreach ($roundsData as $round) {
         if ($game['id'] != $round['game_id']) {
@@ -59,23 +61,38 @@ foreach ($gamesData as $game) {
         }
 
 		if ($round['result'] == 'chombo') {
-            $chomboCount ++;
+            $chomboCount++;
         }
 
+        $player = $aliases[$round['username']];
+
         if ($round['yakuman']) {
-            $bestHan = $bestFu = 0;
-            $player = $aliases[$round['username']];
+            $bestHan = $bestFu = 200;
             $yakuman = 1;
-            break;
+            if ($firstYakuman) {
+                $bestHandPlayers = [];
+                $firstYakuman = false;
+            }
+            array_push($bestHandPlayers, $player);
         }
+
         if ($round['han'] > $bestHan) {
             $bestHan = $round['han'];
             $bestFu = $round['fu'];
-            $player = $aliases[$round['username']];
+            $bestHandPlayers = [];
+            array_push($bestHandPlayers, $player);
         }
+
         if ($round['han'] == $bestHan && $round['fu'] > $bestFu) {
             $bestFu = $round['fu'];
-            $player = $aliases[$round['username']];
+            $bestHandPlayers = [];
+            array_push($bestHandPlayers, $player);
+        }
+
+        if ($round['han'] == $bestHan && $round['fu'] == $bestFu) {
+            if (!in_array($player, $bestHandPlayers)) {
+                array_push($bestHandPlayers, $player);
+            }
         }
     }
 
@@ -197,7 +214,7 @@ foreach ($gamesData as $game) {
         <td>
             <ul>
                 " . (IS_ONLINE ? "<li><a href='{$game['orig_link']}' target='_blank'>Посмотреть реплей</a></li>" : "") . "
-                <li>Лучшая рука собрана игроком <b>" . $player . "</b> - {$cost}</li>
+                <li>Лучшая рука собрана " . plural(count($bestHandPlayers), 'игроком', 'игроками', 'игроками') . " <b>" . join(', ', $bestHandPlayers) . "</b> - {$cost}</li>
                 <li>В игре было {$ronWins} по рон и {$tsumoWins} по цумо</li>
                 ". ($game['doubleron_count'] ? "<li>Кроме того, {$doubleronWins} по дабл-рон!</li>" : "")."
                 ". ($game['tripleron_count'] ? "<li>Кроме того, {$tripleronWins} по трипл-рон!</li>" : "")."

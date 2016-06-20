@@ -40,5 +40,9 @@ mysql -u${MYSQL_USER} -p${MYSQL_PASSWORD} statboard < /vagrant/examples/db-examp
 sudo sed -i 's/bind-address/#bind-address/' /etc/mysql/my.cnf
 sudo service mysql restart
 
+cd /home/vagrant/
+wget https://phar.phpunit.de/phpunit.phar
+sudo mv phpunit.phar /usr/local/bin/phpunit
+
 # go to the project directory after ssh login
 sh -c "echo 'cd /vagrant/' >> /home/vagrant/.profile"
