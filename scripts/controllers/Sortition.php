@@ -73,4 +73,57 @@ class Sortition extends Controller {
 
         include "templates/Sortition.php";
     }
+
+    protected function _generateAndApprove()
+    {
+        $randFactor = substr(md5(microtime(true)), 3, 8);
+
+        // Generate
+        $usersData = db::get("SELECT * FROM players ORDER BY rating DESC, place_avg ASC");
+        $playData = db::get("SELECT game_id, username, rating FROM rating_history");
+        $previousPlacements = db::get("SELECT * FROM tables");
+        $previousPlacements = ArrayHelpers::elm2Key($previousPlacements, 'username', true);
+
+        list($tables, $sortition, $bestIntersection, $bestIntersectionSets) =
+            SortitionHelper::generate($randFactor, $usersData, $playData, $previousPlacements, SORTITION_GROUPS_COUNT);
+
+        // store to cache
+        $cacheData = base64_encode(serialize([$tables, $sortition, $bestIntersection, $bestIntersectionSets, $usersData]));
+        db::exec("INSERT INTO sortition_cache(hash, data) VALUES ('{$randFactor}', '{$cacheData}')");
+
+        // Approve
+        $tablesData = [];
+        foreach ($tables as $table) {
+            $tablesData = array_merge($tablesData, [
+                ['username' => $table[0]['username'], 'player_num' => 0],
+                ['username' => $table[1]['username'], 'player_num' => 1],
+                ['username' => $table[2]['username'], 'player_num' => 2],
+                ['username' => $table[3]['username'], 'player_num' => 3],
+            ]);
+        }
+        $query = "INSERT INTO tables (username, player_num) VALUES " . implode(', ', array_map(function($item) {
+            return "('{$item['username']}', {$item['player_num']})";
+        }, $tablesData));
+        db::exec($query);
+
+        db::exec("UPDATE sortition_cache SET is_confirmed=1 WHERE hash = '" . $randFactor . "'");
+
+        return $randFactor;
+    }
+
+    public function _genSort() // паблик морозов
+    {
+        return $this->_generateAndApprove();
+    }
+
+    public function _getSort($seed)
+    {
+        $cachedSortition = db::get("SELECT * FROM sortition_cache WHERE hash = '" . $seed . "'");
+        if (count($cachedSortition) >= 0) {
+            $sortition = unserialize(base64_decode($cachedSortition[0]['data']));
+            return $sortition[0]; // tables
+        }
+
+        return null;
+    }
 }

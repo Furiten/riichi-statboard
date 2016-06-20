@@ -49,11 +49,12 @@ class AddOnlineGame extends Controller {
 
     /**
      * @param $link
-     * @param $isReplay если добавление игры происходит в процессе перезаливки пайфу
+     * @param bool $checkExpiration если добавление игры происходит в процессе перезаливки пайфу
+     * @return array
      */
-    protected function _addGame($link, $isReplay = false) {
+    protected function _addGame($link, $checkExpiration = true) {
         list($replayHash, $paifuContent) = $this->_getContent($link);
-        if (!$isReplay) {
+        if ($checkExpiration) {
             $this->_checkGameExpired($replayHash);
         }
         // пример: http://e.mjv.jp/0/log/plainfiles.cgi?2015082718gm-0009-7994-2254c66d
@@ -77,11 +78,16 @@ class AddOnlineGame extends Controller {
         ]);
 
         $this->_updatePlayerRatings($playerPlaces, $resultScores, $gameId);
+
+        return [
+            'places' => $playerPlaces,
+            'scores' => $resultScores
+        ];
     }
 
-    public function externalAddGame($link) { // паблик морозов
+    public function externalAddGame($link, $checkExpiration = false) { // паблик морозов
         $this->_loggedRounds = [];
-        $this->_addGame($link, true);
+        return $this->_addGame($link, $checkExpiration);
     }
 
     /**
