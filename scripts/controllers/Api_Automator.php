@@ -94,4 +94,25 @@ class Api_Automator extends Controller {
         $controllerInstance = new AddOnlineGame('', []);
         return $controllerInstance->externalAddGame($data['replay_link'], false);
     }
+
+    /**
+     * Получить четверку лидеров
+     * Входных данных нет
+     *
+     * @return array
+     */
+    protected function _getLeaders() {
+        $usersData = Db::get("SELECT players.username
+            FROM players
+            ORDER BY games_played DESC, rating DESC, place_avg ASC
+            LIMIT 4
+        ");
+
+        $users = [];
+        foreach ($usersData as $k => $v) {
+            $users []= IS_ONLINE ? base64_decode($v['username']) : $v['username'];
+        }
+
+        return $users;
+    }
 }
