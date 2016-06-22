@@ -8,7 +8,6 @@ class Api_Automator extends Controller {
             $data = $this->$method(json_decode(file_get_contents('php://input')));
         } else {
             $data = ["code" => 404, "message" => "Method not found"];
-            header("HTTP/1.0 404 Not Found");
         }
 
         echo json_encode($data);
