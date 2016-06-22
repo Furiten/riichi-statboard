@@ -5,7 +5,7 @@ class Api_Automator extends Controller {
     {
         $method = '_' . $this->_path['method'];
         if (is_callable([$this, $method])) {
-            $data = $this->$method(json_decode($_POST['payload']));
+            $data = $this->$method(json_decode(file_get_contents('php://input')));
         } else {
             $data = ["code" => 404, "message" => "Method not found"];
             header("HTTP/1.0 404 Not Found");
