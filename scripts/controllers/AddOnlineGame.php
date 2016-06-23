@@ -81,6 +81,7 @@ class AddOnlineGame extends Controller {
 
         return [
             'places' => $playerPlaces,
+            'roundScores' => $players,
             'scores' => $resultScores
         ];
     }
