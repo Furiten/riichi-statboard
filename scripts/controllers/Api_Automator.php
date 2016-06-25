@@ -3,9 +3,14 @@
 class Api_Automator extends Controller {
     protected function _run()
     {
+        layout::disable();
+        header('Content-Type: application/json');
         $method = '_' . $this->_path['method'];
         if (is_callable([$this, $method])) {
-            $data = $this->$method(json_decode(file_get_contents('php://input')));
+            $data = $this->$method(json_decode(file_get_contents('php://input'), true));
+            if (json_last_error()) {
+                $data = ["code" => 400, "message" => json_last_error_msg()];
+            }
         } else {
             $data = ["code" => 404, "message" => "Method not found"];
         }
@@ -69,8 +74,8 @@ class Api_Automator extends Controller {
         $out = curl_exec($curl);
         list($headers, $response) = explode("\r\n\r\n", $out, 2);
         $matches = [];
-        if (preg_match('#location: http://tenhou\.net/cs/edit/done.html?C\d+&MEMBER%20NOT%20FOUND(\w+)#is', $headers, $matches)) {
-            $userlist = explode('\n', rawurldecode($matches[1]));
+        if (preg_match('#tenhou\.net/cs/edit/done\.html\?C\d+\&MEMBER%20NOT%20FOUND(\S+)#is', $headers, $matches)) {
+            $userlist = array_values(array_filter(preg_split('#[\n\r]+#is', rawurldecode($matches[1]))));
             return [
                 'code' => '417',
                 'message' => 'Users not found',
@@ -91,7 +96,11 @@ class Api_Automator extends Controller {
         require_once 'scripts/base/Controller.php';
         require_once 'scripts/controllers/AddOnlineGame.php';
         $controllerInstance = new AddOnlineGame('', []);
-        return $controllerInstance->externalAddGame($data['replay_link'], false);
+        try {
+            return ['code' => 200, 'data' => $controllerInstance->externalAddGame($data['replay_link'], false)];
+        } catch (Exception $e) {
+            return ["code" => 400, "message" => $e->getMessage()];
+        }
     }
 
     /**
@@ -112,6 +121,6 @@ class Api_Automator extends Controller {
             $users []= IS_ONLINE ? base64_decode($v['username']) : $v['username'];
         }
 
-        return $users;
+        return ['code' => 200, 'data' => $users];
     }
 }

@@ -78,8 +78,20 @@ class Sortition extends Controller {
     {
         $randFactor = substr(md5(microtime(true)), 3, 8);
 
+        $botsNames = [
+            base64_encode('Alfa-Tom'),
+            base64_encode('Beta-Zef'),
+            base64_encode('Gamma-Ke'),
+            base64_encode('Delta-Se')
+        ];
+
         // Generate
-        $usersData = db::get("SELECT * FROM players ORDER BY rating DESC, place_avg ASC");
+        $usersData = db::get("SELECT * FROM players WHERE username NOT IN('{$botsNames[0]}', '{$botsNames[1]}', '{$botsNames[2]}', '{$botsNames[3]}')
+                              ORDER BY games_played DESC, rating DESC, place_avg ASC");
+        while (count($usersData) % 4 != 0) { // округляем до стола
+            array_pop($usersData);
+        }
+
         $playData = db::get("SELECT game_id, username, rating FROM rating_history");
         $previousPlacements = db::get("SELECT * FROM tables");
         $previousPlacements = ArrayHelpers::elm2Key($previousPlacements, 'username', true);

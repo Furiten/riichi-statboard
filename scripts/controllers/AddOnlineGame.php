@@ -203,8 +203,8 @@ class AddOnlineGame extends Controller {
     protected function _saveRatingsToDb($ratings, $gameId) {
         foreach ($ratings as $playerRating) {
             $avg = ((double)$playerRating['places_sum']) / ((double)$playerRating['games_played']);
-            $query = "INSERT INTO players (username, rating, games_played, places_sum, place_avg)
-                VALUES ('{$playerRating['username']}', {$playerRating['rating']}, {$playerRating['games_played']}, {$playerRating['places_sum']}, {$avg})
+            $query = "INSERT INTO players (username, alias, rating, games_played, places_sum, place_avg)
+                VALUES ('{$playerRating['username']}', '{$playerRating['username']}', {$playerRating['rating']}, {$playerRating['games_played']}, {$playerRating['places_sum']}, {$avg})
                 ON DUPLICATE KEY UPDATE rating=VALUES(rating), games_played=VALUES(games_played), places_sum=VALUES(places_sum), place_avg=VALUES(place_avg)";
             Db::exec($query);
 
