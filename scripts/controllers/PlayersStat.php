@@ -21,11 +21,11 @@ class PlayersStat extends Controller {
 
         switch ($_GET['sort']) {
             case 'avg':
-                $query .= "ORDER BY place_avg ASC, rating DESC";
+                $query .= "ORDER BY games_played DESC, place_avg ASC, rating DESC";
                 break;
             case 'rating':
             default:
-                $query .= "ORDER BY rating DESC, place_avg ASC";
+                $query .= "ORDER BY games_played DESC, rating DESC, place_avg ASC";
         }
 
         $usersData = Db::get($query);
