@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * TODO: replace this very basic automation support with nice api implementation!
+ *
+ * Class Api_Automator
+ */
+
 class Api_Automator extends Controller {
     protected function _run()
     {

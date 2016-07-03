@@ -77,13 +77,7 @@ class Sortition extends Controller {
     protected function _generateAndApprove()
     {
         $randFactor = substr(md5(microtime(true)), 3, 8);
-
-        $botsNames = [
-            base64_encode('Alfa-Tom'),
-            base64_encode('Beta-Zef'),
-            base64_encode('Gamma-Ke'),
-            base64_encode('Delta-Se')
-        ];
+        $botsNames = array_map('base64_encode', BOT_NAMES);
 
         // Generate
         $usersData = db::get("SELECT * FROM players WHERE username NOT IN('{$botsNames[0]}', '{$botsNames[1]}', '{$botsNames[2]}', '{$botsNames[3]}')

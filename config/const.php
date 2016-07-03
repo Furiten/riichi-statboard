@@ -17,6 +17,14 @@ define('ADMIN_COOKIE', 'kldfmewmd9vbeiogbjsdvjepklsdmnvmn');
 define('PARSER_LOG', false);
 define('KIRIAGE_MANGAN', false);
 
+// For online games: names of replacement bots
+define('BOT_NAMES', [
+    'Alfa-Tom',
+    'Beta-Zef',
+    'Gamma-Ke',
+    'Delta-Se'
+]);
+
 switch(RULES) {
     case 'EMA2016':
         define('IS_ONLINE', false);
