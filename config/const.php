@@ -15,7 +15,6 @@ define('ADMIN_PASSWORD', 'hjpjdstckjybrb');
 define('ADMIN_COOKIE', 'kldfmewmd9vbeiogbjsdvjepklsdmnvmn');
 
 define('PARSER_LOG', false);
-define('KIRIAGE_MANGAN', false);
 
 // For online games: names of replacement bots
 define('BOT_NAMES', [
