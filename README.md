@@ -40,7 +40,7 @@ Riichi Statboard
 Требования и инсталляция
 ------------------------
 
-- PHP 5.4+
+- PHP 5.5+
 - Apache с mod_rewrite или Nginx
 - Mysql 5
 

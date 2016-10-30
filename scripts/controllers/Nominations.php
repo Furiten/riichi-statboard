@@ -1,72 +1,38 @@
 <?php
 
+include_once "scripts/components/NominationsBuilder.php";
+
 class Nominations extends Controller {
-    protected function _run()
-    {
-		// 1) Номинация "Мимокрокодил": за наименьшее число выплат
-		$allUsers = Db::get("SELECT players.username, count(DISTINCT round.id) as cnt FROM players LEFT JOIN round ON round.username = players.username GROUP BY players.username HAVING cnt > 0");
-		$winners = Db::get("SELECT username, COUNT( * ) AS cnt FROM  `round` WHERE username !=  '' GROUP BY username ORDER BY cnt ASC");
-		$losers = Db::get("SELECT loser, COUNT( * ) AS cnt FROM  `round` WHERE loser !=  '' GROUP BY loser ORDER BY cnt ASC");
-		$tempai = Db::get("SELECT tempai_list FROM `round` WHERE tempai_list != ''");
 
-		$winCounts = [];
-		foreach ($allUsers as $u) {
-			$winCounts[$u['username']] = 0;
-		}
+    protected function _run() {
+        $gamesCount = Db::get("SELECT COUNT(*) as cnt FROM game;");
+        $gamesCount = reset($gamesCount)['cnt'];
+        if ($gamesCount < 4) {
+            $nominations = null;
+        } else {
+            $data = Db::get("
+                SELECT round.game_id, round.round, round.username as winner, round.loser, round.han, round.fu, 
+                    round.yakuman, round.result, round.tempai_list, result_score.score as last_scores
+                FROM `round`
+                LEFT JOIN result_score ON result_score.game_id = round.game_id;
+            ");
 
-		foreach ($winners as $u) {
-			$winCounts[$u['username']] += $u['cnt'];
-		}
+            $nominations = new NominationsBuilder();
+            $nominations = $nominations->buildNominations($data);
 
-		foreach ($losers as $u) {
-			$winCounts[$u['loser']] += $u['cnt'];
-		}
+            $users = $data = Db::get("SELECT username, alias from players;");
+            $aliases = [];
+            foreach ($users as $v) {
+                $aliases[$v['username']] = $v['alias'];
+            }
 
-		foreach ($tempai as $record) {
-			$data = unserialize($record);
-			if ($data) {
-				$tempaiCount = 0;
-				foreach ($data as $u) {
-					if ($u == 'tempai') {
-						$tempaiCount ++;
-					}
-				}
-
-				if ($tempaiCount == 0 || $tempaiCount == 4) {
-					// все темпай или все нотен - не считаем
-					continue;
-				} else {
-					// есть темпай или нотен - всем четверым по одной победе-поражению
-					foreach ($data as $u => $s) {
-						$winCounts[$u] ++;
-					}
-				}
-			}
-		}
-
-		asort($winCounts);
-
-		$krokodil = reset(array_keys($winCounts));
-		$krokodilCount = reset(array_values($winCounts));
-
-		// 2) Номинация "Жив, цел, орёл" - за выживание после мощного удара
-		$bigHits = Db::get("
-			SELECT * FROM `round`
-			LEFT JOIN result_score ON result_score.game_id = round.game_id AND result_score.username = round.loser
-			WHERE round.result = 'ron' AND result_score.score > 0
-			ORDER BY yakuman DESC, han DESC, fu DESC
-		");
-		$first = reset($bigHits);
-		$orel = $first['loser'];
-		$orelHit = 0;
-		if ($first['yakuman']) {
-			$orelHit = 'yakuman';
-		} elseif ($first['han'] >= 5) {
-			$orelHit = $first['han'];
-		} else {
-			$orelHit = $first['han'] . '/' . $first['fu'];
-		}
-		$orelLastScore = $first['score'];
+            foreach ($nominations as $key => $value) {
+                $nomination = $nominations[$key];
+                if ($nomination) {
+                    $nominations[$key]['alias'] = $aliases[$nomination['name']];
+                }
+            }
+        }
 
         include "templates/Nominations.php";
     }
