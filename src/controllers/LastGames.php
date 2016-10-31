@@ -1,7 +1,7 @@
 <?php
 
-include_once "scripts/helpers/Array.php";
-include_once "scripts/helpers/Yaku.php";
+include_once "src/helpers/Array.php";
+include_once "src/helpers/Yaku.php";
 
 class LastGames extends Controller
 {

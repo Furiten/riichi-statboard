@@ -27,8 +27,8 @@ class Api_Automator extends Controller
 
     protected function _generateSortition()
     {
-        require_once 'scripts/base/Controller.php';
-        require_once 'scripts/controllers/Sortition.php';
+        require_once 'src/base/Controller.php';
+        require_once 'src/controllers/Sortition.php';
         $controllerInstance = new Sortition('', []);
         $result = $controllerInstance->_genSort();
         if ($result) {
@@ -43,8 +43,8 @@ class Api_Automator extends Controller
      */
     protected function _getSortition($data)
     {
-        require_once 'scripts/base/Controller.php';
-        require_once 'scripts/controllers/Sortition.php';
+        require_once 'src/base/Controller.php';
+        require_once 'src/controllers/Sortition.php';
         $controllerInstance = new Sortition('', []);
         return ['code' => 200, 'data' => $controllerInstance->_getSort($data['seed'])];
     }
@@ -104,8 +104,8 @@ class Api_Automator extends Controller
      */
     protected function _registerReplay($data)
     {
-        require_once 'scripts/base/Controller.php';
-        require_once 'scripts/controllers/AddOnlineGame.php';
+        require_once 'src/base/Controller.php';
+        require_once 'src/controllers/AddOnlineGame.php';
         $controllerInstance = new AddOnlineGame('', []);
         try {
             return ['code' => 200, 'data' => $controllerInstance->externalAddGame($data['replay_link'], false)];

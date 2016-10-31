@@ -3,9 +3,9 @@ error_reporting(8191);
 ini_set('display_errors', 'on');
 
 require_once 'config/const.php';
-require_once 'scripts/base/Db.php';
-require_once 'scripts/base/Controller.php';
-require_once 'scripts/controllers/AddGame.php';
+require_once 'src/base/Db.php';
+require_once 'src/base/Controller.php';
+require_once 'src/controllers/AddGame.php';
 
 $controllerInstance = new AddGame('', []);
 

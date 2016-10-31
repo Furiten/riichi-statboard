@@ -1,6 +1,6 @@
 <?php
 
-include_once "scripts/components/NominationsBuilder.php";
+include_once "src/components/NominationsBuilder.php";
 
 class Nominations extends Controller
 {

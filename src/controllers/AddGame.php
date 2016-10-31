@@ -1,8 +1,8 @@
 <?php
 
-include_once "scripts/components/Parser.php";
-include_once "scripts/components/PointsCalc.php";
-include_once "scripts/helpers/Array.php";
+include_once "src/components/Parser.php";
+include_once "src/components/PointsCalc.php";
+include_once "src/helpers/Array.php";
 
 /**
  * Добавление игры

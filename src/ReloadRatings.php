@@ -2,10 +2,9 @@
 error_reporting(8191);
 ini_set('display_errors', 'on');
 
-
-require_once 'scripts/base/Db.php';
-require_once 'scripts/base/Controller.php';
-require_once 'scripts/controllers/AddOnlineGame.php';
+require_once 'src/base/Db.php';
+require_once 'src/base/Controller.php';
+require_once 'src/controllers/AddOnlineGame.php';
 
 $controllerInstance = new AddOnlineGame('', []);
 $links = Db::get("SELECT orig_link FROM game GROUP BY replay_hash");

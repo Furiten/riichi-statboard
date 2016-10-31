@@ -1,6 +1,6 @@
 <?php
 
-include_once 'scripts/helpers/Yaku.php';
+include_once 'src/helpers/Yaku.php';
 
 class Graphs extends Controller
 {

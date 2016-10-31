@@ -1,5 +1,5 @@
 <?php
-require_once 'scripts/helpers/Array.php';
+require_once 'src/helpers/Array.php';
 
 class SortitionHelper
 {
