@@ -1,5 +1,5 @@
 <?php
-/*  Riichi mahjong API game server
+/*  Riichi mahjong stat GUI
  *  Copyright (C) 2016  o.klimenko aka ctizen
  *
  *  This program is free software: you can redistribute it and/or modify

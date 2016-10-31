@@ -1,7 +1,5 @@
 <?php
 
-include_once 'src/helpers/Yaku.php';
-
 class Graphs extends Controller
 {
     protected function _run()
