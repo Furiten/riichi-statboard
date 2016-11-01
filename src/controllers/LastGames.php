@@ -5,6 +5,7 @@ include_once "src/helpers/Yaku.php";
 
 class LastGames extends Controller
 {
+    /* BIG TODO */
     protected function _run()
     {
         $users = Db::get("SELECT username, alias FROM players");

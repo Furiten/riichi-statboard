@@ -3,11 +3,8 @@
 <?php if(!empty($error)) { ?>
 <div class="alert alert-error"><?php echo $error; ?></div>
 <?php } ?>
-<form action="" method="get" class="well form-search">
-    <input placeholder="Игрок" type="text" name="user"<?php if(!empty($_GET['user'])) { echo " value='" . $_GET['user'] . "'"; } ?>>
-    <input type="submit" value="Посмотреть" class="btn">
-</form>
-<?php if(!empty($_GET['user']) && !empty($graphData)) : ?>
+
+<?php if (!empty($data)) : ?>
 <div id='chart_rating'></div>
 <style type="text/css">
     .own {
@@ -22,21 +19,15 @@
 <script type="text/javascript">
     $(document).ready(function(){
         ////// rating plot
-        <?php
-            $substituteAliases = function(&$item) use ($aliases) {
-                foreach ($item as &$playerRecord) {
-                    $playerRecord['username'] = $aliases[$playerRecord['username']];
-                }
-                return $item;
-            };
-        ?>
-        var points = <?php echo json_encode(array_map($substituteAliases, $graphData)); ?>;
-        var games = <?php echo json_encode(array_map($substituteAliases, $gamesData)); ?>;
-        var user = '<?php echo str_replace("'", "\\'", $aliases[$user]); ?>';
+
+        var playersMap = <?php echo json_encode($usersMap); ?>;
+        var points = <?php echo json_encode($graphData); ?>;
+        var games = <?php echo json_encode($data['score_history']); ?>;
+        var user = '<?php echo $currentUser; ?>';
         var plot_rating = $.jqplot('chart_rating', [points], {
             axes:{
                 xaxis:{
-                    //label:'Сыграно игр',
+                    // label:'Сыграно игр',
                     ticks: <?php echo json_encode(array_keys($graphData)); ?>,
                     tickInterval: 1,
                     tickOptions: {
@@ -56,21 +47,21 @@
                     var outcome = '';
                     players.push('<table style="background-color:#fff; padding-bottom: 0; margin-bottom: 0" class="table table-condensed table-bordered">');
                     for (var i = 0; i < 4; i++) {
-                        if (g[i].result_score < 0) {
+                        if (g[i].rating_delta < 0) {
                             outcome = 'important';
                         } else {
                             outcome = 'success';
                         }
-                        if (g[i].username == user) {
+                        if (g[i].player_id == user) {
                             own = 'own';
                         } else {
                             own = '';
                         }
                         players.push(
                             '<tr class=" ' + own + '">' +
-                            '<td><b>' + g[i].username + '</b>: ' +
+                            '<td><b>' + playersMap[g[i].player_id].display_name + '</b>: ' +
                             '</td><td>' +
-                            '<span class="badge badge-' + outcome + '">' + g[i].result_score + '</span>' +
+                            '<span class="badge badge-' + outcome + '">' + g[i].rating_delta + '</span>' +
                             '</td></tr>');
                     }
                     players.push('</table>');
@@ -93,7 +84,7 @@
             var han_data = [
                 <?php
                     $output = [];
-                    foreach ($handsData['hands'] as $han => $count) {
+                    foreach ($data['hands_value_summary'] as $han => $count) {
                         $output []= "['{$han}', {$count}]";
                     }
                     echo implode(", \n", $output);
@@ -103,12 +94,8 @@
             var yaku_data = [
                 <?php
                     $output = [];
-                    asort($handsData['yaku']);
-                    foreach ($handsData['yaku'] as $yaku => $count) {
-                        if (empty($yaku)) {
-                            continue; // Если забыли записать яку - не нужно показывать кривой пустой элемент
-                        }
-                        $output []= "[{$count}, '{$yaku}']";
+                    foreach ($data['yaku'] as $yaku => $count) {
+                        $output []= "[$count, '" . Yaku::getMap()[$yaku] . "']";
                     }
                     echo implode(", \n", $output);
                 ?>
@@ -170,25 +157,39 @@
         <table class="table table-striped table-condensed">
             <tr><td colspan="2" style="padding-left: 20px"><b>Общая статистика:</b></td></tr>
             <tr><td>Сыграно игр</td><td>
-                    <b><?php echo $gamesCount; ?></b></td></tr>
-            <tr><td>Сыграно раздач</td><td>
-                    <b><?php echo $roundsData['rounds_played']; ?></b></td></tr>
+                    <b><?php echo $data['total_played_games']; ?></b></td></tr>
+            <?php
+                    /* <tr><td>Сыграно раздач</td><td>
+                    <b><?php echo $data; ?></b></td></tr> */ // TODO
+                    //
+            ?>
             <tr><td>Выиграно раздач</td><td>
-                    <b><?php echo $handsData['rounds_won'] - $handsData['chombo']; ?></b> &nbsp;
-                    (<?php echo sprintf('%.2f', 100. * ($handsData['rounds_won'] - $handsData['chombo']) / $roundsData['rounds_played']); ?>%)</td></tr>
+                    <b><?php echo $data['win_summary']['ron'] + $data['win_summary']['tsumo']; ?></b> &nbsp;
+                    <?php /* TODO: % of rounds */ ?></td></tr>
             <tr><td>Интегральный рейтинг</td><td>
                     <?php echo $integralRating; ?></td></tr>
             <tr><td colspan="2" style="padding-left: 20px"><b>По исходам раздач:</b></td></tr>
             <tr><td>Выигрышей по рон</td><td>
-                    <b><?php echo $handsData['ron']; ?></b> &nbsp;
-                    (<?php echo sprintf('%.2f', 100. * $handsData['ron'] / $roundsData['rounds_played']); ?>%)</td></tr>
+                    <b><?php echo $data['win_summary']['ron']; ?></b> &nbsp;
+                    <?php /* TODO: % of rounds */ ?></td></tr>
             <tr><td>Выигрышей по цумо</td><td>
-                    <b><?php echo $handsData['tsumo']; ?></b> &nbsp;
-                    (<?php echo sprintf('%.2f', 100. * $handsData['tsumo'] / $roundsData['rounds_played']); ?>%)</td></tr>
+                    <b><?php echo $data['win_summary']['tsumo']; ?></b> &nbsp;
+                    <?php /* TODO: % of rounds */ ?></td></tr>
+            <tr><td>Набросов в рон</td><td>
+                    <b><?php echo $data['win_summary']['feed']; ?></b> &nbsp;
+                    <?php /* TODO: % of rounds */ ?></td></tr>
+            <?php /* TODO
+                    <tr><td>- в том числе из-за риичи</td><td>
+                    <b><?php echo $roundsData['furikomi_riichi']; ?></b>
+                    (<?php echo sprintf('%.2f', 100. * $roundsData['furikomi_riichi'] / $roundsData['rounds_played']); ?>%)</td></tr>
+            */ ?>
+            <tr><td>Проигрышей по цумо</td><td>
+                    <b><?php echo $data['win_summary']['tsumofeed']; ?></b> &nbsp;
+                    <?php /* TODO: % of rounds */ ?></td></tr>
             <tr><td>Штрафов чомбо</td><td>
-                    <b><?php echo $handsData['chombo']; ?></b> &nbsp;
-                    (<?php echo sprintf('%.2f', 100. * $handsData['chombo'] / $roundsData['rounds_played']); ?>%)</td></tr>
-            <tr><td>Ставок риичи</td><td>
+                    <b><?php echo $data['win_summary']['chombo']; ?></b> &nbsp;
+                    <?php /* TODO: % of rounds */ ?></td></tr>
+            <?php /* <tr><td>Ставок риичи</td><td>
                     <b><?php echo $roundsData['riichi_bets']; ?></b> &nbsp;
                     (<?php echo sprintf('%.2f', 100. * $roundsData['riichi_bets'] / $roundsData['rounds_played']); ?>%)</td></tr>
             <tr><td>- из них выигравших</td><td>
@@ -196,22 +197,19 @@
                     (<?php echo sprintf('%.2f', 100. * $roundsData['riichi_won'] / $roundsData['rounds_played']); ?>%)</td></tr>
             <tr><td>- из них потерянных</td><td>
                     <b><?php echo $roundsData['riichi_lost']; ?></b> &nbsp;
-                    (<?php echo sprintf('%.2f', 100. * $roundsData['riichi_lost'] / $roundsData['rounds_played']); ?>%)</td></tr>
-            <tr><td>Набросов в рон</td><td>
-                    <b><?php echo $roundsData['furikomi_total']; ?></b>
-                    (<?php echo sprintf('%.2f', 100. * $roundsData['furikomi_total'] / $roundsData['rounds_played']); ?>%)</td></tr>
-            <tr><td>- в том числе из-за риичи</td><td>
-                    <b><?php echo $roundsData['furikomi_riichi']; ?></b>
-                    (<?php echo sprintf('%.2f', 100. * $roundsData['furikomi_riichi'] / $roundsData['rounds_played']); ?>%)</td></tr>
+                    (<?php echo sprintf('%.2f', 100. * $roundsData['riichi_lost'] / $roundsData['rounds_played']); ?>%)</td></tr>*/
+            // TODO
+            ?>
+
             <tr><td colspan="2" style="padding-left: 20px"><b>По занятым местам:</b></td></tr>
             <tr><td>1 место</td><td>
-                    <?php echo sprintf('%.2f', $placesData[1]); ?> %</td></tr>
+                    <?php echo sprintf('%.2f', $data['places_summary'][1] / (float) array_sum($data['places_summary'])); ?> %</td></tr>
             <tr><td>2 место</td><td>
-                    <?php echo sprintf('%.2f', $placesData[2]); ?> %</td></tr>
+                    <?php echo sprintf('%.2f', $data['places_summary'][2] / (float) array_sum($data['places_summary'])); ?> %</td></tr>
             <tr><td>3 место</td><td>
-                    <?php echo sprintf('%.2f', $placesData[3]); ?> %</td></tr>
+                    <?php echo sprintf('%.2f', $data['places_summary'][3] / (float) array_sum($data['places_summary'])); ?> %</td></tr>
             <tr><td>4 место</td><td>
-                    <?php echo sprintf('%.2f', $placesData[4]); ?> %</td></tr>
+                    <?php echo sprintf('%.2f', $data['places_summary'][4] / (float) array_sum($data['places_summary'])); ?> %</td></tr>
         </table>
     </div>
     <div class="span8">
