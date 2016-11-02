@@ -7,7 +7,6 @@ if (empty($gamesData) && $currentPage == 1) {
     return;
 }
 
-//$gamesCounter = 1;
 echo "
     <table class='table table-striped table-condensed'>
     <tr>
@@ -16,32 +15,26 @@ echo "
         <th>Игроки</th>
         <th>Всякое разное</th>
     </tr>";
+
 $gamesCounter = $offset + 1;
-foreach ($gamesData as $game) {
+foreach ($gamesData['games'] as $game) {
     // игроки и очки
     $players = "<table class='table table-'>\n";
-    foreach ($scoresData as $score) {
-        if ($game['id'] != $score['game_id']) {
-            continue;
-        }
-        if ($score['result_score'] > 0) {
+    foreach ($game['final_results'] as $playerId => $results) {
+        $plus = '';
+        if ($results['rating_delta'] > 0) {
             $plus = '+';
-        } else {
-            $plus = '';
-        }
-
-        if ($score['result_score'] > 0) {
             $label = 'badge-success';
-        } elseif ($score['result_score'] < 0) {
+        } elseif ($results['rating_delta'] < 0) {
             $label = 'badge-important';
         } else {
             $label = 'badge-info';
         }
 
         $players .= "<tr>
-            <td style='background: transparent; width: 50%;'><span class='icon-user'></span>&nbsp;<b>" . $aliases[$score['username']] . "</b></td>
-            <td style='background: transparent; width: 25%;'>{$score['score']}</td>
-            <td style='background: transparent; width: 25%;'><span class='badge {$label}'>{$plus}{$score['result_score']}</span></td>
+            <td style='background: transparent; width: 50%;'><span class='icon-user'></span>&nbsp;<b>" . $gamesData['players'][$playerId]['display_name'] . "</b></td>
+            <td style='background: transparent; width: 25%;'>{$results['score']}</td>
+            <td style='background: transparent; width: 25%;'><span class='badge {$label}'>{$plus}{$results['rating_delta']}</span></td>
         </tr>\n";
     }
     $players .= "</table>";
@@ -51,22 +44,29 @@ foreach ($gamesData as $game) {
     $bestFu = 0;
     $player = '';
     $yakuman = 0;
-    $chomboCount = 0;
     $bestHandPlayers = [];
     $firstYakuman = true;
 
-    foreach ($roundsData as $round) {
-        if ($game['id'] != $round['game_id']) {
-            continue;
+    $chomboCount = 0;
+    $ronWins = 0;
+    $doubleronWins = 0; // TODO
+    $tripleronWins = 0; // TODO
+    $tsumoWins = 0;
+    $draws = 0;
+
+
+    foreach ($game['rounds'] as $round) {
+        switch($round['outcome']) {
+            case 'chombo': $chomboCount++; break;
+            case 'ron': $ronWins++; break;
+            case 'tsumo': $tsumoWins++; break;
+            case 'draw': $draws++; break;
+            case 'abort': $draws++; break;
         }
 
-		if ($round['result'] == 'chombo') {
-            $chomboCount++;
-        }
+        $player = $gamesData['players'][$round['winner_id']]['display_name'];
 
-        $player = $aliases[$round['username']];
-
-        if ($round['yakuman']) {
+        if ($round['han'] < 0) { // yakuman
             $bestHan = $bestFu = 200;
             $yakuman = 1;
             if ($firstYakuman) {
@@ -106,12 +106,6 @@ foreach ($gamesData as $game) {
         $cost = 'якуман!';
     }
 
-    $ronWins = $game['ron_count'] . ' ' . plural($game['ron_count'], 'победа', 'победы', 'побед');
-    $doubleronWins = $game['doubleron_count'] . ' ' . plural($game['doubleron_count'], 'победа', 'победы', 'побед');
-    $tripleronWins = $game['tripleron_count'] . ' ' . plural($game['tripleron_count'], 'победа', 'победы', 'побед');
-    $tsumoWins = $game['tsumo_count'] . ' ' . plural($game['tsumo_count'], 'победа', 'победы', 'побед');
-    $draws = $game['drawn_count'] . ' ' . plural($game['drawn_count'], 'ничья/пересдача', 'ничьи/пересдачи', 'ничьих/пересдач');
-
     $chombosLi = '';
     if ($chomboCount > 0) {
         $chomboCount .= ' ' . plural($chomboCount, 'штраф чомбо', 'штрафа чомбо', 'штрафов чомбо');
@@ -119,25 +113,21 @@ foreach ($gamesData as $game) {
     }
 
     $fullLog = '';
-    foreach ($roundsData as $round) {
-        if ($game['id'] != $round['game_id']) {
-            continue;
-        }
-
+    foreach ($game['rounds'] as $round) {
         $fullLog .= '<div>';
-        if ($round['round'] <= 4) {
-            $fullLog .= '東' . $round['round'];
+        if ($round['round_index'] <= 4) {
+            $fullLog .= '東' . $round['round_index'];
         } else if ($round['round'] <= 8) {
-            $fullLog .= '南' . ($round['round'] - 4);
+            $fullLog .= '南' . ($round['round_index'] - 4);
         } else if ($round['round'] <= 12) {
-            $fullLog .= '西' . ($round['round'] - 8);
+            $fullLog .= '西' . ($round['round_index'] - 8);
         } else if ($round['round'] <= 16) {
-            $fullLog .= '北' . ($round['round'] - 12);
+            $fullLog .= '北' . ($round['round_index'] - 12);
         }
 
         $fullLog .= ': ';
 
-        switch ($round['result']) {
+        switch ($round['outcome']) {
             case 'ron':
                 if ($round['dora'] > 0) {
                     $dora = ', дора ' . $round['dora'];
@@ -147,15 +137,22 @@ foreach ($gamesData as $game) {
                     $fu = ', ' . $round['fu'] . ' фу';
                 } else $fu = '';
 
-                if ($round['dealer']) {
-                    $dealer = ' (дилерское)';
-                } else $dealer = '';
+                $yakuList = implode(', ',
+                    array_map(
+                        function($yaku) {
+                            return Yaku::getMap()[$yaku];
+                        },
+                        explode(',', $round['yaku'])
+                    )
+                );
 
-                $yakuList = implode(', ', $round['yaku']);
                 if (!empty($round['yakuman'])) {
-                    $fullLog .= "<b>{$aliases[$round['username']]}</b> - {$yakuList} (<b>{$aliases[$round['loser']]}</b>), якуман! {$dealer}";
+                    $fullLog .= "<b>{$gamesData['players'][$round['winner_id']]['display_name']}</b>" .
+                                " - {$yakuList} (<b>{$gamesData['players'][$round['loser_id']]['display_name']}</b>), якуман!";
                 } else {
-                    $fullLog .= "<b>{$aliases[$round['username']]}</b> - {$yakuList}{$dora} (<b>{$aliases[$round['loser']]}</b>), {$round['han']} хан{$fu}{$dealer}";
+                    $fullLog .= "<b>{$gamesData['players'][$round['winner_id']]['display_name']}</b>" .
+                                " - {$yakuList}{$dora} (<b>{$gamesData['players'][$round['loser_id']]['display_name']}</b>)," .
+                                " {$round['han']} хан{$fu}";
                 }
                 break;
             case 'tsumo':
@@ -173,39 +170,37 @@ foreach ($gamesData as $game) {
 
                 $yakuList = implode(', ', $round['yaku']);
                 if (!empty($round['yakuman'])) {
-                    $fullLog .= "<b>{$aliases[$round['username']]}</b> - {$yakuList} (цумо), якуман! {$dealer}";
+                    $fullLog .= "<b>{$gamesData['players'][$round['winner_id']]['display_name']}</b>" .
+                        " - {$yakuList} (цумо}</b>), якуман!";
                 } else {
-                    $fullLog .= "<b>{$aliases[$round['username']]}</b> - {$yakuList}{$dora} (цумо), {$round['han']} хан{$fu}{$dealer}";
+                    $fullLog .= "<b>{$gamesData['players'][$round['winner_id']]['display_name']}</b>" .
+                        " - {$yakuList}{$dora} (цумо), {$round['han']} хан{$fu}";
                 }
                 break;
             case 'draw':
-                $tempaiList = [];
-                if ($round['tempai_list']) {
-                    // ничья
-                    $round['tempai_list'] = @unserialize($round['tempai_list']);
-                    foreach ($round['tempai_list'] as $name => $r) {
-                        if ($r == 'tempai') {
-                            $tempaiList []= $aliases[$name];
-                        }
-                    }
-                    $tempaiList = implode(', ', $tempaiList);
-                    $fullLog .= "Ничья (темпай: {$tempaiList})";
-                } else {
-                    // пересдача
-                    $fullLog .= "Пересдача";
-                }
+                // ничья
+                $tempaiList = array_map(function($el) use(&$gamesData) {
+                    return $gamesData['players'][$el]['display_name'];
+                }, explode(',', $round['tempai']));
+                $tempaiList = implode(', ', $tempaiList);
+                $fullLog .= "Ничья (темпай: {$tempaiList})";
+                break;
+            case 'abort':
+                $fullLog .= "Пересдача";
                 break;
             case 'chombo':
-                if ($round['dealer']) {
-                    $dealer = ' (дилерское)';
-                } else $dealer = '';
-
-                $fullLog .= "Чомбо: {$aliases[$round['username']]}{$dealer}";
+                $fullLog .= "Чомбо: {$gamesData['players'][$round['loser_id']]['display_name']}";
                 break;
             default:;
         }
         $fullLog .= "</div>";
     }
+
+    $ronWins .= plural($ronWins, 'победа', 'победы', 'побед');
+    $doubleronWins .= plural($doubleronWins, 'победа', 'победы', 'побед');
+    $tripleronWins .= plural($tripleronWins, 'победа', 'победы', 'побед');
+    $tsumoWins .= plural($tripleronWins, 'победа', 'победы', 'побед');
+    $draws .= plural($draws, 'ничья/пересдача', 'ничьи/пересдачи', 'ничьих/пересдач');
 
     echo "<tr>
         <td>{$gamesCounter}</td>
@@ -213,14 +208,14 @@ foreach ($gamesData as $game) {
         <td>{$players}</td>
         <td>
             <ul>
-                " . (IS_ONLINE ? "<li><a href='{$game['orig_link']}' target='_blank'>Посмотреть реплей</a></li>" : "") . "
+                " . (empty($game['replay_link']) ? "" : "<li><a href='{$game['orig_link']}' target='_blank'>Посмотреть реплей</a></li>") . "
                 <li>Лучшая рука собрана " . plural(count($bestHandPlayers), 'игроком', 'игроками', 'игроками') . " <b>" . join(', ', $bestHandPlayers) . "</b> - {$cost}</li>
                 <li>В игре было {$ronWins} по рон и {$tsumoWins} по цумо</li>
-                ". ($game['doubleron_count'] ? "<li>Кроме того, {$doubleronWins} по дабл-рон!</li>" : "")."
-                ". ($game['tripleron_count'] ? "<li>Кроме того, {$tripleronWins} по трипл-рон!</li>" : "")."
+                ". ($doubleronWins ? "<li>Кроме того, {$doubleronWins} по дабл-рон!</li>" : "")."
+                ". ($tripleronWins ? "<li>Кроме того, {$tripleronWins} по трипл-рон!</li>" : "")."
                 <li>В игре было {$draws}</li>
-                <li>Полный лог игры:</li>
                 {$chombosLi}
+                <li>Полный лог игры:</li>
                 <div class='fullLog'>
                     {$fullLog}
                 </div>
