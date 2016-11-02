@@ -18,24 +18,23 @@
 
 class AdminLogin extends Controller
 {
-    protected function _showForm($error = '')
-    {
-        $loggedIn = ($_COOKIE['secret'] == ADMIN_COOKIE);
-        include __DIR__ . "/../../templates/AdminLogin.php";
-    }
-
     protected function _run()
     {
-        if (!isset($_POST['secret'])) {
-            $this->_showForm();
-        } else {
-            if ($_POST['secret'] != ADMIN_PASSWORD) {
-                $this->_showForm("Wrong password!");
-                return;
-            }
+        $loggedIn = ($_COOKIE['secret'] == ADMIN_COOKIE);
+        $error = null;
 
-            setcookie('secret', ADMIN_COOKIE, time() + 3600, '/');
-            header('Location: ' . $this->_url);
+        if (!empty($_POST['secret'])) {
+            if ($_POST['secret'] != ADMIN_PASSWORD) {
+                $error = "Wrong password!";
+            } else {
+                setcookie('secret', ADMIN_COOKIE, time() + 3600, '/');
+                header('Location: ' . $this->_url);
+            }
         }
+
+        return [
+            'error' => $error,
+            'loggedIn' => $loggedIn
+        ];
     }
 }

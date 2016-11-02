@@ -16,8 +16,6 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once __DIR__ . '/Layout.php';
-
 abstract class Controller
 {
     /**
@@ -36,6 +34,11 @@ abstract class Controller
      */
     protected $_api;
 
+    /**
+     * @var string
+     */
+    protected $_mainTemplate = '';
+
     public function __construct($url, $path)
     {
         $this->_url = $url;
@@ -46,13 +49,26 @@ abstract class Controller
     public function run()
     {
         if ($this->_beforeRun()) {
-            layout::init();
-            $this->_run();
-            layout::show();
+            $context = $this->_run();
+
+            $m = new Mustache_Engine(array(
+                'loader' => new Mustache_Loader_FilesystemLoader(__DIR__ . '/../templates/'),
+            ));
+
+            header("Content-type: text/html; charset=utf-8");
+
+            echo $m->render('Layout', [
+                'isOnline' => IS_ONLINE,
+                'content' => $m->render($this->_mainTemplate, $context)
+            ]);
         }
+
         $this->_afterRun();
     }
 
+    /**
+     * @return string Mustache context for render
+     */
     abstract protected function _run();
 
     protected function _beforeRun()
@@ -71,11 +87,11 @@ abstract class Controller
      */
     public static function makeInstance($url)
     {
-        $routes = require_once __DIR__ . '/../../config/routes.php';
+        $routes = require_once __DIR__ . '/../config/routes.php';
         $matches = [];
         foreach ($routes as $regex => $controller) {
             if (preg_match('#^' . $regex . '$#', $url, $matches)) {
-                require_once __DIR__ . '/../controllers/' . $controller . '.php';
+                require_once __DIR__ . "/controllers/{$controller}.php";
                 return new $controller($url, $matches);
             }
         }

@@ -21,50 +21,29 @@
  */
 class AddOnlineGame extends Controller
 {
-    /**
-     * Показать форму добавления, если есть ошибка - вывести сообщение
-     *
-     * @param string $error
-     */
-    protected function _showForm($error = '')
-    {
-        include __DIR__ . '/../../templates/AddOnlineGame.php';
-    }
-
-    // TODO
-//    protected function _checkGameExpired($replayHash)
-//    {
-//        $regex = '#(?<year>\d{4})(?<month>\d{2})(?<day>\d{2})(?<hour>\d{2})gm#is';
-//        $matches = [];
-//        if (preg_match($regex, $replayHash, $matches)) {
-//            $date = mktime($matches['hour'], 0, 0, $matches['month'], $matches['day'], $matches['year']);
-//            if (time() - $date < 27*60*60) { // 27 часов, чтобы покрыть разницу с JST
-//                return;
-//            }
-//        }
-//
-//        throw new Exception('Добавляемая игра сыграна более чем сутки назад. Игра не принята из-за истечения срока годности.');
-//    }
-
-    // TODO: авторегистрация юзеров в онлайне
+    protected $_mainTemplate = 'AddOnlineGame';
 
     /**
      * Основной метод контроллера
      */
     protected function _run()
     {
-        if (empty($_POST['log'])) { // пусто - показываем форму
-            $this->_showForm();
-        } else {
-            try {
-                $this->_api->execute('addOnlineReplay', [TOURNAMENT_ID, $_POST['log']]);
-            } catch (Exception $e) {
-                $this->_showForm($e->getMessage());
-                return;
-            }
+        $errorMsg = '';
+        $successfullyAdded = false;
 
-            echo "<h4>Игра успешно добавлена!</h4><br>";
-            echo "Идем обратно через 3 секунды... <script type='text/javascript'>window.setTimeout(function() {window.location = '/addonline/';}, 3000);</script>";
+        try {
+            if (!empty($_POST['log'])) {
+                $this->_api->execute('addOnlineReplay', [TOURNAMENT_ID, $_POST['log']]);
+                $successfullyAdded = true;
+            }
+        } catch (Exception $e) {
+            $errorMsg = $e->getMessage();
         }
+
+        return [
+            'error'             => $errorMsg,
+            'link'              => empty($_POST['log']) ? '' : $_POST['log'],
+            'successfullyAdded' => $successfullyAdded
+        ];
     }
 }

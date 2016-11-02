@@ -21,75 +21,37 @@
  */
 class AddGame extends Controller
 {
-    /**
-     * Член класса для сохранения данны о раундах, прилетевших из колбэков
-     *
-     * @var array
-     */
-    protected $_loggedRounds = [];
-
-    /**
-     * Данные о штрафах чомбо по каждому игроку
-     *
-     * @var array
-     */
-    protected $_chomboPenalties = [];
-
-    /**
-     * Показать форму добавления, если есть ошибка - вывести сообщение
-     *
-     * @param string $error
-     */
-    protected function _showForm($error = '')
-    {
-        try {
-            $players = $this->_getRegisteredUsersList();
-        } catch (Exception $e) {
-            $players = [];
-            $error = $e->getMessage();
-        }
-
-        include __DIR__ . '/../../templates/AddGame.php';
-    }
+    protected $_mainTemplate = 'AddGame';
 
     /**
      * Основной метод контроллера
      */
     protected function _run()
     {
-        if (empty($_POST['content'])) { // пусто - показываем форму
-            $this->_showForm();
-        } else {
-            // иначе пытаемся сохранить игру в базу
-            if ($_COOKIE['secret'] != ADMIN_COOKIE) {
-                $this->_showForm("Секретное слово неправильное");
-                return;
+        $players = [];
+        $errorMsg = '';
+        $successfullyAdded = false;
+
+        try {
+            $players = $this->_api->execute('getAllPlayers', [TOURNAMENT_ID]);
+            if (!empty($_POST['content'])) {
+                // пытаемся сохранить игру в базу
+                if ($_COOKIE['secret'] != ADMIN_COOKIE) {
+                    $errorMsg = "Секретное слово неправильное";
+                } else {
+                    $this->_api->execute('addTextLog', [TOURNAMENT_ID, $_POST['content']]);
+                }
+                $successfullyAdded = true;
             }
-
-            try {
-                $this->_api->execute('addTextLog', [TOURNAMENT_ID, $_POST['content']]);
-            } catch (Exception $e) {
-                $this->_showForm($e->getMessage());
-                return;
-            }
-
-            echo "<h4>Игра успешно добавлена!</h4><br>";
-            echo "Идем обратно через 3 секунды... <script type='text/javascript'>window.setTimeout(function() {window.location = '/add/';}, 3000);</script>";
-        }
-    }
-
-    /**
-     * Получение полного списка зарегистрированных юзеров
-     * @throws
-     */
-    protected function _getRegisteredUsersList()
-    {
-        $players = $this->_api->execute('getAllPlayers', [TOURNAMENT_ID]);
-        $aliases = [];
-        foreach ($players as $v) {
-            $aliases[$v['username']] = $v['alias'];
+        } catch (Exception $e) {
+            $errorMsg = $e->getMessage();
         }
 
-        return $aliases;
+        return [
+            'players'           => $players,
+            'error'             => $errorMsg,
+            'text'              => empty($_POST['content']) ? '' : $_POST['content'],
+            'successfullyAdded' => $successfullyAdded
+        ];
     }
 }

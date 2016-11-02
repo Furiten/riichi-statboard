@@ -16,6 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+define('IS_ONLINE', true); // TODO -> to rules
 define('API_URL', 'http://localhost:8080/'); // TODO
 define('TOURNAMENT_ID', 100);
 
