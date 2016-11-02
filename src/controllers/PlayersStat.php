@@ -4,32 +4,42 @@ class PlayersStat extends Controller
 {
     protected function _run()
     {
-        $users = Db::get("SELECT username, alias FROM players");
-        $aliases = [];
-        foreach ($users as $v) {
-            $aliases[$v['username']] = IS_ONLINE ? base64_decode($v['alias']) : $v['alias'];
-        }
-
         if (!isset($_GET['sort'])) {
             $_GET['sort'] = '';
         }
 
-        $query = "SELECT players.*, STD(result_score.place) AS stddev
-            FROM players
-            LEFT JOIN result_score ON (players.username = result_score.username)
-            GROUP BY result_score.username
-        ";
-
-        switch ($_GET['sort']) {
-            case 'avg':
-                $query .= "ORDER BY games_played DESC, place_avg ASC, rating DESC";
-                break;
-            case 'rating':
-            default:
-                $query .= "ORDER BY games_played DESC, rating DESC, place_avg ASC";
+        $order = empty($_GET['order']) ? '' : $_GET['order'];
+        if ($order != 'asc' && $order != 'desc') {
+            $order = '';
         }
 
-        $usersData = Db::get($query);
+        switch ($_GET['sort']) {
+            case 'rating':
+                $orderBy = $_GET['sort'];
+                if (empty($_GET['order'])) {
+                    $order = 'desc';
+                }
+                break;
+            case 'avg_place':
+                $orderBy = $_GET['sort'];
+                if (empty($_GET['order'])) {
+                    $order = 'asc';
+                }
+                break;
+            case 'name':
+                $orderBy = $_GET['sort'];
+                if (empty($_GET['order'])) {
+                    $order = 'asc';
+                }
+                break;
+            default:;
+                $orderBy = 'rating';
+                if (empty($_GET['order'])) {
+                    $order = 'desc';
+                }
+        }
+
+        $data = $this->_api->execute('getRatingTable', [TOURNAMENT_ID, $orderBy, $order]);
         include "templates/PlayersStat.php";
     }
 }
