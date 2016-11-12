@@ -1,9 +1,14 @@
 <?php
 
-class PlayersStat extends Controller
+class RatingTable extends Controller
 {
+    protected $_mainTemplate = 'RatingTable';
+
     protected function _run()
     {
+        $errMsg = '';
+        $data = null;
+
         if (!isset($_GET['sort'])) {
             $_GET['sort'] = '';
         }
@@ -39,7 +44,27 @@ class PlayersStat extends Controller
                 }
         }
 
-        $data = $this->_api->execute('getRatingTable', [TOURNAMENT_ID, $orderBy, $order]);
-        include "templates/PlayersStat.php";
+        try {
+            $data = $this->_api->execute('getRatingTable', [TOURNAMENT_ID, $orderBy, $order]);
+
+            $ctr = 1;
+            $data = array_map(function($el) use (&$ctr) {
+                $el['_index'] = $ctr++;
+                return $el;
+            }, $data);
+        } catch (Exception $e) {
+            $errMsg = $e->getMessage();
+        }
+
+        return [
+            'error'             => $errMsg,
+            'data'              => $data,
+
+            'orderDesc'         => $order == 'desc',
+
+            'orderByRating'     => $orderBy == 'rating',
+            'orderByAvgPlace'   => $orderBy == 'avg_place',
+            'orderByName'       => $orderBy == 'name',
+        ];
     }
 }
