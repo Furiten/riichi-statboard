@@ -57,8 +57,8 @@ class LastGames extends Controller
             $bestHandPlayers = [];
             $chomboCount = 0;
             $ronWins = 0;
-            $doubleronWins = 0; // TODO
-            $tripleronWins = 0; // TODO
+            $doubleronWins = 0;
+            $tripleronWins = 0;
             $tsumoWins = 0;
             $draws = 0;
             $firstYakuman = true;
@@ -70,6 +70,14 @@ class LastGames extends Controller
                         break;
                     case 'ron':
                         $ronWins++;
+                        break;
+                    case 'multiron':
+                        if ($round['multi_ron'] == 2) {
+                            $doubleronWins ++;
+                        }
+                        if ($round['multi_ron'] == 3) {
+                            $tripleronWins ++;
+                        }
                         break;
                     case 'tsumo':
                         $tsumoWins++;
@@ -124,7 +132,7 @@ class LastGames extends Controller
                         : $bestHan . ' хан, ' . $bestFu . ' фу'
                     )
                 ),
-                'ronWins' => $ronWins,
+                'ronWins' => $ronWins + 2 * $doubleronWins + 3 * $tripleronWins,
                 'tsumoWins' => $tsumoWins,
                 'draws' => $draws,
                 'chombo' => $chomboCount,
