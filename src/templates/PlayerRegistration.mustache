@@ -1,10 +1,10 @@
 <h2>Регистрация игрока</h2>
 <br>
-<?php if(!empty($error)) { ?>
-<div class="alert alert-error"><?php echo $error; ?></div>
-<?php } ?>
+{{#error}}
+<div class="alert alert-error">{{error}}</div>
+{{/error}}
 <form action="" method="post" class="well form-search">
-    <input type="text" class="input-medium search-query" name="username" placeholder='Системное имя'<?php if (isset($_POST['username'])) { echo " value='" . $_POST['username'] . "'"; } ?>>
-    <input type="text" class="input-medium search-query" name="alias" placeholder='Реальный ник'<?php if (isset($_POST['alias'])) { echo " value='" . $_POST['alias'] . "'"; } ?>>
+    <input type="text" class="input-medium search-query" name="ident" placeholder='Системное имя' value="{{ident}}">
+    <input type="text" class="input-medium search-query" name="display_name" placeholder='Реальный ник' value="{{display_name}}">
     <button type="submit" class="btn">Зарегистрировать</button>
 </form>
