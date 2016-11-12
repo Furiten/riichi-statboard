@@ -157,69 +157,85 @@ class LastGames extends Controller
                 $roundIndex = ($round['round_index'] - 12);
             }
 
-            $yakuList = null;
-            if (!empty($round['yaku'])) {
-                $yakuList = implode(', ',
-                    array_map(
-                        function ($yaku) {
-                            return Yaku::getMap()[$yaku];
-                        },
-                        explode(',', $round['yaku'])
-                    )
-                );
-            }
-
-            $tempaiList = null;
-            if (!empty($round['tempai'])) {
-                $tempaiList = array_map(
-                    function ($el) use (&$playersData) {
-                        return $playersData[$el]['display_name'];
-                    },
-                    explode(',', $round['tempai'])
-                );
-                $tempaiList = implode(', ', $tempaiList);
-            }
-
-            $riichiList = null;
-            if (!empty($round['riichi_bets'])) {
-                $riichiList = array_map(
-                    function ($el) use (&$playersData) {
-                        return $playersData[$el]['display_name'];
-                    },
-                    explode(',', $round['riichi_bets'])
-                );
-                $riichiList = implode(', ', $riichiList);
-            }
-
-            $multiRonWins = [];
-            if ($round['outcome'] == 'multiron') {
-                $multiRonWins = array_map(function($win) {
-
-                }, $round['wins']);
-            }
-
             $rounds []= [
                 'roundWind'         => $roundWind,
                 'roundIndex'        => $roundIndex,
                 'roundTypeRon'      => $round['outcome'] == 'ron',
-                'roundTypeMultiRon' => $round['outcome'] == 'multiron',
                 'roundTypeTsumo'    => $round['outcome'] == 'tsumo',
                 'roundTypeDraw'     => $round['outcome'] == 'draw',
                 'roundTypeAbort'    => $round['outcome'] == 'abort',
                 'roundTypeChombo'   => $round['outcome'] == 'chombo',
+                'roundTypeMultiRon' => $round['outcome'] == 'multiron',
 
                 'winnerName'        => isset($round['winner_id']) ? $playersData[$round['winner_id']]['display_name'] : null,
                 'loserName'         => isset($round['loser_id']) ? $playersData[$round['loser_id']]['display_name'] : null,
-                'yakuList'          => $yakuList,
+                'yakuList'          => $this->_formatYaku($round),
                 'doras'             => isset($round['dora']) ? $round['dora'] : null,
                 'han'               => isset($round['han']) ? $round['han'] : null,
                 'fu'                => isset($round['fu']) ? $round['fu'] : null,
                 'yakuman'           => isset($round['han']) && $round['han'] < 0,
-                'tempaiPlayers'     => $tempaiList,
-                'riichiPlayers'     => $riichiList,
+                'tempaiPlayers'     => $this->_formatCsvPlayersList($round, 'tempai', $playersData),
+                'riichiPlayers'     => $this->_formatCsvPlayersList($round, 'riichi_bets', $playersData),
+
+                'multiRonWins'      => $this->_formatMultiron($round, $playersData)
             ];
         }
 
         return $rounds;
     }
+
+    protected function _formatYaku(&$round)
+    {
+        $yakuList = null;
+        if (!empty($round['yaku'])) {
+            $yakuList = implode(', ',
+                array_map(
+                    function ($yaku) {
+                        return Yaku::getMap()[$yaku];
+                    },
+                    explode(',', $round['yaku'])
+                )
+            );
+        }
+
+        return $yakuList;
+    }
+
+    protected function _formatCsvPlayersList(&$round, $key, &$playersData)
+    {
+        $list = null;
+        if (!empty($round[$key])) {
+            $list = array_map(
+                function ($el) use (&$playersData) {
+                    return $playersData[$el]['display_name'];
+                },
+                explode(',', $round[$key])
+            );
+            $list = implode(', ', $list);
+        }
+
+        return $list;
+    }
+
+    protected function _formatMultiron(&$round, &$playersData)
+    {
+        $wins = null;
+        if ($round['outcome'] == 'multiron' && !empty($round['wins'])) {
+            $wins = array_map(function($win) use(&$playersData, &$round) {
+                return [
+                    'winnerName'    => $playersData[$win['winner_id']]['display_name'],
+                    'loserName'     => $playersData[$round['loser_id']]['display_name'],
+                    'han'           => $win['han'],
+                    'fu'            => $win['fu'],
+                    'yakuman'       => $win['han'] < 0,
+                    'yakuList'      => $this->_formatYaku($win),
+                    'riichiPlayers' => $this->_formatCsvPlayersList($win, 'riichi_bets', $playersData),
+                    'doras'         => isset($round['dora']) ? $round['dora'] : null
+                ];
+            }, $round['wins']);
+        }
+
+        return $wins;
+    }
 }
+

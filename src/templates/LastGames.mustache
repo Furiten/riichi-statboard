@@ -60,7 +60,22 @@
                                         {{/roundTypeRon}}
 
                                         {{#roundTypeMultiRon}}
-
+                                            Дабл-рон:
+                                            {{#multiRonWins}}{{! double & triple rons }}
+                                                <div>
+                                                    <b>{{winnerName}}</b> -
+                                                    {{yakuList}}{{#doras}}, дора {{doras}}{{/doras}} (<b>{{loserName}}</b>),
+                                                    {{#yakuman}}
+                                                        якуман!
+                                                    {{/yakuman}}
+                                                    {{^yakuman}}
+                                                        {{han}} хан{{#fu}}, {{fu}} фу{{/fu}}.
+                                                    {{/yakuman}}
+                                                    {{#riichiPlayers}}
+                                                        Риичи: {{riichiPlayers}}
+                                                    {{/riichiPlayers}}
+                                                </div>
+                                            {{/multiRonWins}}
                                         {{/roundTypeMultiRon}}
 
                                         {{#roundTypeTsumo}}
