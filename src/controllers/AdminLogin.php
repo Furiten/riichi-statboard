@@ -18,6 +18,7 @@
 
 class AdminLogin extends Controller
 {
+    protected $_mainTemplate = 'AdminLogin';
     protected function _run()
     {
         $loggedIn = ($_COOKIE['secret'] == ADMIN_COOKIE);
