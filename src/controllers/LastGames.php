@@ -82,7 +82,7 @@ class LastGames extends Controller
                         break;
                 }
 
-                if (empty($gamesData['players'][$round['winner_id']]['display_name'])) {
+                if (empty($round['winner_id']) || empty($gamesData['players'][$round['winner_id']]['display_name'])) {
                     continue;
                 }
 
@@ -157,14 +157,17 @@ class LastGames extends Controller
                 $roundIndex = ($round['round_index'] - 12);
             }
 
-            $yakuList = implode(', ',
-                array_map(
-                    function ($yaku) {
-                        return Yaku::getMap()[$yaku];
-                    },
-                    explode(',', $round['yaku'])
-                )
-            );
+            $yakuList = null;
+            if (!empty($round['yaku'])) {
+                $yakuList = implode(', ',
+                    array_map(
+                        function ($yaku) {
+                            return Yaku::getMap()[$yaku];
+                        },
+                        explode(',', $round['yaku'])
+                    )
+                );
+            }
 
             $tempaiList = null;
             if (!empty($round['tempai'])) {
@@ -188,6 +191,13 @@ class LastGames extends Controller
                 $riichiList = implode(', ', $riichiList);
             }
 
+            $multiRonWins = [];
+            if ($round['outcome'] == 'multiron') {
+                $multiRonWins = array_map(function($win) {
+
+                }, $round['wins']);
+            }
+
             $rounds []= [
                 'roundWind'         => $roundWind,
                 'roundIndex'        => $roundIndex,
@@ -198,13 +208,13 @@ class LastGames extends Controller
                 'roundTypeAbort'    => $round['outcome'] == 'abort',
                 'roundTypeChombo'   => $round['outcome'] == 'chombo',
 
-                'winnerName'        => $playersData[$round['winner_id']]['display_name'],
-                'loserName'         => $playersData[$round['loser_id']]['display_name'],
+                'winnerName'        => isset($round['winner_id']) ? $playersData[$round['winner_id']]['display_name'] : null,
+                'loserName'         => isset($round['loser_id']) ? $playersData[$round['loser_id']]['display_name'] : null,
                 'yakuList'          => $yakuList,
-                'doras'             => $round['dora'],
-                'han'               => $round['han'],
-                'fu'                => $round['fu'],
-                'yakuman'           => $round['han'] < 0,
+                'doras'             => isset($round['dora']) ? $round['dora'] : null,
+                'han'               => isset($round['han']) ? $round['han'] : null,
+                'fu'                => isset($round['fu']) ? $round['fu'] : null,
+                'yakuman'           => isset($round['han']) && $round['han'] < 0,
                 'tempaiPlayers'     => $tempaiList,
                 'riichiPlayers'     => $riichiList,
             ];
