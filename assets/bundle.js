@@ -1,7 +1,15 @@
-function plotRating(points, games, currentUser, playersMap) {
+function plotRating (points, games, currentUser, playersMap) {
     var ticks = [];
     for (var idx = 0; idx < points.length; idx++) {
         ticks.push(idx);
+    }
+
+    var gamesIdx = [];
+    for (var id in games) {
+        if (!games.hasOwnProperty(id)) {
+            continue;
+        }
+        gamesIdx.push(id);
     }
 
     $.jqplot(
@@ -25,7 +33,7 @@ function plotRating(points, games, currentUser, playersMap) {
                 show: true,
                 sizeAdjust: 7,
                 tooltipContentEditor: function (str, seriesIndex, pointIndex) {
-                    var g = games[pointIndex - 1];
+                    var g = games[gamesIdx[pointIndex - 1]];
                     var players = [];
                     var outcome = '';
                     var own = '';
@@ -58,7 +66,7 @@ function plotRating(points, games, currentUser, playersMap) {
     );
 }
 
-function plotHands(handValueStats, yakuStats) {
+function plotHands (handValueStats, yakuStats) {
     $.jqplot('chart_hands', [handValueStats], {
         title: 'Ценность собранных рук',
         series:[{renderer:$.jqplot.BarRenderer}],
