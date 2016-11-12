@@ -78,7 +78,7 @@ class Graphs extends Controller
         } catch (Exception $e) {
             return [
                 'data' => null,
-                'error' => "Нет данных по указанному пользователю"
+                'error' => $e->getMessage()
             ];
         }
     }
