@@ -18,8 +18,16 @@
             <div id='chart_rating'></div>
             <script type="text/javascript">
                 $(document).ready(function () {
-                    plotRating("{{points}}", "{{games}}", "{{currentPlayer}}", "{{playersMap}}");
-                    plotHands("{{handValueStats}}", "{{yakuStats}}");
+                    plotRating(
+                        {{{points}}},
+                        {{{games}}},
+                        {{{currentPlayer}}},
+                        {{{playersMap}}}
+                    );
+                    plotHands(
+                        {{{handValueStats}}},
+                        {{{yakuStats}}}
+                    );
                 });
             </script>
             <hr>
