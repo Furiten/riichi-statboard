@@ -44,6 +44,7 @@
                                 {{#logItems}}
                                     <div>
                                         {{roundWind}}{{roundIndex}}:
+
                                         {{#roundTypeRon}}
                                             <b>{{winnerName}}</b> -
                                             {{yakuList}}{{#doras}}, дора {{doras}}{{/doras}} (<b>{{loserName}}</b>),
@@ -53,7 +54,15 @@
                                             {{^yakuman}}
                                                 {{han}} хан{{#fu}}, {{fu}} фу{{/fu}}.
                                             {{/yakuman}}
+                                            {{#riichiPlayers}}
+                                                Риичи: {{riichiPlayers}}
+                                            {{/riichiPlayers}}
                                         {{/roundTypeRon}}
+
+                                        {{#roundTypeMultiRon}}
+
+                                        {{/roundTypeMultiRon}}
+
                                         {{#roundTypeTsumo}}
                                             <b>{{winnerName}}</b> -
                                             {{yakuList}}{{#doras}}, дора {{doras}}{{/doras}} (цумо),
@@ -63,13 +72,25 @@
                                             {{^yakuman}}
                                                 {{han}} хан{{#fu}}, {{fu}} фу{{/fu}}.
                                             {{/yakuman}}
+                                            {{#riichiPlayers}}
+                                                Риичи: {{riichiPlayers}}
+                                            {{/riichiPlayers}}
                                         {{/roundTypeTsumo}}
+
                                         {{#roundTypeDraw}}
                                             Ничья (темпай: {{tempaiPlayers}}).
+                                            {{#riichiPlayers}}
+                                                Риичи: {{riichiPlayers}}
+                                            {{/riichiPlayers}}
                                         {{/roundTypeDraw}}
+
                                         {{#roundTypeAbort}}
                                             Пересдача.
+                                            {{#riichiPlayers}}
+                                                Риичи: {{riichiPlayers}}
+                                            {{/riichiPlayers}}
                                         {{/roundTypeAbort}}
+
                                         {{#roundTypeChombo}}
                                             Чомбо: {{loserName}}.
                                         {{/roundTypeChombo}}

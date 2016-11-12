@@ -177,10 +177,22 @@ class LastGames extends Controller
                 $tempaiList = implode(', ', $tempaiList);
             }
 
+            $riichiList = null;
+            if (!empty($round['riichi_bets'])) {
+                $riichiList = array_map(
+                    function ($el) use (&$playersData) {
+                        return $playersData[$el]['display_name'];
+                    },
+                    explode(',', $round['riichi_bets'])
+                );
+                $riichiList = implode(', ', $riichiList);
+            }
+
             $rounds []= [
                 'roundWind'         => $roundWind,
                 'roundIndex'        => $roundIndex,
                 'roundTypeRon'      => $round['outcome'] == 'ron',
+                'roundTypeMultiRon' => $round['outcome'] == 'multiron',
                 'roundTypeTsumo'    => $round['outcome'] == 'tsumo',
                 'roundTypeDraw'     => $round['outcome'] == 'draw',
                 'roundTypeAbort'    => $round['outcome'] == 'abort',
@@ -194,6 +206,7 @@ class LastGames extends Controller
                 'fu'                => $round['fu'],
                 'yakuman'           => $round['han'] < 0,
                 'tempaiPlayers'     => $tempaiList,
+                'riichiPlayers'     => $riichiList,
             ];
         }
 
