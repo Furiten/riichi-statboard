@@ -128,7 +128,7 @@ class LastGames extends Controller
                 'tsumoWins' => $tsumoWins,
                 'draws' => $draws,
                 'chombo' => $chomboCount,
-                'logItems' => $this->_makeLog($game, $gamesData['players'])
+                'logItems' => $this->_makeLog($game['rounds'], $gamesData['players'])
             ];
         }
 
@@ -137,61 +137,66 @@ class LastGames extends Controller
 
     protected function _makeLog($game, &$playersData)
     {
-        $roundWind = '東';
-        $roundIndex = $game['round_index'];
+        $rounds = [];
+        foreach ($game as $round) {
+            $roundWind = '東';
+            $roundIndex = $round['round_index'];
 
-        if ($game['round'] > 4) {
-            $roundWind = '南';
-            $roundIndex = ($game['round_index'] - 4);
-        }
+            if ($round['round_index'] > 4) {
+                $roundWind = '南';
+                $roundIndex = ($round['round_index'] - 4);
+            }
 
-        if ($game['round'] > 8) {
-            $roundWind = '西';
-            $roundIndex = ($game['round_index'] - 8);
-        }
+            if ($round['round_index'] > 8) {
+                $roundWind = '西';
+                $roundIndex = ($round['round_index'] - 8);
+            }
 
-        if ($game['round'] > 12) {
-            $roundWind = '北';
-            $roundIndex = ($game['round_index'] - 12);
-        }
+            if ($round['round_index'] > 12) {
+                $roundWind = '北';
+                $roundIndex = ($round['round_index'] - 12);
+            }
 
-        $yakuList = implode(', ',
-            array_map(
-                function($yaku) {
-                    return Yaku::getMap()[$yaku];
-                },
-                explode(',', $game['yaku'])
-            )
-        );
-
-        $tempaiList = null;
-        if (!empty($game['tempai'])) {
-            $tempaiList = array_map(
-                function ($el) use (&$playersData) {
-                    return $playersData[$el]['display_name'];
-                },
-                explode(',', $game['tempai'])
+            $yakuList = implode(', ',
+                array_map(
+                    function ($yaku) {
+                        return Yaku::getMap()[$yaku];
+                    },
+                    explode(',', $round['yaku'])
+                )
             );
-            $tempaiList = implode(', ', $tempaiList);
+
+            $tempaiList = null;
+            if (!empty($round['tempai'])) {
+                $tempaiList = array_map(
+                    function ($el) use (&$playersData) {
+                        return $playersData[$el]['display_name'];
+                    },
+                    explode(',', $round['tempai'])
+                );
+                $tempaiList = implode(', ', $tempaiList);
+            }
+
+            $rounds []= [
+                'roundWind'         => $roundWind,
+                'roundIndex'        => $roundIndex,
+                'roundTypeRon'      => $round['outcome'] == 'ron',
+                'roundTypeTsumo'    => $round['outcome'] == 'tsumo',
+                'roundTypeDraw'     => $round['outcome'] == 'draw',
+                'roundTypeAbort'    => $round['outcome'] == 'abort',
+                'roundTypeChombo'   => $round['outcome'] == 'chombo',
+
+                'winnerName'        => $playersData[$round['winner_id']]['display_name'],
+                'loserName'         => $playersData[$round['loser_id']]['display_name'],
+                'yakuList'          => $yakuList,
+                'doras'             => $round['dora'],
+                'han'               => $round['han'],
+                'fu'                => $round['fu'],
+                'yakuman'           => $round['han'] < 0,
+                'tempaiPlayers'     => $tempaiList,
+            ];
         }
 
-        return [
-            'roundWind' => $roundWind,
-            'roundIndex' => $roundIndex,
-            'roundTypeRon' => $game['outcome'] == 'ron',
-            'roundTypeTsumo' => $game['outcome'] == 'tsumo',
-            'roundTypeDraw' => $game['outcome'] == 'draw',
-            'roundTypeAbort' => $game['outcome'] == 'abort',
-            'roundTypeChombo' => $game['outcome'] == 'chombo',
-
-            'winnerName' => $playersData[$game['winner_id']],
-            'loserName' => $playersData[$game['loser_id']],
-            'yakuList' => $yakuList,
-            'doras' => $game['dora'],
-            'han' => $game['han'],
-            'fu' => $game['fu'],
-            'yakuman' => $game['han'] < 0,
-            'tempaiPlayers' => $tempaiList,
-        ];
+        return $rounds;
     }
 }

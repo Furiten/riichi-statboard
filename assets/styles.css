@@ -5,6 +5,13 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'PT Sans Narrow';
+    src: local('PT Sans Narrow Bold'), local('PTSans-NarrowBold'), url('./ptn77f.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+}
+
 * {
     font-family: "PT Sans Narrow", Arial, sans-serif !important;
     font-size: 20px;
