@@ -36,12 +36,12 @@ class AddGame extends Controller
             $players = $this->_api->execute('getAllPlayers', [TOURNAMENT_ID]);
             if (!empty($_POST['content'])) {
                 // пытаемся сохранить игру в базу
-                if ($_COOKIE['secret'] != ADMIN_COOKIE) {
+                if (empty($_COOKIE['secret']) || $_COOKIE['secret'] != ADMIN_COOKIE) {
                     $errorMsg = "Секретное слово неправильное";
                 } else {
                     $this->_api->execute('addTextLog', [TOURNAMENT_ID, $_POST['content']]);
+                    $successfullyAdded = true;
                 }
-                $successfullyAdded = true;
             }
         } catch (Exception $e) {
             $errorMsg = $e->getMessage();

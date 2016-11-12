@@ -1,9 +1,12 @@
 <?php
 
 include_once __DIR__ . "/../helpers/Array.php";
+include_once __DIR__ . "/../helpers/YakuMap.php";
 
 class LastGames extends Controller
 {
+    protected $_mainTemplate = 'LastGames';
+
     protected function _run()
     {
         $limit = 10;
@@ -18,7 +21,7 @@ class LastGames extends Controller
         $gamesData = $this->_api->execute('getLastGames', [TOURNAMENT_ID, $limit, $offset]);
 
         return [
-            'noGames' => empty($gamesData) && $currentPage == 1,
+            'noGames' => empty($gamesData['games']) && $currentPage == 1,
             'games' => $this->_makeGamesData($gamesData),
             'nextPage' => $currentPage + 1,
             'prevPage' => $currentPage == 1 ? 1 : $currentPage - 1
