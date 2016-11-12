@@ -16,19 +16,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define('IS_ONLINE', true); // TODO -> to rules
-define('API_URL', 'http://localhost:8080/'); // TODO
-define('TOURNAMENT_ID', 100);
+define('IS_ONLINE', false); // TODO -> to rules
+define('API_URL', 'http://api.furiten.ru/');
+define('TOURNAMENT_ID', 1);
 
 define('ADMIN_PASSWORD', 'hjpjdstckjybrb');
 define('ADMIN_COOKIE', 'kldfmewmd9vbeiogbjsdvjepklsdmnvmn');
 
 define('PARSER_LOG', false);
-
-// For online games: names of replacement bots
-define('BOT_NAMES', [
-    'Alfa-Tom',
-    'Beta-Zef',
-    'Gamma-Ke',
-    'Delta-Se'
-]);

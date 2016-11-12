@@ -1,6 +1,6 @@
 <?php
 
-require_once 'src/base/Controller.php';
+require_once __DIR__ . '/../Controller.php';
 
 class Mainpage extends Controller
 {
