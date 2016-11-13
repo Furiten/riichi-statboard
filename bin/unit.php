@@ -1,5 +1,5 @@
 <?php
-/*  Riichi mahjong stat GUI
+/*  Riichi mahjong API game server
  *  Copyright (C) 2016  o.klimenko aka ctizen
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -16,11 +16,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define('IS_ONLINE', false); // TODO -> to rules
-define('API_URL', 'http://api.furiten.ru/');
-define('TOURNAMENT_ID', 1);
+require __DIR__ . '/../vendor/autoload.php';
 
-define('ADMIN_PASSWORD', 'hjpjdstckjybrb');
-define('ADMIN_COOKIE', 'kldfmewmd9vbeiogbjsdvjepklsdmnvmn');
-
-define('PARSER_LOG', false);
+if (!ini_get('date.timezone')) {
+    ini_set('date.timezone', 'UTC');
+}
+PHPUnit_TextUI_Command::main();

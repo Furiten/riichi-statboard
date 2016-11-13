@@ -1,0 +1,31 @@
+{{#successfullyAdded}}
+    <h4>Игра успешно добавлена!</h4>
+    <br>
+    Идем обратно через 3 секунды...
+    <script type='text/javascript'>
+        window.setTimeout(function () {
+            window.location = '/addonline/';
+        }, 3000);
+    </script>
+{{/successfullyAdded}}
+{{^successfullyAdded}}
+    <div class="row">
+        <div class="span9">
+            <h2>Добавить онлайн-игру</h2>
+            <br>
+            {{#error}}
+                <div class="alert alert-error">{{error}}</div>
+            {{/if}}
+            <form action="" method="POST" id="addform">
+                <input type="text" name="log" value="{{link}}">
+
+                <div class="row">
+                    <div class="span10">
+                        <input type="submit" value="Добавить" class="btn btn-primary btn-large">
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+{{/successfullyAdded}}

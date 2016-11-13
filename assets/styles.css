@@ -30,3 +30,28 @@
 li, .table th, .table td {
     line-height: 24px;
 }
+
+/* graphs */
+.graphs .own {
+    background-color: #ffff00 !important;
+}
+.graphs .jqplot-highlighter-tooltip {
+    border: 1px solid #555;
+    -webkit-box-shadow: 4px 4px 24px 1px rgba(0, 0, 0, 0.7);
+    box-shadow: 4px 4px 24px 1px rgba(0, 0, 0, 0.7);
+}
+.graphs .table-plot-rating {
+    background-color: #fff;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+/* last games */
+.last-games tr.user-item-row td {
+    background: transparent;
+    width: 25%;
+}
+.last-games tr.user-item-row td:first-child {
+    background: transparent;
+    width: 50%;
+}

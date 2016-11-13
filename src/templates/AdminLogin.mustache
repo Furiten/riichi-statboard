@@ -1,0 +1,14 @@
+<h2>Админство</h2>
+<br>
+{{#error}}
+    <div class="alert alert-error">{{error}}</div>
+{{/error}}
+
+{{#loggedIn}}
+    <div class="alert alert-error">Уже авторизованы!</div>
+{{/loggedIn}}
+
+<form action="" method="post" class="well form-search">
+    <input type="password" class="input-medium search-query" name="secret" placeholder='secret'>
+    <button type="submit" class="btn">Авторизация</button>
+</form>

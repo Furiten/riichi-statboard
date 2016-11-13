@@ -1,0 +1,10 @@
+<h2>Регистрация игрока</h2>
+<br>
+{{#error}}
+<div class="alert alert-error">{{error}}</div>
+{{/error}}
+<form action="" method="post" class="well form-search">
+    <input type="text" class="input-medium search-query" name="ident" placeholder='Системное имя' value="{{ident}}">
+    <input type="text" class="input-medium search-query" name="display_name" placeholder='Реальный ник' value="{{display_name}}">
+    <button type="submit" class="btn">Зарегистрировать</button>
+</form>

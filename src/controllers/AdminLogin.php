@@ -16,11 +16,26 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define('IS_ONLINE', false); // TODO -> to rules
-define('API_URL', 'http://api.furiten.ru/');
-define('TOURNAMENT_ID', 1);
+class AdminLogin extends Controller
+{
+    protected $_mainTemplate = 'AdminLogin';
+    protected function _run()
+    {
+        $loggedIn = (isset($_COOKIE['secret']) && $_COOKIE['secret'] == ADMIN_COOKIE);
+        $error = null;
 
-define('ADMIN_PASSWORD', 'hjpjdstckjybrb');
-define('ADMIN_COOKIE', 'kldfmewmd9vbeiogbjsdvjepklsdmnvmn');
+        if (!empty($_POST['secret'])) {
+            if ($_POST['secret'] != ADMIN_PASSWORD) {
+                $error = "Wrong password!";
+            } else {
+                setcookie('secret', ADMIN_COOKIE, time() + 3600, '/');
+                header('Location: ' . $this->_url);
+            }
+        }
 
-define('PARSER_LOG', false);
+        return [
+            'error' => $error,
+            'loggedIn' => $loggedIn
+        ];
+    }
+}
