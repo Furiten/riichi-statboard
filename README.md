@@ -1,3 +1,5 @@
+**Данная система устарела и более не поддерживается. Все силы направлены на разработку и поддержку [новой версии](https://github.com/Furiten/riichi-gui) и ее [бэкенда](https://github.com/Furiten/riichi-api).**
+
 Riichi Statboard
 ================
 [![Build Status](https://travis-ci.org/Furiten/riichi-statboard.svg?branch=master)](https://travis-ci.org/Furiten/riichi-statboard)
