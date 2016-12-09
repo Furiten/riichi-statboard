@@ -49,12 +49,11 @@ class AddOnlineGame extends Controller {
 
     /**
      * @param $link
-     * @param bool $checkExpiration если добавление игры происходит в процессе перезаливки пайфу
-     * @return array
+     * @param $isReplay если добавление игры происходит в процессе перезаливки пайфу
      */
-    protected function _addGame($link, $checkExpiration = true) {
+    protected function _addGame($link, $isReplay = false) {
         list($replayHash, $paifuContent) = $this->_getContent($link);
-        if ($checkExpiration) {
+        if (!$isReplay) {
             $this->_checkGameExpired($replayHash);
         }
         // пример: http://e.mjv.jp/0/log/plainfiles.cgi?2015082718gm-0009-7994-2254c66d
@@ -78,17 +77,11 @@ class AddOnlineGame extends Controller {
         ]);
 
         $this->_updatePlayerRatings($playerPlaces, $resultScores, $gameId);
-
-        return [
-            'places' => $playerPlaces,
-            'roundScores' => $players,
-            'scores' => $resultScores
-        ];
     }
 
-    public function externalAddGame($link, $checkExpiration = false) { // паблик морозов
+    public function externalAddGame($link) { // паблик морозов
         $this->_loggedRounds = [];
-        return $this->_addGame($link, $checkExpiration);
+        $this->_addGame($link, true);
     }
 
     /**
@@ -203,8 +196,8 @@ class AddOnlineGame extends Controller {
     protected function _saveRatingsToDb($ratings, $gameId) {
         foreach ($ratings as $playerRating) {
             $avg = ((double)$playerRating['places_sum']) / ((double)$playerRating['games_played']);
-            $query = "INSERT INTO players (username, alias, rating, games_played, places_sum, place_avg)
-                VALUES ('{$playerRating['username']}', '{$playerRating['username']}', {$playerRating['rating']}, {$playerRating['games_played']}, {$playerRating['places_sum']}, {$avg})
+            $query = "INSERT INTO players (username, rating, games_played, places_sum, place_avg)
+                VALUES ('{$playerRating['username']}', {$playerRating['rating']}, {$playerRating['games_played']}, {$playerRating['places_sum']}, {$avg})
                 ON DUPLICATE KEY UPDATE rating=VALUES(rating), games_played=VALUES(games_played), places_sum=VALUES(places_sum), place_avg=VALUES(place_avg)";
             Db::exec($query);
 

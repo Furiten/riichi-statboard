@@ -37,7 +37,7 @@ class Graphs extends Controller {
 		}
 
         if (empty($ratingResults) && !empty($user)) { // все еще пусто?
-            $error = "Нет данных по указанному пользователю";
+            $error = "Нет такого пользователя в базе";
         } else {
             if (!empty($user)) {
                 $gameResults = $this->_getGameResults($ratingResults);
